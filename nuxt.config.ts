@@ -5,6 +5,12 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
 
+  vite: {
+    optimizeDeps: {
+      include: ['@nuxtjs/mdc']
+    }
+  },
+
   modules: [
     '@nuxt/content',
     '@nuxt/eslint',
@@ -51,6 +57,8 @@ export default defineNuxtConfig({
       routes: ['/sitemap.xml', '/robots.txt']
     }
   },
+
+  css: ['~/assets/css/main.css'],
 
   alias: {
     '@gen-prisma': fileURLToPath(new URL('./generated/prisma', import.meta.url))

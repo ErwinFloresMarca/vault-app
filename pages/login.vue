@@ -62,21 +62,6 @@
           </div>
         </template>
       </UCard>
-
-      <!-- Divider -->
-      <div class="relative mb-6">
-        <div class="absolute inset-0 flex items-center">
-          <div class="w-full border-t border-gray-700"></div>
-        </div>
-        <div class="relative flex justify-center text-sm">
-          <span class="px-2 bg-gray-900 text-gray-400">o continúa como cliente</span>
-        </div>
-      </div>
-
-      <!-- Email login (futuro) -->
-      <p class="text-center text-sm text-gray-400">
-        La autenticación con email estará disponible pronto
-      </p>
     </div>
   </div>
 </template>
@@ -99,6 +84,7 @@ watch(isAuthenticated, (newVal) => {
 const route = useRoute()
 if (route.query.provider && route.query.error) {
   const message = `Error al autenticarse con ${route.query.provider}`
+  console.error(message, route.query.error)
   // Mostrar notificación de error
 }
 </script>
