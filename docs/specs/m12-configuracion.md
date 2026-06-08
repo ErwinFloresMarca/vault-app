@@ -25,7 +25,7 @@ Permitir al admin ajustar parametros globales.
 - Recargo por mora
 - Dias sin pago para cancelar
 - Plan de pago por defecto
-- Datos de la empresa
+- **Datos de la empresa**: nombre, email, telefono, direccion, redes sociales, slogan
 - Tipo de cambio USD->BOB vigente
 - Modelo de post-proceso con valores por defecto
 

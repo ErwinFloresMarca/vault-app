@@ -7,7 +7,11 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:reset": "prisma migrate reset"
   },
   "dependencies": {
     "@nuxt/content": "3.13.0",
@@ -17,9 +21,13 @@
     "@nuxt/icon": "2.2.2",
     "@nuxt/image": "2.0.0",
     "@nuxt/ui": "4.7.1",
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
     "better-sqlite3": "^12.9.0",
     "eslint": "^10.3.0",
     "nuxt": "^3.21.4",
+    "nuxt-auth-utils": "^0.5.29",
+    "pg": "^8.21.0",
     "tailwindcss": "^4.3.0",
     "typescript": "^5.9.3",
     "vue": "^3.5.33",
@@ -27,8 +35,13 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
-      "better-sqlite3",
-      "sqlite3"
+      "@prisma/client",
+      "better-sqlite3"
     ]
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.2",
+    "dotenv": "^17.4.2",
+    "prisma": "^7.8.0"
   }
 }
