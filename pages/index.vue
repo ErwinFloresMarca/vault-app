@@ -17,7 +17,7 @@ const collections = computed<CollectionSummary[]>(() => data.value?.data?.slice(
       title="Colecciona. Descubre. Completa."
       description="Una plataforma de coleccionables impresos en 3D de Volt-3D. Explora colecciones, sigue tu progreso y completa tu colección."
       :links="[
-        { label: 'Ver colecciones', to: '/collections', icon: 'i-lucide-collection' },
+        { label: 'Ver colecciones', to: '/collections', icon: 'i-lucide-library' },
       ]"
     />
 

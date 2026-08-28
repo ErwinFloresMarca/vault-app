@@ -2,12 +2,12 @@
   <div class="min-h-screen flex flex-col">
     <UHeader>
       <template #title>
-        <NuxtLink to="/" class="flex items-center gap-2">
+        <div class="flex items-center gap-2">
           <div class="flex items-center justify-center rounded-lg bg-primary text-primary-foreground h-8 w-8">
             <Icon name="i-lucide-box" class="h-5 w-5" />
           </div>
           <span class="font-semibold text-xl tracking-tight">Volt Vault</span>
-        </NuxtLink>
+        </div>
       </template>
 
       <UNavigationMenu :items="navItems" />
@@ -72,7 +72,7 @@ const navItems = computed<NavigationMenuItem[]>(() => [{
 const userMenuItems = computed<DropdownMenuItem[]>(() => {
   const items: DropdownMenuItem[] = [{
     label: 'Mi colección',
-    icon: 'i-lucide-collection',
+    icon: 'i-lucide-library',
     to: '/me',
   }]
   if (user.value?.role === 'ADMIN') {

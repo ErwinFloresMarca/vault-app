@@ -66,6 +66,12 @@ export default defineNuxtConfig({
     },
   },
 
+  app: {
+    head: {
+      htmlAttrs: { lang: 'es' },
+    },
+  },
+
   css: ['~/assets/css/main.css'],
 
   alias: {

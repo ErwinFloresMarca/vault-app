@@ -43,7 +43,7 @@ const navItems = computed<NavigationMenuItem[]>(() => [{
   to: '/admin/dashboard',
 }, {
   label: 'Colecciones',
-  icon: 'i-lucide-collection',
+  icon: 'i-lucide-library',
   to: '/admin/collections',
 }, {
   label: 'Items',

@@ -94,7 +94,7 @@ async function remove(row: CollectionRow) {
         <UTable
           :rows="rows"
           :columns="columns"
-          :empty-state="{ icon: 'i-lucide-collection', label: 'Sin colecciones' }"
+          :empty-state="{ icon: 'i-lucide-library', label: 'Sin colecciones' }"
         >
           <template #status="{ row }">
             <UBadge :label="row.original.status" :color="row.original.status === 'PUBLISHED' ? 'success' : (row.original.status === 'ARCHIVED' ? 'neutral' : 'warning')" />
