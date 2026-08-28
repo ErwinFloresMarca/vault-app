@@ -20,10 +20,10 @@ export default defineOAuthGoogleEventHandler({
     let user
 
     if (existingOAuth) {
-      // Actualizar último acceso
+      // Actualizar último acceso y avatar
       user = await prisma.user.update({
         where: { id: existingOAuth.userId },
-        data: { lastLoginAt: new Date() },
+        data: { lastLoginAt: new Date(), avatarUrl: googleUser.picture },
       })
     } else {
       // Verificar si el email ya existe
@@ -33,7 +33,10 @@ export default defineOAuthGoogleEventHandler({
 
       if (existingByEmail) {
         // Usuario existe pero sin OAuth Google, agregar la cuenta OAuth
-        user = existingByEmail
+        user = await prisma.user.update({
+          where: { id: existingByEmail.id },
+          data: { avatarUrl: googleUser.picture },
+        })
         await prisma.oAuthAccount.create({
           data: {
             userId: user.id,
@@ -65,12 +68,14 @@ export default defineOAuthGoogleEventHandler({
       }
     }
 
-    // Crear sesión
+    // Crear sesión (estructura { user: {...} } como espera nuxt-auth-utils)
     await setUserSession(event, {
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      role: user.role,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+      },
     })
 
     // Redirigir a home

@@ -5,9 +5,9 @@ import { prisma } from './db'
  * Lee la sesión actual. Devuelve el usuario de BD o null.
  */
 export async function getCurrentUser(event: H3Event) {
-  const session = await getUserSession(event)
-  if (!session?.id) return null
-  return prisma.user.findUnique({ where: { id: session.id } })
+  const { user: sessionUser } = await getUserSession(event)
+  if (!sessionUser?.id) return null
+  return prisma.user.findUnique({ where: { id: sessionUser.id } })
 }
 
 /**

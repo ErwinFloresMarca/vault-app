@@ -2,7 +2,9 @@
 
 export default defineEventHandler(async (event) => {
   // Obtener usuario actual desde la sesión
-  const user = await getUserSession(event)
+  const {
+    user
+  } = await getUserSession(event)
 
   if (!user) {
     throw createError({
