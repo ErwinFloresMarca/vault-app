@@ -48,11 +48,11 @@ const items = computed(() => data.value?.data ?? [])
           </div>
         </template>
 
-        <UEmptyState v-else title="Aún no has conseguido nada" description="Explora las colecciones y empieza a completar la tuya.">
+        <UEmpty v-else title="Aún no has conseguido nada" description="Explora las colecciones y empieza a completar la tuya.">
           <template #actions>
             <UButton to="/collections" icon="i-lucide-collection">Ver colecciones</UButton>
           </template>
-        </UEmptyState>
+        </UEmpty>
       </UContainer>
     </UPageBody>
   </UPage>

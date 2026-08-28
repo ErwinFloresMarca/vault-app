@@ -80,7 +80,7 @@ async function onToggle() {
     <UContainer>
       <USkeleton v-if="pending" class="h-64 rounded-lg" />
       <UAlert v-else-if="error" color="error" title="No se pudo cargar el item" />
-      <UEmptyState v-else title="Item no encontrado" />
+      <UEmpty v-else title="Item no encontrado" />
     </UContainer>
   </div>
 </template>

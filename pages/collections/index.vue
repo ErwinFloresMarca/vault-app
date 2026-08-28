@@ -22,7 +22,7 @@ const collections = computed(() => data.value?.data ?? [])
 
         <CollectionGrid v-else-if="collections.length" :collections="collections" />
 
-        <UEmptyState v-else title="No hay colecciones" description="Pronto se publicarán nuevas colecciones." />
+        <UEmpty v-else title="No hay colecciones" description="Pronto se publicarán nuevas colecciones." />
       </UContainer>
     </UPageBody>
   </UPage>

@@ -79,42 +79,38 @@ async function remove(row: CollectionRow) {
 </script>
 
 <template>
-  <UDashboardPage>
-    <UDashboardPanel>
-      <UDashboardNavbar title="Colecciones">
-        <template #right>
-          <UButton icon="i-lucide-plus" label="Nueva colección" @click="openCreate" />
-        </template>
-      </UDashboardNavbar>
-      <UDashboardPanelContent>
-        <UContainer>
-          <UAlert v-if="error" color="error" title="No se pudieron cargar las colecciones" />
-          <div v-else-if="pending" class="flex justify-center py-16">
-            <USkeleton class="h-64 w-full rounded-lg" />
-          </div>
-          <UPageCard v-else>
-            <UTable
-              :rows="rows"
-              :columns="columns"
-              :empty-state="{ icon: 'i-lucide-collection', label: 'Sin colecciones' }"
-            >
-              <template #status="{ row }">
-                <UStatusBadge :label="row.original.status" :color="row.original.status === 'PUBLISHED' ? 'success' : (row.original.status === 'ARCHIVED' ? 'neutral' : 'warning')" />
+  <UDashboardPanel>
+    <UDashboardNavbar title="Colecciones">
+      <template #right>
+        <UButton icon="i-lucide-plus" label="Nueva colección" @click="openCreate" />
+      </template>
+    </UDashboardNavbar>
+    <UContainer class="p-6">
+      <UAlert v-if="error" color="error" title="No se pudieron cargar las colecciones" />
+      <div v-else-if="pending" class="flex justify-center py-16">
+        <USkeleton class="h-64 w-full rounded-lg" />
+      </div>
+      <UPageCard v-else>
+        <UTable
+          :rows="rows"
+          :columns="columns"
+          :empty-state="{ icon: 'i-lucide-collection', label: 'Sin colecciones' }"
+        >
+          <template #status="{ row }">
+            <UBadge :label="row.original.status" :color="row.original.status === 'PUBLISHED' ? 'success' : (row.original.status === 'ARCHIVED' ? 'neutral' : 'warning')" />
+          </template>
+          <template #actions="{ row }">
+            <UButton icon="i-lucide-pencil" variant="ghost" color="neutral" @click="openEdit(row.original)" />
+            <UModal :title="`Eliminar ${row.original.name}?`" description="Se archivará la colección.">
+              <template #trigger>
+                <UButton icon="i-lucide-trash" variant="ghost" color="error" />
               </template>
-              <template #actions="{ row }">
-                <UButton icon="i-lucide-pencil" variant="ghost" color="neutral" @click="openEdit(row.original)" />
-                <UModal :title="`Eliminar ${row.original.name}?`" description="Se archivará la colección.">
-                  <template #trigger>
-                    <UButton icon="i-lucide-trash" variant="ghost" color="error" />
-                  </template>
-                  <UButton color="error" block label="Archivar" @click="remove(row.original)" />
-                </UModal>
-              </template>
-            </UTable>
-          </UPageCard>
-        </UContainer>
-      </UDashboardPanelContent>
-    </UDashboardPanel>
+              <UButton color="error" block label="Archivar" @click="remove(row.original)" />
+            </UModal>
+          </template>
+        </UTable>
+      </UPageCard>
+    </UContainer>
 
     <UModal v-model="modalOpen" :title="editing ? 'Editar colección' : 'Nueva colección'">
       <UForm :state="form" class="space-y-4" @submit="save">
@@ -131,5 +127,5 @@ async function remove(row: CollectionRow) {
         <UButton type="submit" block :loading="saving" :label="editing ? 'Guardar cambios' : 'Crear' " />
       </UForm>
     </UModal>
-  </UDashboardPage>
+  </UDashboardPanel>
 </template>

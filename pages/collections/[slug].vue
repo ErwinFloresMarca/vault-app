@@ -60,7 +60,7 @@ const collection = computed<CollectionWithItems | null>(() => data.value?.data ?
     <UContainer>
       <USkeleton v-if="pending" class="h-64 rounded-lg" />
       <UAlert v-else-if="error" color="error" title="No se pudo cargar la colección" />
-      <UEmptyState v-else title="Colección no encontrada" description="Es posible que aún no se publique." />
+      <UEmpty v-else title="Colección no encontrada" description="Es posible que aún no se publique." />
     </UContainer>
   </div>
 </template>

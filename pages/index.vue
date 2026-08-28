@@ -27,7 +27,7 @@ const collections = computed<CollectionSummary[]>(() => data.value?.data?.slice(
       description="Figuras flexibles y criaturas fantásticas impresas en 3D, listas para coleccionar."
     >
       <CollectionGrid v-if="collections.length" :collections="collections" />
-      <UEmptyState v-else title="Pronto" description="Estamos preparando nuevas colecciones." />
+      <UEmpty v-else title="Pronto" description="Estamos preparando nuevas colecciones." />
     </UPageSection>
   </UPage>
 </template>

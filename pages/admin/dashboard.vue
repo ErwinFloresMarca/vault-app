@@ -35,72 +35,68 @@ const recentItems = computed(() =>
 </script>
 
 <template>
-  <UDashboardPage>
-    <UDashboardPanel>
-      <UDashboardNavbar title="Dashboard" />
-      <UDashboardPanelContent>
-        <UContainer>
-          <UAlert v-if="error" color="error" title="No se pudo cargar el dashboard" />
+  <UDashboardPanel>
+    <UDashboardNavbar title="Dashboard" />
+    <UContainer class="p-6">
+      <UAlert v-if="error" color="error" title="No se pudo cargar el dashboard" />
 
-          <div v-else-if="stats" class="space-y-8">
-            <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
-              <UPageCard>
-                <template #content>
-                  <p class="text-sm text-muted">Colecciones</p>
-                  <p class="text-3xl font-bold">{{ stats.counts.collections }}</p>
-                </template>
-              </UPageCard>
-              <UPageCard>
-                <template #content>
-                  <p class="text-sm text-muted">Items</p>
-                  <p class="text-3xl font-bold">{{ stats.counts.items }}</p>
-                </template>
-              </UPageCard>
-              <UPageCard>
-                <template #content>
-                  <p class="text-sm text-muted">Usuarios</p>
-                  <p class="text-3xl font-bold">{{ stats.counts.users }}</p>
-                </template>
-              </UPageCard>
-              <UPageCard>
-                <template #content>
-                  <p class="text-sm text-muted">Elementos conseguidos</p>
-                  <p class="text-3xl font-bold">{{ stats.counts.collected }}</p>
-                </template>
-              </UPageCard>
-            </div>
+      <div v-else-if="stats" class="space-y-8">
+        <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <UPageCard>
+            <template #content>
+              <p class="text-sm text-muted">Colecciones</p>
+              <p class="text-3xl font-bold">{{ stats.counts.collections }}</p>
+            </template>
+          </UPageCard>
+          <UPageCard>
+            <template #content>
+              <p class="text-sm text-muted">Items</p>
+              <p class="text-3xl font-bold">{{ stats.counts.items }}</p>
+            </template>
+          </UPageCard>
+          <UPageCard>
+            <template #content>
+              <p class="text-sm text-muted">Usuarios</p>
+              <p class="text-3xl font-bold">{{ stats.counts.users }}</p>
+            </template>
+          </UPageCard>
+          <UPageCard>
+            <template #content>
+              <p class="text-sm text-muted">Elementos conseguidos</p>
+              <p class="text-3xl font-bold">{{ stats.counts.collected }}</p>
+            </template>
+          </UPageCard>
+        </div>
 
-            <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-              <UPageCard>
-                <template #header>
-                  <h3 class="font-semibold">Más vendidos</h3>
-                </template>
-                <template #content>
-                  <UTable
-                    :rows="stats.top"
-                    :columns="topColumns"
-                    :empty-state="{ icon: 'i-lucide-box', label: 'Sin ventas registradas' }"
-                  />
-                </template>
-              </UPageCard>
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <UPageCard>
+            <template #header>
+              <h3 class="font-semibold">Más vendidos</h3>
+            </template>
+            <template #content>
+              <UTable
+                :rows="stats.top"
+                :columns="topColumns"
+                :empty-state="{ icon: 'i-lucide-box', label: 'Sin ventas registradas' }"
+              />
+            </template>
+          </UPageCard>
 
-              <UPageCard>
-                <template #header>
-                  <h3 class="font-semibold">Actividad reciente</h3>
-                </template>
-                <template #content>
-                  <div v-if="!stats.recent.length" class="text-sm text-muted">Sin actividad reciente.</div>
-                  <ULandingTimeline v-else :items="recentItems" icon-size="md" />
-                </template>
-              </UPageCard>
-            </div>
-          </div>
+          <UPageCard>
+            <template #header>
+              <h3 class="font-semibold">Actividad reciente</h3>
+            </template>
+            <template #content>
+              <div v-if="!stats.recent.length" class="text-sm text-muted">Sin actividad reciente.</div>
+              <UTimeline v-else :items="recentItems" />
+            </template>
+          </UPageCard>
+        </div>
+      </div>
 
-          <div v-else class="flex justify-center py-16">
-            <USkeleton class="h-64 w-full rounded-lg" />
-          </div>
-        </UContainer>
-      </UDashboardPanelContent>
-    </UDashboardPanel>
-  </UDashboardPage>
+      <div v-else class="flex justify-center py-16">
+        <USkeleton class="h-64 w-full rounded-lg" />
+      </div>
+    </UContainer>
+  </UDashboardPanel>
 </template>
