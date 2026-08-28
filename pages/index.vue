@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { CollectionSummary } from '~/types'
+import CollectionGrid from '~/components/organisms/CollectionGrid.vue'
 
 useSeoMeta({
   title: 'Volt Vault — Coleccionables impresos en 3D',

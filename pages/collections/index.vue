@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import CollectionGrid from '~/components/organisms/CollectionGrid.vue'
+
 useSeoMeta({
   title: 'Colecciones — Volt Vault',
   description: 'Explora todas las colecciones de coleccionables impresos en 3D de Volt-3D.',

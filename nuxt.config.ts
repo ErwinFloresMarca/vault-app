@@ -22,6 +22,14 @@ export default defineNuxtConfig({
     'nuxt-auth-utils'
   ],
 
+  // Atomic Design: registrar los componentes de atoms/molecules/organisms
+  // sin el prefijo de directorio (p.ej. <AppImage>, <TagList>, <CollectionCard>).
+  components: [
+    { path: '~/components/atoms', pathPrefix: false },
+    { path: '~/components/molecules', pathPrefix: false },
+    { path: '~/components/organisms', pathPrefix: false },
+  ],
+
   runtimeConfig: {
     // Private keys - solo servidor
     sessionPassword: process.env.NUXT_SESSION_PASSWORD || 'default-32-character-secret-key!!',

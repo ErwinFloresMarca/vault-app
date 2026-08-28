@@ -9,6 +9,7 @@
 </template>
 
 <script setup lang="ts">
+import CollectionCard from '~/components/molecules/CollectionCard.vue'
 import type { CollectionSummary } from '~/types'
 
 defineProps<{
