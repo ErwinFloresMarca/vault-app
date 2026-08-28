@@ -1,14 +1,11 @@
 <template>
-  <UPageCard v-if="item" :to="`/collections/${collectionSlug}/${item.slug}`">
-    <template #image>
-      <AppImage
-        :src="item.mainImage?.url"
-        :alt="item.name"
-        class="aspect-square"
-      />
-    </template>
-
-    <template #content>
+  <UPageCard v-if="item" :to="`/collections/${collectionSlug}/${item.slug}`" class="overflow-hidden">
+    <AppImage
+      :src="item.mainImage?.url"
+      :alt="item.name"
+      class="aspect-square w-full"
+    />
+    <div class="p-4">
       <div class="flex items-start justify-between gap-2">
         <h3 class="font-semibold">{{ item.name }}</h3>
         <StockIndicator :stock="item.stock" class="shrink-0" />
@@ -18,14 +15,14 @@
           Conseguido
         </UBadge>
       </div>
-    </template>
+    </div>
   </UPageCard>
 </template>
 
 <script setup lang="ts">
 import type { ItemSummary } from '~/types'
 
-const props = defineProps<{
+defineProps<{
   item: ItemSummary
   collectionSlug: string
 }>()

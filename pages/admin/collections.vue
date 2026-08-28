@@ -92,7 +92,7 @@ async function remove(row: CollectionRow) {
       </div>
       <UPageCard v-else>
         <UTable
-          :rows="rows"
+          :data="rows"
           :columns="columns"
           :empty-state="{ icon: 'i-lucide-library', label: 'Sin colecciones' }"
         >
@@ -102,17 +102,19 @@ async function remove(row: CollectionRow) {
           <template #actions="{ row }">
             <UButton icon="i-lucide-pencil" variant="ghost" color="neutral" @click="openEdit(row.original)" />
             <UModal :title="`Eliminar ${row.original.name}?`" description="Se archivará la colección.">
-              <template #trigger>
-                <UButton icon="i-lucide-trash" variant="ghost" color="error" />
+              <UButton icon="i-lucide-trash" variant="ghost" color="error" />
+              <template #footer="{ close }">
+                <UButton color="neutral" variant="outline" label="Cancelar" @click="close" />
+                <UButton color="error" label="Archivar" @click="remove(row.original)" />
               </template>
-              <UButton color="error" block label="Archivar" @click="remove(row.original)" />
             </UModal>
           </template>
         </UTable>
       </UPageCard>
     </UContainer>
 
-    <UModal v-model="modalOpen" :title="editing ? 'Editar colección' : 'Nueva colección'">
+    <UModal v-model:open="modalOpen" :title="editing ? 'Editar colección' : 'Nueva colección'">
+      <template #body>
       <UForm :state="form" class="space-y-4" @submit="save">
         <UFormField label="Nombre">
           <UInput v-model="form.name" />
@@ -126,6 +128,7 @@ async function remove(row: CollectionRow) {
         <div v-if="formError" class="text-sm text-(--ui-error)">{{ formError }}</div>
         <UButton type="submit" block :loading="saving" :label="editing ? 'Guardar cambios' : 'Crear' " />
       </UForm>
+      </template>
     </UModal>
   </UDashboardPanel>
 </template>

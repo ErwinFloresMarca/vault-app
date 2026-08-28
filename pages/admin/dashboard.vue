@@ -75,7 +75,7 @@ const recentItems = computed(() =>
             </template>
             <template #content>
               <UTable
-                :rows="stats.top"
+                :data="stats.top"
                 :columns="topColumns"
                 :empty-state="{ icon: 'i-lucide-box', label: 'Sin ventas registradas' }"
               />

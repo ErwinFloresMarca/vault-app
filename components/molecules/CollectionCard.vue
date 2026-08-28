@@ -1,14 +1,11 @@
 <template>
-  <UPageCard v-if="collection" :to="`/collections/${collection.slug}`">
-    <template #image>
-      <AppImage
-        :src="collection.coverImage?.url"
-        :alt="collection.name"
-        class="aspect-[4/3]"
-      />
-    </template>
-
-    <template #content>
+  <UPageCard v-if="collection" :to="`/collections/${collection.slug}`" class="overflow-hidden">
+    <AppImage
+      :src="collection.coverImage?.url"
+      :alt="collection.name"
+      class="aspect-[4/3] w-full"
+    />
+    <div class="p-4">
       <div class="flex items-start justify-between gap-2">
         <h3 class="font-semibold">{{ collection.name }}</h3>
         <span v-if="collection.itemCount !== undefined" class="text-xs text-muted shrink-0">
@@ -19,14 +16,14 @@
         {{ stripMarkdown(collection.description) }}
       </p>
       <TagList v-if="collection.tags?.length" :tags="collection.tags" class="mt-2" />
-    </template>
+    </div>
   </UPageCard>
 </template>
 
 <script setup lang="ts">
 import type { CollectionSummary } from '~/types'
 
-const props = defineProps<{
+defineProps<{
   collection: CollectionSummary
 }>()
 
