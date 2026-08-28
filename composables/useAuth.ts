@@ -2,21 +2,32 @@
  * Composable para autenticación
  * Proporciona acceso a datos del usuario y funciones de auth
  */
+
+export interface AuthUser {
+  id: string
+  email: string
+  name: string
+  avatarUrl: string | null
+  role: 'USER' | 'ADMIN'
+  lastLoginAt: string
+  oauthProviders: string[]
+}
+
 export const useAuthUser = () => {
-  const user = useState('auth.user', () => null)
-  const isLoading = useState('auth.isLoading', () => false)
-  const error = useState('auth.error', () => null)
+  const user = useState<AuthUser | null>('auth.user', () => null)
+  const isLoading = useState<boolean>('auth.isLoading', () => false)
+  const error = useState<string | null>('auth.error', () => null)
 
   const fetchUser = async () => {
     isLoading.value = true
     try {
-      const { data, error: err } = await useFetch('/api/auth/me')
+      const { data, error: err } = await useFetch<AuthUser>('/api/auth/me')
       if (err.value) {
         user.value = null
       } else {
-        user.value = data.value
+        user.value = data.value ?? null
       }
-      error.value = err.value
+      error.value = err.value?.message ?? null
     } finally {
       isLoading.value = false
     }
@@ -29,7 +40,7 @@ export const useAuthUser = () => {
       user.value = null
       await navigateTo('/')
     } catch (err) {
-      error.value = err
+      error.value = (err as Error)?.message ?? 'Error al cerrar sesión'
     } finally {
       isLoading.value = false
     }
@@ -39,11 +50,11 @@ export const useAuthUser = () => {
   const isAdmin = computed(() => user.value?.role === 'ADMIN')
 
   return {
-    user: readonly(user),
+    user,
     isAuthenticated,
     isAdmin,
-    isLoading: readonly(isLoading),
-    error: readonly(error),
+    isLoading,
+    error,
     fetchUser,
     logout,
   }

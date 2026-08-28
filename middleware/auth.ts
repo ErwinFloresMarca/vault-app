@@ -1,14 +1,28 @@
 /**
- * Middleware para verificar autenticación
- * Si la ruta requiere autenticación y el usuario no está autenticado,
+ * Middleware para verificar autenticación.
+ * Si la ruta no está en la lista pública y el usuario no está autenticado,
  * redirige a login.
  */
-export default defineRouteMiddleware(async (to, from) => {
-  // Rutas públicas
-  const publicRoutes = ['/', '/galeria', '/contacto', '/auth/error']
+export default defineNuxtRouteMiddleware(async (to) => {
+  // Rutas públicas (catálogo + auth)
+  const publicRoutes = [
+    '/',
+    '/login',
+    '/auth',
+    '/auth/error',
+    '/collections',
+    '/collections/',
+    '/galeria',
+    '/contacto',
+    '/privacy',
+    '/terms',
+  ]
 
-  // Si es una ruta pública, permitir acceso
-  if (publicRoutes.includes(to.path)) {
+  // Compatible con rutas dinámicas de catálogo público
+  if (
+    publicRoutes.includes(to.path) ||
+    to.path.startsWith('/collections/')
+  ) {
     return
   }
 
@@ -16,7 +30,6 @@ export default defineRouteMiddleware(async (to, from) => {
   const { data: user } = await useFetch('/api/auth/me')
 
   if (!user.value) {
-    // Si no está autenticado, redirigir a login
     return navigateTo('/login')
   }
 })
