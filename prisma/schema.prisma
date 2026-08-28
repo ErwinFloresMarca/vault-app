@@ -1,5 +1,5 @@
-// Volt3D - Sistema de Impresión 3D
-// Schema Prisma completo
+// Volt Vault - Catálogo de coleccionables impresos en 3D
+// Schema Prisma completo (rehecho desde cero sobre la infra de auth existente)
 
 generator client {
   provider = "prisma-client"
@@ -10,31 +10,25 @@ datasource db {
   provider = "postgresql"
 }
 
-// ===== M2: AUTENTICACIÓN =====
+// ===== AUTH =====
+
+enum UserRole {
+  USER
+  ADMIN
+}
 
 model User {
   id          String   @id @default(cuid())
   email       String   @unique
   name        String
   avatarUrl   String?
-  role        UserRole @default(CLIENT)
+  role        UserRole @default(USER)
   lastLoginAt DateTime @default(now())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  // Relaciones
   oauthAccounts OAuthAccount[]
-  projects      Project[]
-  quotes        Quote[]
-  orders        Order[]
-  payments      Payment[]
-  cancellations Cancellation[]
-  notifications Notification[]
-}
-
-enum UserRole {
-  CLIENT
-  ADMIN
+  collected     UserCollectedItem[]
 }
 
 model OAuthAccount {
@@ -53,415 +47,164 @@ model OAuthAccount {
   @@index([userId])
 }
 
-// ===== M5: CATÁLOGOS =====
+// ===== FILES (imágenes y recursos) =====
 
-model Filament {
-  id           String   @id @default(cuid())
-  type         String // "PLA", "PETG", "ABS", "TPU", etc.
-  brand        String
-  color        String
-  diameter     Float // mm
-  density      Float // g/cm³
-  currentPrice Float // USD per kg
-  stock        Float // grams
-  supplier     String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+model File {
+  id        String    @id @default(cuid())
+  url       String    @unique // URL de acceso (web o /uploads/... local)
+  path      String? // ruta local en disco si aplica
+  mimeType  String?
+  size      Int?
+  createdAt DateTime  @default(now())
 
-  // Historial de precios
-  priceHistory FilamentPriceHistory[]
+  collections CollectionFile[]
+  items       ItemFile[]
 
-  // Relaciones
-  projectEstimates ProjectEstimate[]
+  @@index([url])
 }
 
-model FilamentPriceHistory {
+// ===== CATÁLOGO =====
+
+enum CollectionStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ItemStatus {
+  DRAFT
+  AVAILABLE
+  SOLD_OUT
+  ARCHIVED
+}
+
+model Collection {
+  id          String           @id @default(cuid())
+  name        String
+  slug        String           @unique
+  description String? // Markdown enriquecido
+  status      CollectionStatus @default(DRAFT)
+  orderIndex  Int              @default(0) // orden de exhibición
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  items      CollectionItem[]
+  tags       CollectionTag[]
+  files      CollectionFile[]
+
+  @@index([status])
+}
+
+model CollectionItem {
+  id           String     @id @default(cuid())
+  collectionId String
+  name         String
+  slug         String     @unique
+  description  String?
+  stock        Int        @default(0) // denormalizado, se actualiza atómicamente con movimientos
+  soldQuantity Int        @default(0) // denormalizado, derivado de movimientos SALE
+  status       ItemStatus @default(DRAFT)
+  orderIndex   Int        @default(0)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  collection  Collection    @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  files       ItemFile[]
+  movements   InventoryMovement[]
+  collectedBy UserCollectedItem[]
+
+  @@index([collectionId])
+  @@index([status])
+}
+
+// ===== TAGS =====
+
+model Tag {
+  id        String        @id @default(cuid())
+  name      String        @unique
+  slug      String        @unique
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  collections CollectionTag[]
+}
+
+model CollectionTag {
+  collectionId String
+  tagId        String
+
+  collection Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  tag        Tag        @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([collectionId, tagId])
+  @@index([tagId])
+}
+
+// ===== RELACIONES FILE ↔ CATÁLOGO (M:N) =====
+
+model CollectionFile {
+  id           String @id @default(cuid())
+  collectionId String
+  fileId       String
+  position     Int    @default(0) // 0 = portada
+  alt          String?
+
+  collection Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  file       File       @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  @@unique([collectionId, fileId])
+  @@index([fileId])
+}
+
+model ItemFile {
+  id       String @id @default(cuid())
+  itemId   String
+  fileId   String
+  position Int    @default(0) // 0 = imagen principal
+  alt      String?
+
+  item CollectionItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  file File           @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  @@unique([itemId, fileId])
+  @@index([fileId])
+}
+
+// ===== ELEMENTOS CONSEGUIDOS =====
+
+model UserCollectedItem {
   id         String   @id @default(cuid())
-  filamentId String
-  price      Float // USD per kg
-  changedAt  DateTime @default(now())
+  userId     String
+  itemId     String
+  obtainedAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  filament Filament @relation(fields: [filamentId], references: [id], onDelete: Cascade)
+  user User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  item CollectionItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
 
-  @@index([filamentId])
+  @@unique([userId, itemId])
+  @@index([itemId])
 }
 
-model Printer {
-  id              String   @id @default(cuid())
-  name            String
-  model           String
-  technology      String // "FDM", "SLA", "SLS"
-  costPerHour     Float // USD per hour (includes maintenance + amortization)
-  electricalUsage Float? // kWh
-  maxVolume       String? // description or dimensions
-  isActive        Boolean  @default(true)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+// ===== INVENTARIO =====
 
-  // Relaciones
-  projectEstimates ProjectEstimate[]
-}
-
-// ===== M3: CALCULADORA Y COTIZACIONES =====
-
-model Project {
-  id             String    @id @default(cuid())
-  creatorId      String // admin who created
-  name           String
-  description    String?
-  estimatedGrams Float // material weight for this project
-  estimatedHours Float // printing time for this project
-  profitMargin   Float     @default(100) // percentage, configurable per project
-  category       String? // project category
-  isPublished    Boolean   @default(false)
-  publishedAt    DateTime?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  creator   User              @relation(fields: [creatorId], references: [id])
-  estimates ProjectEstimate[]
-  quotes    Quote[]
-  orders    Order[]
-
-  @@index([creatorId])
-}
-
-model ProjectEstimate {
-  id                 String  @id @default(cuid())
-  projectId          String
-  filamentId         String
-  printerId          String?
-  grams              Float // override if different
-  hours              Float // override if different
-  complexityLevel    String // "low", "medium", "high"
-  postProcessCostBOB Float? // BOB (calculated or override)
-
-  project  Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  filament Filament @relation(fields: [filamentId], references: [id])
-  printer  Printer? @relation(fields: [printerId], references: [id])
-
-  @@unique([projectId, filamentId, printerId])
-  @@index([projectId])
-}
-
-model Quote {
-  id              String  @id @default(cuid())
-  clientId        String
-  projectId       String?
-  filamentId      String?
-  grams           Float
-  complexityLevel String // "low", "medium", "high"
-  needsDesign     Boolean @default(false)
-  printerId       String?
-
-  // Costs (USD)
-  filamentCostUSD Float
-  machineCostUSD  Float
-  postProcessUSD  Float
-  marginUSD       Float
-  totalUSD        Float
-
-  // Conversion (BOB)
-  exchangeRateUsed Float // USD to BOB rate used
-  totalBOB         Float
-
-  // State
-  status          QuoteStatus @default(PENDING)
-  expiresAt       DateTime
-  approvedAt      DateTime?
-  rejectedAt      DateTime?
-  rejectionReason String?
-
-  // Files
-  stlFileUrl String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  client  User     @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  project Project? @relation(fields: [projectId], references: [id])
-
-  @@index([clientId])
-  @@index([projectId])
-}
-
-enum QuoteStatus {
-  PENDING
-  APPROVED
-  REJECTED
-  EXPIRED
-  CONVERTED_TO_ORDER
-}
-
-// ===== M4: PEDIDOS =====
-
-model Order {
-  id        String  @id @default(cuid())
-  clientId  String
-  projectId String?
-  quoteId   String?
-
-  // Cliente info
-  clientName      String
-  clientEmail     String
-  clientPhone     String
-  shippingAddress String?
-
-  // Financiero
-  totalBOB Float
-
-  // Estado
-  status    OrderStatus @default(PENDING)
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-
-  client  User     @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  project Project? @relation(fields: [projectId], references: [id])
-
-  // Relaciones
-  stateChanges OrderStateChange[]
-  photos       OrderPhoto[]
-  installments Installment[]
-  cancellation Cancellation?
-  paymentPlan  PaymentPlan[]      @relation("paymentPlan")
-
-  @@index([clientId])
-  @@index([projectId])
-}
-
-enum OrderStatus {
-  PENDING // Aprobado pero no iniciado
-  PRINTING // En impresión
-  POST_PROCESSING // Post-procesado
-  QUALITY_CHECK // Control de calidad
-  COMPLETED // Completado
-  SHIPPED // Enviado
-  DELIVERED // Entregado
-  CANCELLED // Cancelado
-}
-
-model OrderStateChange {
-  id        String      @id @default(cuid())
-  orderId   String
-  fromState OrderStatus
-  toState   OrderStatus
-  note      String?
-  changedBy String // userId
-  changedAt DateTime    @default(now())
-
-  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
-
-  @@index([orderId])
-}
-
-model OrderPhoto {
-  id         String   @id @default(cuid())
-  orderId    String
-  photoUrl   String
-  caption    String?
-  uploadedAt DateTime @default(now())
-
-  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
-
-  @@index([orderId])
-}
-
-// ===== M7: PAGOS Y CUOTAS =====
-
-model PaymentPlan {
-  id      String          @id @default(cuid())
-  orderId String          @unique
-  type    PaymentPlanType
-
-  order Order @relation("paymentPlan", fields: [orderId], references: [id], onDelete: Cascade)
-}
-
-enum PaymentPlanType {
-  FULL_UPFRONT // 100%
-  HALF_UPFRONT // 50% + 50%
-  THREE_INSTALLMENTS // 30% + 40% + 30%
-}
-
-model Installment {
-  id             String   @id @default(cuid())
-  orderId        String
-  installmentNum Int // 1, 2, 3, etc.
-  amount         Float // BOB
-  percentage     Int // 30, 40, 50, etc.
-  milestone      String? // description
-  dueDate        DateTime
-
-  status          InstallmentStatus @default(PENDING)
-  paidAt          DateTime?
-  gracePeriodDays Int? // days before auto-pause
-  createdAt       DateTime          @default(now())
-
-  order    Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  payments Payment[]
-
-  @@index([orderId])
-}
-
-enum InstallmentStatus {
-  PENDING
-  PARTIALLY_PAID
-  PAID
-  OVERDUE
-  PAUSED
-}
-
-model Payment {
-  id            String   @id @default(cuid())
-  clientId      String
-  installmentId String?
-  orderId       String?
-  amount        Float // BOB
-  paymentMethod String // "manual", "transfer", etc.
-  receiptUrl    String?
-  registeredBy  String // admin user id
-  registeredAt  DateTime @default(now())
-  createdAt     DateTime @default(now())
-
-  client      User         @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  installment Installment? @relation(fields: [installmentId], references: [id])
-
-  @@index([clientId])
-  @@index([installmentId])
-}
-
-// ===== M8: CANCELACIONES =====
-
-model Cancellation {
-  id          String @id @default(cuid())
-  orderId     String @unique
-  clientId    String
-  reason      String
-  requestedBy String // "client" or admin userId
-
-  percentageProgress Float // % of work done
-  amountToCharge     Float // BOB (non-reimbursable)
-  amountToRefund     Float // BOB
-
-  status       CancellationStatus @default(PENDING)
-  approvedAt   DateTime?
-  processedAt  DateTime?
-  refundStatus String? // "pending", "completed"
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  order  Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  client User  @relation(fields: [clientId], references: [id])
-
-  @@index([orderId])
-  @@index([clientId])
-}
-
-enum CancellationStatus {
-  PENDING
-  APPROVED
-  REJECTED
-  PROCESSED
-}
-
-// ===== M9: CONTABILIDAD =====
-
-model Transaction {
-  id          String          @id @default(cuid())
-  type        TransactionType // "sale", "expense", "refund"
-  category    String? // "printing", "design", "material", "overhead", etc.
-  orderId     String?
-  amount      Float // BOB
-  description String?
-  receiptUrl  String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-enum TransactionType {
+enum InventoryMovementType {
+  IN
+  OUT
+  ADJUSTMENT
   SALE
-  EXPENSE
-  REFUND
-  PURCHASE
 }
 
-// ===== M11: NOTIFICACIONES =====
+model InventoryMovement {
+  id        String               @id @default(cuid())
+  itemId    String
+  type      InventoryMovementType
+  quantity  Int
+  reason    String?
+  createdAt DateTime             @default(now())
 
-model Notification {
-  id        String           @id @default(cuid())
-  userId    String
-  type      NotificationType
-  title     String
-  message   String
-  relatedId String? // orderId, quoteId, etc.
-  isRead    Boolean          @default(false)
-  sentAt    DateTime         @default(now())
-  readAt    DateTime?
+  item CollectionItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-}
-
-enum NotificationType {
-  QUOTE_APPROVED
-  ORDER_STATE_CHANGED
-  PHOTO_UPLOADED
-  INSTALLMENT_NEAR_DUE
-  INSTALLMENT_OVERDUE
-  PAYMENT_RECEIVED
-  CANCELLATION_PROCESSED
-  STOCK_LOW
-}
-
-// ===== M12: CONFIGURACIÓN =====
-
-model SystemConfig {
-  id String @id @default("singleton")
-
-  // Margen y costos
-  baseProfitMargin     Float @default(100) // %
-  minimumDownPayment   Float @default(30) // %
-  gracePeriodDays      Int   @default(5) // days before auto-pause
-  latePaymentSurcharge Float @default(5) // %
-  autoCancelDays       Int   @default(15) // days without payment
-
-  // Planes de pago
-  defaultPaymentPlan PaymentPlanType @default(THREE_INSTALLMENTS)
-
-  // Empresa
-  companyName    String  @default("Volt3D")
-  companyEmail   String?
-  companyPhone   String?
-  companyAddress String?
-  companyLogo    String?
-
-  // Redes sociales
-  socialFacebook  String?
-  socialInstagram String?
-  socialWhatsapp  String?
-
-  updatedAt DateTime @updatedAt
-}
-
-model ExchangeRate {
-  id        String   @id @default(cuid())
-  rate      Float // 1 USD = X BOB
-  source    String // "manual", "api", etc.
-  updatedAt DateTime @default(now())
-}
-
-// ===== AUDITORÍA =====
-
-model AuditLog {
-  id        String @id @default(cuid())
-  entity    String // "User", "Order", "Payment", etc.
-  entityId  String
-  action    String // "CREATE", "UPDATE", "DELETE"
-  changes   Json? // before/after
-  changedBy String
-
-  createdAt DateTime @default(now())
+  @@index([itemId])
 }

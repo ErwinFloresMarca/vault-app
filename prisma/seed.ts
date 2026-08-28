@@ -1,103 +1,156 @@
 import { PrismaClient } from './../generated/prisma/client'
-import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaPg } from '@prisma/adapter-pg'
+import 'dotenv/config'
 
-const pool = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
-const prisma = new PrismaClient({
-  adapter: pool,
-})
+const pool = new PrismaPg({ connectionString: process.env.DATABASE_URL! })
+const prisma = new PrismaClient({ adapter: pool })
 
 async function main() {
-  console.log('🌱 Seeding database...')
+  console.log('🌱 Seeding Volt Vault...')
 
-  // Crear configuración del sistema
-  const config = await prisma.systemConfig.upsert({
-    where: { id: 'singleton' },
+  // ===== TAGS =====
+  const tagNames = ['Animales', 'Flexibles', 'Fantasía', 'Macetas', 'Personalizado', 'Edición Limitada']
+  const tags = new Map<string, string>()
+  for (const name of tagNames) {
+    const slug = name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, '-')
+    const tag = await prisma.tag.upsert({
+      where: { slug },
+      update: {},
+      create: { name, slug },
+    })
+    tags.set(name, tag.id)
+  }
+  console.log(`✓ ${tags.size} tags`)
+
+  // ===== FILES (urls externas de ejemplo) =====
+  async function ensureFile(url: string) {
+    return prisma.file.upsert({
+      where: { url },
+      update: {},
+      create: { url, mimeType: 'image/webp' },
+    })
+  }
+
+  // ===== COLECCIÓN 1: Animalitos Flexibles =====
+  const coll1Slug = 'animalitos-flexibles'
+  const coll1 = await prisma.collection.upsert({
+    where: { slug: coll1Slug },
     update: {},
     create: {
-      id: 'singleton',
-      baseProfitMargin: 100,
-      minimumDownPayment: 30,
-      gracePeriodDays: 5,
-      latePaymentSurcharge: 5,
-      autoCancelDays: 15,
-      defaultPaymentPlan: 'THREE_INSTALLMENTS',
-      companyName: 'Volt3D',
-      companyEmail: 'info@volt3d.com',
-      companyPhone: '+591 XXXXXXXX',
-      companyAddress: 'La Paz, Bolivia',
-      socialInstagram: '@volt3d',
-      socialFacebook: 'Volt3D',
-      socialWhatsapp: '+591 XXXXXXXX',
+      name: 'Animalitos Flexibles',
+      slug: coll1Slug,
+      description:
+        '# Animalitos Flexibles\n\nUna colección de pequeños animales articulados impresos en 3D.\n\n## Características\n\n- Diseño flexible\n- Impresión 3D\n- Diferentes colores\n- Colección limitada\n\n> ¡Colecciónalos todos!',
+      status: 'PUBLISHED',
+      orderIndex: 0,
+      tags: {
+        create: [
+          { tag: { connect: { id: tags.get('Animales')! } } },
+          { tag: { connect: { id: tags.get('Flexibles')! } } },
+        ],
+      },
     },
   })
-  console.log('✓ System config created:', config)
 
-  // Crear tipo de cambio inicial
-  const exchangeRate = await prisma.exchangeRate.create({
-    data: {
-      rate: 6.85, // 1 USD = 6.85 BOB (aproximado)
-      source: 'manual',
+  const catFile = await ensureFile('https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=600')
+  const dogFile = await ensureFile('https://images.unsplash.com/photo-1552053831-71594a27632d?w=600')
+  const foxFile = await ensureFile('https://images.unsplash.com/photo-1516939884455-1445c8652f83?w=600')
+
+  const cat = await prisma.collectionItem.upsert({
+    where: { slug: 'gato' },
+    update: {},
+    create: {
+      collectionId: coll1.id,
+      name: 'Gato',
+      slug: 'gato',
+      description: 'Un gato flexible articulado.',
+      stock: 0,
+      soldQuantity: 0,
+      status: 'AVAILABLE',
+      files: { create: [{ fileId: catFile.id, position: 0, alt: 'Gato flexible' }] },
     },
   })
-  console.log('✓ Exchange rate created:', exchangeRate)
-
-  // Crear filamentos de ejemplo
-  const pla = await prisma.filament.create({
-    data: {
-      type: 'PLA',
-      brand: 'Prusament',
-      color: 'Black',
-      diameter: 1.75,
-      density: 1.23,
-      currentPrice: 15.0, // USD per kg
-      stock: 5000, // grams
-      supplier: 'Local distributor',
+  const dog = await prisma.collectionItem.upsert({
+    where: { slug: 'perro' },
+    update: {},
+    create: {
+      collectionId: coll1.id,
+      name: 'Perro',
+      slug: 'perro',
+      description: 'Un perro flexible articulado.',
+      stock: 0,
+      soldQuantity: 0,
+      status: 'AVAILABLE',
+      files: { create: [{ fileId: dogFile.id, position: 0, alt: 'Perro flexible' }] },
     },
   })
-  console.log('✓ Filament (PLA) created:', pla)
-
-  const petg = await prisma.filament.create({
-    data: {
-      type: 'PETG',
-      brand: 'Prusament',
-      color: 'Orange',
-      diameter: 1.75,
-      density: 1.27,
-      currentPrice: 18.0, // USD per kg
-      stock: 3000,
-      supplier: 'Local distributor',
+  const fox = await prisma.collectionItem.upsert({
+    where: { slug: 'zorro' },
+    update: {},
+    create: {
+      collectionId: coll1.id,
+      name: 'Zorro',
+      slug: 'zorro',
+      description: 'Un zorro flexible articulado.',
+      stock: 0,
+      soldQuantity: 0,
+      status: 'AVAILABLE',
+      files: { create: [{ fileId: foxFile.id, position: 0, alt: 'Zorro flexible' }] },
     },
   })
-  console.log('✓ Filament (PETG) created:', petg)
+  console.log(`✓ Colección "${coll1.name}" con items: ${cat.name}, ${dog.name}, ${fox.name}`)
 
-  // Crear impresoras de ejemplo
-  const printerFDM = await prisma.printer.create({
-    data: {
-      name: 'Prusa i3 MK3S+',
-      model: 'MK3S+',
-      technology: 'FDM',
-      costPerHour: 3.5, // USD per hour
-      electricalUsage: 0.5, // kWh
-      maxVolume: '250x210x210mm',
-      isActive: true,
+  // ===== Movimientos de inventario de ejemplo =====
+  // Ajuste inicial de stock (absoluto) + ventas, vía movimientos → stock/soldQuantity consistentes.
+  const movements: Array<{ item: typeof cat; type: 'IN' | 'SALE'; qty: number }> = [
+    { item: cat, type: 'IN', qty: 100 },
+    { item: cat, type: 'SALE', qty: 40 },
+    { item: dog, type: 'IN', qty: 80 },
+    { item: dog, type: 'SALE', qty: 25 },
+    { item: fox, type: 'IN', qty: 60 },
+    { item: fox, type: 'SALE', qty: 10 },
+  ]
+  for (const m of movements) {
+    await prisma.$transaction(async (tx) => {
+      await tx.inventoryMovement.create({
+        data: { itemId: m.item.id, type: m.type, quantity: m.qty, reason: 'seed' },
+      })
+      const moveItem = await tx.collectionItem.findUnique({ where: { id: m.item.id } })
+      if (!moveItem) return
+      if (m.type === 'IN') {
+        await tx.collectionItem.update({
+          where: { id: m.item.id },
+          data: { stock: moveItem.stock + m.qty },
+        })
+      } else if (m.type === 'SALE') {
+        await tx.collectionItem.update({
+          where: { id: m.item.id },
+          data: { stock: moveItem.stock - m.qty, soldQuantity: moveItem.soldQuantity + m.qty },
+        })
+      }
+    })
+  }
+  console.log('✓ Movimientos de inventario de ejemplo')
+
+  // ===== COLECCIÓN 2: Edición Especial (placeholder básica) =====
+  const coll2Slug = 'edicion-especial-dragones'
+  await prisma.collection.upsert({
+    where: { slug: coll2Slug },
+    update: {},
+    create: {
+      name: 'Criaturas Fantásticas',
+      slug: coll2Slug,
+      description: '# Criaturas Fantásticas\n\nColección de criaturas míticas impresas en 3D.\n\n- Dragones\n- Criaturas\n\nPróximamente más.',
+      status: 'PUBLISHED',
+      orderIndex: 1,
+      tags: {
+        create: [{ tag: { connect: { id: tags.get('Fantasía')! } } }],
+      },
     },
   })
-  console.log('✓ Printer (FDM) created:', printerFDM)
+  console.log('✓ Colección "Criaturas Fantásticas"')
 
-  const printerSLA = await prisma.printer.create({
-    data: {
-      name: 'Formlabs Form 3',
-      model: 'Form 3',
-      technology: 'SLA',
-      costPerHour: 8.0, // USD per hour
-      electricalUsage: 0.3,
-      maxVolume: '145x81.5x100mm',
-      isActive: true,
-    },
-  })
-  console.log('✓ Printer (SLA) created:', printerSLA)
-
-  console.log('✨ Seeding complete!')
+  console.log('✨ Seeding Volt Vault completado!')
 }
 
 main()
