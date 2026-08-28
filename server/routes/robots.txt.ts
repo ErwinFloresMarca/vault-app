@@ -1,10 +1,10 @@
-// robots.txt dinámico. Se enriquece en el módulo SEO.
 export default defineEventHandler(() => {
+  const base = process.env.SITE_URL ?? 'https://local.volt-vault.dev'
   return [
     'User-Agent: *',
     'Disallow: /admin/',
     'Allow: /',
     '',
-    'Sitemap: /sitemap.xml',
+    `Sitemap: ${base}/sitemap.xml`,
   ].join('\n')
 })

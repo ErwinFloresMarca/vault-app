@@ -50,12 +50,12 @@ export default defineNuxtConfig({
     },
   },
 
-  // Auth config
+  // sitemap.xml y robots.txt se sirven dinámicamente por sus handlers en server/routes
+  // (el prerender de rutas server no es fiable; se omiten expresamente)
   nitro: {
     prerender: {
       crawlLinks: false,
-      routes: ['/sitemap.xml', '/robots.txt']
-    }
+    },
   },
 
   css: ['~/assets/css/main.css'],
