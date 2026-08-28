@@ -1,6 +1,10 @@
 /**
  * Composable para autenticación
- * Proporciona acceso a datos del usuario y funciones de auth
+ * Proporciona acceso a datos del usuario y funciones de auth.
+ *
+ * Usa useFetch('/api/auth/me') con una key compartida para que la sesión
+ * se recupere ya en el SSR y se hidrate en el cliente vía el payload de Nuxt,
+ * de modo que tras el redirect de OAuth el usuario queda identificado.
  */
 
 export interface AuthUser {
@@ -14,40 +18,22 @@ export interface AuthUser {
 }
 
 export const useAuthUser = () => {
-  const user = useState<AuthUser | null>('auth.user', () => null)
-  const isLoading = useState<boolean>('auth.isLoading', () => false)
-  const error = useState<string | null>('auth.error', () => null)
-
-  const fetchUser = async () => {
-    isLoading.value = true
-    try {
-      const { data, error: err } = await useFetch<AuthUser>('/api/auth/me')
-      if (err.value) {
-        user.value = null
-      } else {
-        user.value = data.value ?? null
-      }
-      error.value = err.value?.message ?? null
-    } finally {
-      isLoading.value = false
-    }
-  }
-
-  const logout = async () => {
-    isLoading.value = true
-    try {
-      await $fetch('/api/auth/logout', { method: 'POST' })
-      user.value = null
-      await navigateTo('/')
-    } catch (err) {
-      error.value = (err as Error)?.message ?? 'Error al cerrar sesión'
-    } finally {
-      isLoading.value = false
-    }
-  }
+  const { data: user, pending, error, refresh } = useFetch<AuthUser>(
+    '/api/auth/me',
+    { key: 'auth:user' }
+  )
 
   const isAuthenticated = computed(() => !!user.value)
   const isAdmin = computed(() => user.value?.role === 'ADMIN')
+  const isLoading = computed(() => pending.value)
+
+  const fetchUser = () => refresh()
+
+  const logout = async () => {
+    await $fetch('/api/auth/logout', { method: 'POST' })
+    user.value = null
+    await navigateTo('/')
+  }
 
   return {
     user,
