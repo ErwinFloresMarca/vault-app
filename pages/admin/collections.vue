@@ -88,6 +88,14 @@ async function remove(row: CollectionRow) {
   await $fetch(`/api/admin/collections/${row.id}`, { method: 'DELETE' })
   await refresh()
 }
+
+const batchCollection = ref<{ id: string; name: string } | null>(null)
+const batchOpen = ref(false)
+
+function openBatch(row: CollectionRow) {
+  batchCollection.value = { id: row.id, name: row.name }
+  batchOpen.value = true
+}
 </script>
 
 <template>
@@ -113,6 +121,7 @@ async function remove(row: CollectionRow) {
           </template>
           <template #actions-cell="{ row }">
             <div class="flex items-center gap-1">
+              <UButton icon="i-lucide-boxes" variant="ghost" color="neutral" :aria-label="`Inventario de ${row.original.name}`" title="Registrar movimiento por grupo" @click="openBatch(row.original)" />
               <UButton icon="i-lucide-pencil" variant="ghost" color="neutral" :aria-label="`Editar ${row.original.name}`" @click="openEdit(row.original)" />
               <UModal :title="`Eliminar ${row.original.name}?`" description="Se archivará la colección.">
                 <UButton icon="i-lucide-trash" variant="ghost" color="error" :aria-label="`Eliminar ${row.original.name}`" />
@@ -147,5 +156,12 @@ async function remove(row: CollectionRow) {
       </UForm>
       </template>
     </UModal>
+
+    <CollectionBatchModal
+      :open="batchOpen"
+      :collection="batchCollection"
+      @update:open="batchOpen = $event"
+      @changed="refresh"
+    />
   </UDashboardPanel>
 </template>

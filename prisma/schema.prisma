@@ -91,6 +91,7 @@ model Collection {
   items      CollectionItem[]
   tags       CollectionTag[]
   files      CollectionFile[]
+  inventoryBatches InventoryBatch[]
 
   @@index([status])
 }
@@ -196,15 +197,35 @@ enum InventoryMovementType {
   SALE
 }
 
+// Agrupa uno o más InventoryMovement que se registran a la vez
+// (p.ej. imprimir una tanda de items de una colección).
+// collectionId es opcional para permitir agrupar items de varias colecciones.
+model InventoryBatch {
+  id           String                @id @default(cuid())
+  collectionId String?
+  type         InventoryMovementType
+  reason       String?
+  createdAt    DateTime              @default(now())
+
+  collection Collection?          @relation(fields: [collectionId], references: [id], onDelete: SetNull)
+  movements  InventoryMovement[]
+
+  @@index([collectionId])
+  @@index([createdAt])
+}
+
 model InventoryMovement {
   id        String               @id @default(cuid())
   itemId    String
+  batchId   String?
   type      InventoryMovementType
   quantity  Int
   reason    String?
   createdAt DateTime             @default(now())
 
   item CollectionItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  batch InventoryBatch? @relation(fields: [batchId], references: [id], onDelete: Cascade)
 
   @@index([itemId])
+  @@index([batchId])
 }

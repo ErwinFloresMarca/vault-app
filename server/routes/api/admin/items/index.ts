@@ -14,8 +14,14 @@ export default defineEventHandler(async (event) => {
     }
     case 'GET': {
       await requireAdmin(event)
+      const q = getQuery(event)
+      const where: any = {}
+      if (typeof q.collectionId === 'string' && q.collectionId) {
+        where.collectionId = q.collectionId
+      }
       const items = await prisma.collectionItem.findMany({
-        orderBy: { createdAt: 'desc' },
+        where,
+        orderBy: { createdAt: 'asc' },
         include: {
           collection: { select: { name: true, slug: true } },
           _count: { select: { collectedBy: true } },
