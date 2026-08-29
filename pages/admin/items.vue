@@ -13,6 +13,7 @@ interface ItemRow {
   stock: number
   soldQuantity: number
   collection?: { id: string; name: string }
+  files?: Array<{ file: { id: string; url: string } }>
 }
 
 interface CollectionOption {
@@ -39,8 +40,20 @@ const collections = computed<CollectionOption[]>(() => collectionsData.value?.da
 const modalOpen = ref(false)
 const editing = ref<ItemRow | null>(null)
 const saving = ref(false)
-const form = reactive({ name: '', description: '', status: 'AVAILABLE', collectionId: '', stockInicial: 0 })
+const form = reactive({ name: '', description: '', status: 'AVAILABLE', collectionId: '', stockInicial: 0, fileId: null as string | null })
 const formError = ref('')
+
+const inventoryOpen = ref(false)
+const inventoryItem = ref<ItemRow | null>(null)
+
+function mainImageOf(row: ItemRow) {
+  return row.files?.find((f) => f.file)?.file ?? null
+}
+
+function openInventory(row: ItemRow) {
+  inventoryItem.value = row
+  inventoryOpen.value = true
+}
 
 function openCreate() {
   editing.value = null
@@ -49,6 +62,7 @@ function openCreate() {
   form.status = 'AVAILABLE'
   form.collectionId = collections.value[0]?.id ?? ''
   form.stockInicial = 0
+  form.fileId = null
   formError.value = ''
   modalOpen.value = true
 }
@@ -60,6 +74,7 @@ function openEdit(row: ItemRow) {
   form.status = row.status
   form.collectionId = row.collection?.id ?? ''
   form.stockInicial = 0
+  form.fileId = mainImageOf(row)?.id ?? null
   formError.value = ''
   modalOpen.value = true
 }
@@ -77,7 +92,12 @@ async function save() {
   formError.value = ''
   try {
     if (editing.value) {
-      const payload: any = { name: form.name, description: form.description || undefined, status: form.status }
+      const payload: any = {
+        name: form.name,
+        description: form.description || undefined,
+        status: form.status,
+        fileIds: form.fileId ? [form.fileId] : undefined,
+      }
       await $fetch(`/api/admin/items/${editing.value.id}`, { method: 'PUT', body: payload })
     } else {
       await $fetch('/api/admin/items', {
@@ -88,6 +108,7 @@ async function save() {
           status: form.status,
           collectionId: form.collectionId,
           stockInicial: Number(form.stockInicial) || 0,
+          fileIds: form.fileId ? [form.fileId] : undefined,
         },
       })
     }
@@ -122,20 +143,23 @@ async function remove(row: ItemRow) {
         <UTable
           :data="rows"
           :columns="columns"
-          :empty-state="{ icon: 'i-lucide-box', label: 'Sin items' }"
+          :empty="'Sin items'"
         >
-          <template #status="{ row }">
+          <template #status-cell="{ row }">
             <UBadge :label="row.original.status" :color="row.original.status === 'AVAILABLE' ? 'success' : (row.original.status === 'ARCHIVED' ? 'neutral' : 'warning')" />
           </template>
-          <template #actions="{ row }">
-            <UButton icon="i-lucide-pencil" variant="ghost" color="neutral" @click="openEdit(row.original)" />
-            <UModal :title="`Eliminar ${row.original.name}?`" description="Se archivará el item.">
-              <UButton icon="i-lucide-trash" variant="ghost" color="error" />
-              <template #footer="{ close }">
-                <UButton color="neutral" variant="outline" label="Cancelar" @click="close" />
-                <UButton color="error" label="Archivar" @click="remove(row.original)" />
-              </template>
-            </UModal>
+          <template #actions-cell="{ row }">
+            <div class="flex items-center gap-1">
+              <UButton icon="i-lucide-boxes" variant="ghost" color="neutral" :aria-label="`Inventario de ${row.original.name}`" @click="openInventory(row.original)" />
+              <UButton icon="i-lucide-pencil" variant="ghost" color="neutral" :aria-label="`Editar ${row.original.name}`" @click="openEdit(row.original)" />
+              <UModal :title="`Eliminar ${row.original.name}?`" description="Se archivará el item.">
+                <UButton icon="i-lucide-trash" variant="ghost" color="error" :aria-label="`Eliminar ${row.original.name}`" />
+                <template #footer="{ close }">
+                  <UButton color="neutral" variant="outline" label="Cancelar" @click="close" />
+                  <UButton color="error" label="Archivar" @click="remove(row.original)" />
+                </template>
+              </UModal>
+            </div>
           </template>
         </UTable>
       </UPageCard>
@@ -153,6 +177,9 @@ async function remove(row: ItemRow) {
         <UFormField label="Descripción (Markdown)">
           <UTextarea v-model="form.description" :rows="4" placeholder="Descripción con formato Markdown..." />
         </UFormField>
+        <UFormField label="Imagen principal">
+          <ImageField v-model="form.fileId" :preview-url="editing ? mainImageOf(editing)?.url : null" />
+        </UFormField>
         <UFormField label="Estado">
           <USelect v-model="form.status" :items="['AVAILABLE', 'DRAFT', 'SOLD_OUT', 'ARCHIVED']" />
         </UFormField>
@@ -162,7 +189,9 @@ async function remove(row: ItemRow) {
         <div v-if="formError" class="text-sm text-(--ui-error)">{{ formError }}</div>
         <UButton type="submit" block :loading="saving" :label="editing ? 'Guardar cambios' : 'Crear'" />
       </UForm>
-      </template>
+        </template>
     </UModal>
+
+    <InventoryModal v-model:open="inventoryOpen" :item="inventoryItem" @changed="refresh" />
   </UDashboardPanel>
 </template>

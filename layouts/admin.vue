@@ -49,5 +49,9 @@ const navItems = computed<NavigationMenuItem[]>(() => [{
   label: 'Items',
   icon: 'i-lucide-box',
   to: '/admin/items',
+}, {
+  label: 'Inventario',
+  icon: 'i-lucide-boxes',
+  to: '/admin/inventory',
 }])
 </script>

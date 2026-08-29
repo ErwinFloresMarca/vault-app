@@ -43,28 +43,20 @@ const recentItems = computed(() =>
       <div v-else-if="stats" class="space-y-8">
         <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
           <UPageCard>
-            <template #content>
-              <p class="text-sm text-muted">Colecciones</p>
-              <p class="text-3xl font-bold">{{ stats.counts.collections }}</p>
-            </template>
+            <p class="text-sm text-muted">Colecciones</p>
+            <p class="text-3xl font-bold">{{ stats.counts.collections }}</p>
           </UPageCard>
           <UPageCard>
-            <template #content>
-              <p class="text-sm text-muted">Items</p>
-              <p class="text-3xl font-bold">{{ stats.counts.items }}</p>
-            </template>
+            <p class="text-sm text-muted">Items</p>
+            <p class="text-3xl font-bold">{{ stats.counts.items }}</p>
           </UPageCard>
           <UPageCard>
-            <template #content>
-              <p class="text-sm text-muted">Usuarios</p>
-              <p class="text-3xl font-bold">{{ stats.counts.users }}</p>
-            </template>
+            <p class="text-sm text-muted">Usuarios</p>
+            <p class="text-3xl font-bold">{{ stats.counts.users }}</p>
           </UPageCard>
           <UPageCard>
-            <template #content>
-              <p class="text-sm text-muted">Elementos conseguidos</p>
-              <p class="text-3xl font-bold">{{ stats.counts.collected }}</p>
-            </template>
+            <p class="text-sm text-muted">Elementos conseguidos</p>
+            <p class="text-3xl font-bold">{{ stats.counts.collected }}</p>
           </UPageCard>
         </div>
 
@@ -73,23 +65,19 @@ const recentItems = computed(() =>
             <template #header>
               <h3 class="font-semibold">Más vendidos</h3>
             </template>
-            <template #content>
-              <UTable
-                :data="stats.top"
-                :columns="topColumns"
-                :empty-state="{ icon: 'i-lucide-box', label: 'Sin ventas registradas' }"
-              />
-            </template>
+            <UTable
+              :data="stats.top"
+              :columns="topColumns"
+              :empty="'Sin ventas registradas'"
+            />
           </UPageCard>
 
           <UPageCard>
             <template #header>
               <h3 class="font-semibold">Actividad reciente</h3>
             </template>
-            <template #content>
-              <div v-if="!stats.recent.length" class="text-sm text-muted">Sin actividad reciente.</div>
-              <UTimeline v-else :items="recentItems" />
-            </template>
+            <div v-if="!stats.recent.length" class="text-sm text-muted">Sin actividad reciente.</div>
+            <UTimeline v-else :items="recentItems" />
           </UPageCard>
         </div>
       </div>

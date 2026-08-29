@@ -12,6 +12,7 @@ interface CollectionRow {
   description?: string | null
   status: string
   _count?: { items: number }
+  files?: Array<{ file: { id: string; url: string } }>
 }
 
 const columns: TableColumn<CollectionRow>[] = [
@@ -28,14 +29,19 @@ const rows = computed<CollectionRow[]>(() => data.value?.data ?? [])
 const modalOpen = ref(false)
 const editing = ref<CollectionRow | null>(null)
 const saving = ref(false)
-const form = reactive({ name: '', description: '', status: 'PUBLISHED' as string })
+const form = reactive({ name: '', description: '', status: 'PUBLISHED' as string, fileId: null as string | null })
 const formError = ref('')
+
+function coverOf(row: CollectionRow) {
+  return row.files?.find((f) => f.file)?.file ?? null
+}
 
 function openCreate() {
   editing.value = null
   form.name = ''
   form.description = ''
   form.status = 'PUBLISHED'
+  form.fileId = null
   formError.value = ''
   modalOpen.value = true
 }
@@ -45,6 +51,7 @@ function openEdit(row: CollectionRow) {
   form.name = row.name
   form.description = row.description ?? ''
   form.status = row.status
+  form.fileId = coverOf(row)?.id ?? null
   formError.value = ''
   modalOpen.value = true
 }
@@ -57,7 +64,12 @@ async function save() {
   saving.value = true
   formError.value = ''
   try {
-    const payload = { name: form.name, description: form.description || undefined, status: form.status }
+    const payload = {
+      name: form.name,
+      description: form.description || undefined,
+      status: form.status,
+      fileIds: form.fileId ? [form.fileId] : undefined,
+    }
     if (editing.value) {
       await $fetch(`/api/admin/collections/${editing.value.id}`, { method: 'PUT', body: payload })
     } else {
@@ -94,20 +106,22 @@ async function remove(row: CollectionRow) {
         <UTable
           :data="rows"
           :columns="columns"
-          :empty-state="{ icon: 'i-lucide-library', label: 'Sin colecciones' }"
+          :empty="'Sin colecciones'"
         >
-          <template #status="{ row }">
+          <template #status-cell="{ row }">
             <UBadge :label="row.original.status" :color="row.original.status === 'PUBLISHED' ? 'success' : (row.original.status === 'ARCHIVED' ? 'neutral' : 'warning')" />
           </template>
-          <template #actions="{ row }">
-            <UButton icon="i-lucide-pencil" variant="ghost" color="neutral" @click="openEdit(row.original)" />
-            <UModal :title="`Eliminar ${row.original.name}?`" description="Se archivará la colección.">
-              <UButton icon="i-lucide-trash" variant="ghost" color="error" />
-              <template #footer="{ close }">
-                <UButton color="neutral" variant="outline" label="Cancelar" @click="close" />
-                <UButton color="error" label="Archivar" @click="remove(row.original)" />
-              </template>
-            </UModal>
+          <template #actions-cell="{ row }">
+            <div class="flex items-center gap-1">
+              <UButton icon="i-lucide-pencil" variant="ghost" color="neutral" :aria-label="`Editar ${row.original.name}`" @click="openEdit(row.original)" />
+              <UModal :title="`Eliminar ${row.original.name}?`" description="Se archivará la colección.">
+                <UButton icon="i-lucide-trash" variant="ghost" color="error" :aria-label="`Eliminar ${row.original.name}`" />
+                <template #footer="{ close }">
+                  <UButton color="neutral" variant="outline" label="Cancelar" @click="close" />
+                  <UButton color="error" label="Archivar" @click="remove(row.original)" />
+                </template>
+              </UModal>
+            </div>
           </template>
         </UTable>
       </UPageCard>
@@ -121,6 +135,9 @@ async function remove(row: CollectionRow) {
         </UFormField>
         <UFormField label="Descripción (Markdown)">
           <UTextarea v-model="form.description" :rows="4" placeholder="Descripción con formato Markdown..." />
+        </UFormField>
+        <UFormField label="Imagen de portada">
+          <ImageField v-model="form.fileId" :preview-url="editing ? coverOf(editing)?.url : null" />
         </UFormField>
         <UFormField label="Estado">
           <USelect v-model="form.status" :items="['PUBLISHED', 'DRAFT', 'ARCHIVED']" />

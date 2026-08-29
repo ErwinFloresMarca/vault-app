@@ -14,7 +14,10 @@ export default defineEventHandler(async (event) => {
       await requireAdmin(event)
       const collections = await prisma.collection.findMany({
         orderBy: { createdAt: 'desc' },
-        include: { _count: { select: { items: true } } },
+        include: {
+          _count: { select: { items: true } },
+          files: { include: { file: true }, orderBy: { position: 'asc' } },
+        },
       })
       return { success: true, data: collections }
     }

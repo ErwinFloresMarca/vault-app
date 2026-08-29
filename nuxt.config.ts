@@ -32,7 +32,10 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     // Private keys - solo servidor
-    sessionPassword: process.env.NUXT_SESSION_PASSWORD || 'default-32-character-secret-key!!',
+    // nuxt-auth-utils lee runtimeConfig.session.password (o la env NUXT_SESSION_PASSWORD).
+    session: {
+      password: process.env.NUXT_SESSION_PASSWORD || 'default-32-character-secret-key!!',
+    },
     smtpHost: process.env.NUXT_SMTP_HOST || 'localhost',
     smtpPort: parseInt(process.env.NUXT_SMTP_PORT || '587'),
     smtpUser: process.env.NUXT_SMTP_USER || '',

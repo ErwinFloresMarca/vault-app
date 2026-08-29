@@ -37,13 +37,11 @@ const items = computed(() => data.value?.data ?? [])
               :key="entry.id"
               :to="`/collections/${entry.item.collection.slug}/${entry.item.slug}`"
             >
-              <template #image>
-                <AppImage :src="entry.item.image?.url" :alt="entry.item.name" class="aspect-square" />
-              </template>
-              <template #content>
+              <AppImage :src="entry.item.image?.url" :alt="entry.item.name" class="aspect-square" />
+              <div class="p-4">
                 <h3 class="font-semibold">{{ entry.item.name }}</h3>
                 <p class="text-xs text-muted">{{ entry.item.collection.name }}</p>
-              </template>
+              </div>
             </UPageCard>
           </div>
         </template>
