@@ -30,6 +30,19 @@ export default defineNuxtConfig({
     { path: '~/components/organisms', pathPrefix: false },
   ],
 
+  // @nuxt/hints: silenciar la sugerencia de lazy-load (genera un 404 en dev).
+  hints: {
+    features: {
+      lazyLoad: false,
+    },
+  },
+
+  // @nuxt/image: permitir las imágenes remotas (Unsplash) para evitar fallbacks tipo `/1x`.
+  image: {
+    domains: ['images.unsplash.com'],
+    provider: 'ipx',
+  },
+
   runtimeConfig: {
     // Private keys - solo servidor
     // nuxt-auth-utils lee runtimeConfig.session.password (o la env NUXT_SESSION_PASSWORD).

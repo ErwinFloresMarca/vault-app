@@ -5,13 +5,13 @@ const route = useRoute()
 const itemSlug = computed(() => String(route.params.itemSlug))
 const collectionSlug = computed(() => String(route.params.collectionSlug))
 
+const { data, pending, error } = await useFetch<{ success: boolean; data: ItemDetail }>(`/api/items/${itemSlug.value}`)
+const item = computed<ItemDetail | null>(() => data.value?.data ?? null)
+
 useSeoMeta({
   title: () => (item.value?.name || 'Item') + ' — Volt Vault',
   description: () => item.value?.description ? undefined : 'Item de coleccionable impreso en 3D de Volt-3D.',
 })
-
-const { data, pending, error } = await useFetch<{ success: boolean; data: ItemDetail }>(`/api/items/${itemSlug.value}`)
-const item = computed<ItemDetail | null>(() => data.value?.data ?? null)
 
 const { user, isAuthenticated } = useAuthUser()
 const { busy, toggle } = useCollectItem()

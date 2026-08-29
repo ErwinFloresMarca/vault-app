@@ -4,13 +4,13 @@ import type { CollectionWithItems } from '~/types'
 const route = useRoute()
 const slug = computed(() => String(route.params.slug))
 
+const { data, pending, error } = await useFetch<{ success: boolean; data: CollectionWithItems }>(`/api/collections/${slug.value}`)
+const collection = computed<CollectionWithItems | null>(() => data.value?.data ?? null)
+
 useSeoMeta({
   title: () => (collection.value?.name || 'Colección') + ' — Volt Vault',
   description: () => collection.value?.description ? undefined : 'Colección de coleccionables impresos en 3D de Volt-3D.',
 })
-
-const { data, pending, error } = await useFetch<{ success: boolean; data: CollectionWithItems }>(`/api/collections/${slug.value}`)
-const collection = computed<CollectionWithItems | null>(() => data.value?.data ?? null)
 </script>
 
 <template>
