@@ -16,6 +16,8 @@ export default defineEventHandler(async (event) => {
           type: body.type,
           quantity: body.quantity,
           reason: body.reason,
+          registeredBy: body.registeredBy ?? undefined,
+          customer: body.customer ?? undefined,
         },
         event,
       )

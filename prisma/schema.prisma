@@ -29,6 +29,11 @@ model User {
 
   oauthAccounts OAuthAccount[]
   collected     UserCollectedItem[]
+
+  registeredBatches InventoryBatch[] @relation("RegisteredBy")
+  customerBatches   InventoryBatch[] @relation("Customer")
+  registeredMovements InventoryMovement[] @relation("RegisteredBy")
+  customerMovements   InventoryMovement[] @relation("Customer")
 }
 
 model OAuthAccount {
@@ -205,10 +210,23 @@ model InventoryBatch {
   collectionId String?
   type         InventoryMovementType
   reason       String?
-  createdAt    DateTime              @default(now())
+
+  // Persona que registra/interactúa con el sistema (siempre se persiste).
+  registeredByUserId String?
+  registeredByName   String?
+  registeredByEmail  String?
+
+  // Persona a quien se vende/entrega. Obligatoria solo para OUT y SALE.
+  customerUserId String?
+  customerName   String?
+  customerEmail  String?
+
+  createdAt DateTime              @default(now())
 
   collection Collection?          @relation(fields: [collectionId], references: [id], onDelete: SetNull)
   movements  InventoryMovement[]
+  registeredBy User? @relation("RegisteredBy", fields: [registeredByUserId], references: [id], onDelete: SetNull)
+  customer    User? @relation("Customer", fields: [customerUserId], references: [id], onDelete: SetNull)
 
   @@index([collectionId])
   @@index([createdAt])
@@ -221,11 +239,26 @@ model InventoryMovement {
   type      InventoryMovementType
   quantity  Int
   reason    String?
+
+  // Persona que registra (heredada del batch en movimientos agrupados).
+  registeredByUserId String?
+  registeredByName   String?
+  registeredByEmail  String?
+
+  // Persona a quien se vende/entrega (obligatoria solo para OUT y SALE).
+  customerUserId String?
+  customerName   String?
+  customerEmail  String?
+
   createdAt DateTime             @default(now())
 
   item CollectionItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
   batch InventoryBatch? @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  registeredBy User? @relation("RegisteredBy", fields: [registeredByUserId], references: [id], onDelete: SetNull)
+  customer      User? @relation("Customer", fields: [customerUserId], references: [id], onDelete: SetNull)
 
   @@index([itemId])
   @@index([batchId])
+  @@index([registeredByUserId])
+  @@index([customerUserId])
 }

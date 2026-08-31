@@ -19,9 +19,11 @@ export default defineEventHandler(async (event) => {
   const batch = await inventoryService.createBatch(
     {
       type: body.type,
-      collectionId: typeof body.collectionId === 'string' ? body.collectionId : undefined,
+      collectionId: typeof body.collectionId === 'string' && body.collectionId !== 'all' ? body.collectionId : undefined,
       reason: typeof body.reason === 'string' && body.reason ? body.reason : undefined,
       lines,
+      registeredBy: body.registeredBy ?? undefined,
+      customer: body.customer ?? undefined,
     },
     event,
   )

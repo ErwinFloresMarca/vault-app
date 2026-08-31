@@ -30,10 +30,14 @@ export default defineNuxtConfig({
     { path: '~/components/organisms', pathPrefix: false },
   ],
 
-  // @nuxt/hints: silenciar la sugerencia de lazy-load (genera un 404 en dev).
+  // @nuxt/hints: silenciar sugerencias que generan ruido/logs en dev
+  // (lazy-load 404, validación HTML, web-vitals) sin utilidad para el usuario.
   hints: {
     features: {
       lazyLoad: false,
+      htmlValidate: false,
+      webVitals: false,
+      hydration: false,
     },
   },
 

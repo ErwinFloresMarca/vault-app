@@ -10,7 +10,13 @@ interface ItemOption {
   name: string
   stock: number
   soldQuantity: number
+  collectionId?: string
   collection?: { name: string }
+}
+
+interface CollectionOption {
+  id: string
+  name: string
 }
 
 interface Movement {
@@ -24,10 +30,20 @@ interface Movement {
 const { data: itemsData, refresh: refreshItems } = await useFetch<{ success: boolean; data: ItemOption[] }>('/api/admin/items')
 const items = computed<ItemOption[]>(() => itemsData.value?.data ?? [])
 
+const { data: collectionsData } = await useFetch<{ success: boolean; data: CollectionOption[] }>('/api/admin/collections')
+const collections = computed<CollectionOption[]>(() => collectionsData.value?.data ?? [])
+
+const selectedCollectionId = ref('all')
+
+const filteredItems = computed<ItemOption[]>(() => {
+  if (selectedCollectionId.value === 'all') return items.value
+  return items.value.filter((i) => i.collectionId === selectedCollectionId.value)
+})
+
 const selectedId = ref('')
-watch(items, (val) => {
-  if (!selectedId.value && val.length) {
-    selectedId.value = val[0].id
+watch(filteredItems, (val) => {
+  if (!val.some((i) => i.id === selectedId.value)) {
+    selectedId.value = val[0]?.id ?? ''
   }
 }, { immediate: true })
 const selected = computed<ItemOption | null>(() => items.value.find((i) => i.id === selectedId.value) ?? null)
@@ -121,13 +137,22 @@ function formatDate(iso: string) {
       <UAlert v-if="!items.length" color="neutral" title="No hay items registrados" description="Crea items desde la sección Items para gestionar su inventario." />
 
       <template v-else>
-        <UFormField label="Item">
-          <USelect
-            v-model="selectedId"
-            :items="items.map(i => ({ label: `${i.name}${i.collection ? ` · ${i.collection.name}` : ''}`, value: i.id }))"
-            size="lg"
-          />
-        </UFormField>
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <UFormField label="Colección">
+            <USelect
+              v-model="selectedCollectionId"
+              :items="[{ label: 'Todas las colecciones', value: 'all' }, ...collections.map(c => ({ label: c.name, value: c.id }))]"
+              size="lg"
+            />
+          </UFormField>
+          <UFormField label="Item">
+            <USelect
+              v-model="selectedId"
+              :items="filteredItems.map(i => ({ label: `${i.name}${i.collection ? ` · ${i.collection.name}` : ''}`, value: i.id }))"
+              size="lg"
+            />
+          </UFormField>
+        </div>
 
         <UAlert v-if="movementsErrorText" color="error" :title="movementsErrorText" />
 
