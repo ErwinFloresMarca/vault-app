@@ -49,6 +49,24 @@
                 <UEmpty v-else title="Sin items" description="Esta colección no tiene items para inventariar." />
               </div>
 
+              <template v-if="requiresCustomer">
+                <USeparator label="Persona a quien se vende/entrega" />
+                <USelect
+                  v-model="form.customerUserId"
+                  clearable
+                  :items="users.map(u => ({ label: `${u.name}${u.email ? ` · ${u.email}` : ''}`, value: u.id }))"
+                  :disabled="customersPending"
+                />
+                <div class="grid grid-cols-2 gap-3">
+                  <UFormField label="Nombre">
+                    <UInput v-model="form.customerName" placeholder="Nombre de la persona" />
+                  </UFormField>
+                  <UFormField label="Email (opcional)">
+                    <UInput v-model="form.customerEmail" placeholder="correo@ejemplo.com" type="email" />
+                  </UFormField>
+                </div>
+              </template>
+
               <div v-if="formError" class="text-sm text-(--ui-error)">{{ formError }}</div>
 
               <UButton block :loading="saving" :disabled="!selectedCount" @click="submit">
@@ -140,11 +158,29 @@ const movementTypes = [
   { label: 'Venta (SALE)', value: 'SALE' },
 ]
 
-const form = reactive({ type: 'IN' as 'IN' | 'OUT' | 'ADJUSTMENT' | 'SALE', reason: '' })
+const form = reactive({ type: 'IN' as 'IN' | 'OUT' | 'ADJUSTMENT' | 'SALE', reason: '', customerUserId: '', customerName: '', customerEmail: '' })
 const formError = ref('')
 const saving = ref(false)
 const selected = reactive<Record<string, boolean>>({})
 const quantities = reactive<Record<string, number>>({})
+
+interface CustomerUser {
+  id: string
+  name: string | null
+  email: string | null
+}
+const { data: usersData, pending: customersPending } = useFetch<{ success: boolean; data: CustomerUser[] }>('/api/admin/users?role=USER')
+const users = computed<CustomerUser[]>(() => usersData.value?.data ?? [])
+const requiresCustomer = computed(() => form.type === 'OUT' || form.type === 'SALE')
+
+function buildCustomer() {
+  if (!form.type || (!requiresCustomer.value)) return undefined
+  const userId = form.customerUserId || undefined
+  const selectedUser = userId ? users.value.find((u) => u.id === userId) : undefined
+  const name = form.customerName.trim() || selectedUser?.name || undefined
+  const email = form.customerEmail.trim() || selectedUser?.email || undefined
+  return { userId, name, email }
+}
 
 const { collection } = toRefs(props)
 
@@ -176,6 +212,9 @@ function resetState() {
   Object.keys(quantities).forEach((k) => delete quantities[k])
   form.type = 'IN'
   form.reason = ''
+  form.customerUserId = undefined
+  form.customerName = ''
+  form.customerEmail = ''
   formError.value = ''
   tab.value = 'movimiento'
 }
@@ -223,6 +262,7 @@ async function submit() {
         collectionId: props.collection.id,
         reason: form.reason || undefined,
         lines,
+        customer: buildCustomer(),
       },
     })
     Object.keys(quantities).forEach((k) => delete quantities[k])

@@ -22,6 +22,25 @@
           <UFormField label="Cantidad">
             <UInput v-model.number="form.quantity" type="number" :min="form.type === 'ADJUSTMENT' ? 0 : 1" />
           </UFormField>
+
+          <template v-if="requiresCustomer">
+            <USeparator label="Persona a quien se vende/entrega" />
+            <UFormField label="Cliente con cuenta (opcional)">
+              <USelect
+                v-model="form.customerUserId"
+                clearable
+                :items="users.map(u => ({ label: `${u.name}${u.email ? ` · ${u.email}` : ''}`, value: u.id }))"
+                :disabled="customersPending"
+              />
+            </UFormField>
+            <UFormField label="Nombre">
+              <UInput v-model="form.customerName" placeholder="Nombre de la persona" />
+            </UFormField>
+            <UFormField label="Email (opcional)">
+              <UInput v-model="form.customerEmail" placeholder="correo@ejemplo.com" type="email" />
+            </UFormField>
+          </template>
+
           <UFormField label="Motivo (opcional)">
             <UInput v-model="form.reason" placeholder="Ej.: reposición, devolución, venta..." />
           </UFormField>
@@ -41,6 +60,7 @@
               <span :class="typeBadge(m.type).class">{{ typeBadge(m.type).label }}</span>
               <span class="font-medium">{{ m.quantity }}</span>
               <span v-if="m.reason" class="text-muted">· {{ m.reason }}</span>
+              <span v-if="m.customerName" class="text-muted">→ {{ m.customerName }}</span>
             </div>
             <span class="text-xs text-muted">{{ formatDate(m.createdAt) }}</span>
           </div>
@@ -67,6 +87,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   'update:open': [value: boolean]
+  changed: []
 }>()
 
 interface Movement {
@@ -74,7 +95,14 @@ interface Movement {
   type: 'IN' | 'OUT' | 'ADJUSTMENT' | 'SALE'
   quantity: number
   reason: string | null
+  customerName?: string | null
   createdAt: string
+}
+
+interface CustomerUser {
+  id: string
+  name: string | null
+  email: string | null
 }
 
 const movementTypes = [
@@ -88,11 +116,19 @@ const form = reactive({
   type: 'IN' as 'IN' | 'OUT' | 'ADJUSTMENT' | 'SALE',
   quantity: 1,
   reason: '',
+  customerUserId: '',
+  customerName: '',
+  customerEmail: '',
 })
 const formError = ref('')
 const saving = ref(false)
 const movements = ref<Movement[]>([])
 const movementsPending = ref(false)
+
+const requiresCustomer = computed(() => form.type === 'OUT' || form.type === 'SALE')
+
+const { data: usersData, pending: customersPending } = useFetch<{ success: boolean; data: CustomerUser[] }>('/api/admin/users?role=USER')
+const users = computed<CustomerUser[]>(() => usersData.value?.data ?? [])
 
 const { item } = toRefs(props)
 const { data: movementsData, pending: movementsPendingRef, refresh: refreshMovements } = useFetch<{ success: boolean; data: Movement[] }>(
@@ -108,6 +144,9 @@ watch(item, async (val) => {
     form.type = 'IN'
     form.quantity = 1
     form.reason = ''
+    form.customerUserId = undefined
+    form.customerName = ''
+    form.customerEmail = ''
     formError.value = ''
     await refreshMovements()
   }
@@ -123,6 +162,16 @@ async function submitMovement() {
     formError.value = 'La cantidad debe ser mayor a 0'
     return
   }
+
+  let customer: { userId?: string; name?: string; email?: string } | undefined
+  if (requiresCustomer.value) {
+    const userId = form.customerUserId || undefined
+    const selectedUser = userId ? users.value.find((u) => u.id === userId) : undefined
+    const name = form.customerName.trim() || selectedUser?.name || undefined
+    const email = form.customerEmail.trim() || selectedUser?.email || undefined
+    customer = { userId, name, email }
+  }
+
   saving.value = true
   formError.value = ''
   try {
@@ -133,10 +182,14 @@ async function submitMovement() {
         type: form.type,
         quantity: qty,
         reason: form.reason || undefined,
+        customer,
       },
     })
     form.quantity = 1
     form.reason = ''
+    form.customerUserId = undefined
+    form.customerName = ''
+    form.customerEmail = ''
     await refreshMovements()
     emit('changed')
   } catch (e: any) {

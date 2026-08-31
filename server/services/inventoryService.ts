@@ -226,6 +226,13 @@ export async function createInventoryBatch(
   const registeredBy = resolveRegisteredBy(input, user)
   const customer = resolveCustomer(input.type, input)
 
+  // collectionId auto: si no se especifica, se deriva de los items —
+  // una sola colección común → esa; varias (o ninguna) → global (null)
+  if (!input.collectionId) {
+    const unique = new Set(items.map((i) => i.collectionId).filter(Boolean))
+    input.collectionId = unique.size === 1 ? [...unique][0] as string : undefined
+  }
+
   return prisma.$transaction(async (tx) => {
     const batch = await tx.inventoryBatch.create({
       data: {
