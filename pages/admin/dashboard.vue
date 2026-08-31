@@ -27,7 +27,7 @@ const topColumns: TableColumn<NonNullable<typeof stats.value>['top'][number]>[] 
 const recentItems = computed(() =>
   (stats.value?.recent ?? []).map((r) => ({
     title: `${r.user.name ?? r.user.email} consiguió "${r.item.name}"`,
-    description: new Date(r.obtainedAt).toLocaleString('es'),
+    description: new Date(r.obtainedAt).toLocaleString('es', { timeZone: 'UTC' }),
     icon: 'i-lucide-check-check',
     color: 'success' as const,
   })),

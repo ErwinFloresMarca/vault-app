@@ -213,6 +213,6 @@ function typeBadge(type: Movement['type']) {
 }
 
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleString('es')
+  return new Date(iso).toLocaleString('es', { timeZone: 'UTC' })
 }
 </script>
