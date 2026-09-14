@@ -1,44 +1,54 @@
 # Spec: Módulo 01 — Base del proyecto
 
+> **Spec as-built** (reconstruida desde la implementación). Refleja el código
+> real, no el plan original.
+
 ## Objetivo
-Preparar el proyecto Nuxt para Volt Vault: limpiar artefactos de la app Volt3D original, definir layouts, y
-montar el scaffold de Atomic Design para el frontend. Catálogo coleccionable estéticamente ligado a la cultura
-geek / impresión 3D.
+App Nuxt 4 full-stack SSR para Volt Vault: catálogo de coleccionables impresos en
+3D. Establece layouts, Atomic Design, rutas base y configuración del stack.
 
 ## Stack
-Nuxt 4.4, Vue 3.5, TypeScript, @nuxt/ui 4, Tailwind v4, @nuxt/content (MDC).
+Nuxt 4.4, Vue 3.5, TypeScript 5.9, `@nuxt/ui` 4, Tailwind v4 (`assets/css/main.css`
+importa `tailwindcss` + `@nuxt/ui`), `@nuxt/content`, `@nuxt/icon` (Lucide),
+`@nuxt/image`, `@nuxt/fonts`, `@nuxt/eslint`, `nuxt-auth-utils`.
 
 ## Commands
-- Dev: `pnpm dev`
-- Build: `pnpm build`
-- Lint: `pnpm eslint .`
-- Typecheck: `pnpm exec nuxi typecheck`
+- Dev: `pnpm dev` (`:3000`)
+- Build: `pnpm build` / `pnpm generate` / `pnpm preview`
+- Lint: `pnpm exec eslint .` (no hay script `lint`)
 
-## Project Structure
+## Estructura real
 ```
-assets/css/main.css        estilos base + tema Tailwind
-layouts/default.vue        layout público con header/nav + footer
-layouts/admin.vue          layout del panel admin
-layouts/minimal.vue        layout login/auth
-components/atoms/          botones, badges, tags, inputs, imágenes, indicadores
-components/molecules/      CollectionCard, ItemCard, SearchBar, TagList, StockStatus, gallery
-components/organisms/      grids y secciones (CollectionGrid, CollectionHeader, ItemGrid, ItemDetail…)
-components/templates/      CollectionPage, ItemPage, AdminDashboard, etc.
+app.vue                     UApp > NuxtLayout > NuxtPage
+layouts/default.vue         público (header/nav + footer)
+layouts/admin.vue           panel admin (UDashboard*)
+layouts/minimal.vue         login/auth
+components/atoms/           AppImage, StatusBadge, StockIndicator, TagBadge,
+                            MarkdownContent
+components/molecules/       CollectionCard, ItemCard, ItemGallery, TagList,
+                            ImageField, InventoryModal, CollectionBatchModal
+components/organisms/       CollectionGrid, ItemGrid
+pages/                      índex, collections, me, login, auth/error,
+                            privacy, terms, admin/*
+composables/                useAuth, useCollectItem
+types/index.ts              tipos de dominio compartidos
 ```
+No existe `components/templates/` (el plan original lo preveía; no se usó).
 
-## Code Style
-`<script setup lang="ts">` en TS; comentarios y copy en español. Componentes reutilizables con props/emits tipados,
-sin lógica de negocio en la UI.
-
-## Testing Strategy
-Sin framework aún; verificación manual + typecheck.
+## Reglas de implementación
+- Los componentes de `atoms/molecules/organisms` se registran **sin prefijo** en
+  `nuxt.config.ts` (`<CollectionCard>`, no `<MoleculesCollectionCard>`).
+- `alias['@gen-prisma']` apunta a `./generated/prisma`; no cambiar.
+- `@nuxt/hints` desactiva lazyLoad/htmlValidate/webVitals/hydration.
+- `@nuxt/image` permite el dominio `images.unsplash.com` (provider `ipx`).
+- Copy y comentarios en español; `<script setup lang="ts">`.
 
 ## Boundaries
-- **Always**: typecheck antes de commit; seguir Atomic Design; copy en español.
-- **Ask first**: agregar dependencias; tocar `nuxt.config.ts` salvo lo ya previsto.
-- **Never**: escribir lógica de negocio en componentes; conservar componentes de Volt3D.
+- **Always**: usar Atomic Design; registrar componentes vía `nuxt.config.ts`.
+- **Ask first**: añadir dependencias o módulos a `nuxt.config.ts`.
+- **Never**: lógica de negocio en componentes; referencias a la app Volt3D previa.
 
-## Success Criteria
-- La app arranca y renderiza el catálogo base sin referencias a Volt3D (impresión/servicio).
-- Existen `layouts/` (default, minimal, admin) y carpetas de Atomic Design pobladas con componentes v1 (mínimos).
-- El header/footer permiten navegar Home, Colecciones y Login.
+## Success Criteria (verificado)
+- `pnpm dev` arranca y renderiza el catálogo sin referencias a Volt3D.
+- Existen los 3 layouts y las carpetas de Atomic Design pobladas.
+- Header/footer permiten navegar Home, Colecciones y Login.

@@ -1,24 +1,41 @@
 # Spec: Módulo 07 — Colección personal
 
+> **Spec as-built** (reconstruida desde la implementación).
+
 ## Objetivo
-Permitir a un usuario autenticado marcar/desmarcar items como conseguidos y consultar su colección y progreso.
-Base para futura gamificación (perfil de coleccionista, intercambio, etc.).
+Permitir a un usuario autenticado marcar/desmarcar items como conseguidos y
+consultar su colección. Base para gamificación futura.
 
-## Commands
-- Dev: `pnpm dev`
+## API (requieren `requireUser`)
+- `POST /api/items/:id/collect` — marca como conseguido. **Idempotente** vía
+  `upsert` sobre `@@unique([userId, itemId])`; fija `obtainedAt`. Responde
+  `{ success: true, collected: true }`.
+- `DELETE /api/items/:id/collect` — desmarca (`deleteMany`). Responde
+  `{ success: true, collected: false }`.
+- `GET /api/me/collection` — items conseguidos del usuario, orden `obtainedAt desc`,
+  con la imagen principal (`position = 0`) y la colección. Responde
+  `{ success, data[], total }`.
 
-## API (requieren auth)
-- `POST /api/items/:id/collect` — marca el item como conseguido por el usuario actual.
-- `DELETE /api/items/:id/collect` — desmarca.
-- `GET /api/me/collection` — items conseguidos por el usuario actual.
-- `GET /api/me/collections/:slug/progress` — progreso (X/Y, %) en una colección.
+El parámetro es **`:id`** (id del item), no slug.
+
+## Progreso
+No existe endpoint `/api/me/collections/:slug/progress`. El progreso se calcula
+en `collectionService.computeProgress(collectionId, userId)` y se incluye en
+`GET /api/collections/:slug` (`progress: { total, collected, percent,
+collectedItemIds }`), solo cuando hay sesión.
+
+## UI
+- `composables/useCollectItem.ts` — `toggle(itemId, collected)`; si no hay sesión,
+  redirige a `/login`.
+- `pages/collections/[collectionSlug]/[itemSlug].vue` — botón Conseguir/Conseguido.
+- `pages/collections/[slug].vue` — barra de progreso.
+- `pages/me/index.vue` — grid de la colección personal.
 
 ## Reglas
-- `UserCollectedItem` con `@@unique([userId, itemId])` → operaciones idempotentes (upsert/deleteMany).
-- Endpoint `collect` solicita el item por id (no slug) o acepta slug; definir convención: aceptar `/:id`.
-- Solo afectan al usuario de la sesión (`/api/me`).
+- Las operaciones solo afectan al usuario de la sesión.
+- La unicidad `(userId, itemId)` garantiza colección sin duplicados.
 
-## Success Criteria
-- Un usuario puede marcar/desmarcar items y ver su lista conseguida.
-- La página de colección muestra el progreso en % y los items conseguidos.
-- No se permiten duplicados (restricción única).
+## Success Criteria (verificado)
+- Un usuario marca/desmarca items y ve su lista en `/me`.
+- La página de colección muestra progreso en % y `collected` por item.
+- No se pueden crear duplicados.

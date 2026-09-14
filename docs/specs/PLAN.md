@@ -78,3 +78,20 @@ base de datos relacional PostgreSQL dedicada (`vault-volt3d`) en el Postgres Doc
   APIs (`requireUser` / `requireAdmin`).
 - **Tokens de `DESIGN.md` sin cablear** en `assets/css/main.css`; la UI usa el tema
   de `@nuxt/ui` v4.
+- **Inventario con batches y personas** (no previsto en el plan): se añadió el
+  modelo `InventoryBatch` y los campos `registeredBy*` / `customer*` en batch y
+  movimiento. Documentado en `m08-inventory.md`.
+- **Dashboard simplificado**: solo se implementó `GET /api/admin/dashboard/stats`
+  (conteos + top + actividad reciente). No existen `/api/admin/sales` ni la tabla
+  de ventas ordenable/filtrable/paginable del plan.
+- **Catálogo público sin filtros**: `GET /api/collections` no soporta filtro por
+  tag, búsqueda ni paginación (el plan los mencionaba).
+- **SEO incompleto**: sin `og:image` ni `canonical` por entidad. Además la
+  `description` de colección/item tiene la lógica invertida (ver `m10-seo.md`).
+- **Specs as-built**: los 10 specs se reconstruyeron desde el código el
+  2026-09-13 para reflejar la implementación real, no el plan inicial.
+
+## Follow-ups abiertos (Linear SEL)
+- `SEL-32` cablear middleware auth/admin en páginas.
+- `SEL-33` corregir errores de eslint en `server/services`.
+- `SEL-34` cablear tokens de `DESIGN.md` en `assets/css/main.css`.

@@ -1,35 +1,49 @@
 # Spec: Módulo 06 — Items
 
+> **Spec as-built** (reconstruida desde la implementación).
+
 ## Objetivo
-Gestión de items de colección: CRUD admin + galería de archivos + API pública + página pública SEO-friendly.
+CRUD de items de colección (admin) + galería de archivos + API pública + página
+pública. El stock se gestiona exclusivamente vía movimientos de inventario (m08).
 
-## Commands
-- Dev: `pnpm dev`
+## API pública
+- `GET /api/collections/:slug/items` → `itemService.listByCollectionSlug`; items
+  no `ARCHIVED`, orden `orderIndex`, con flag `collected` si hay sesión.
+- `GET /api/items/:slug` → `itemService.getBySlug`. Un visitante anónimo solo ve
+  items `AVAILABLE` o `SOLD_OUT` (404 en otro estado). Devuelve `ItemDetail`:
+  `collection {id,name,slug}`, `files[]`, `tags[]` (hoy siempre vacío),
+  `stock, soldQuantity, status, collected`.
 
-## API
-Públicas (sin auth):
-- `GET /api/collections/:slug/items` — items de una colección.
-- `GET /api/items/:slug` — detalle de item (galería, stock/disponibilidad).
+## API admin (requiere ADMIN)
+- `GET /api/admin/items?collectionId=` — lista (colección, `_count.collectedBy`,
+  files).
+- `POST /api/admin/items` — body `{ name*, collectionId*, description?,
+  fileIds?: string[], stockInicial?: number, status? }`. `status` default
+  `AVAILABLE`. Si `stockInicial > 0`, crea un `InventoryMovement` tipo `IN`
+  (reason `stock inicial`) y fija `stock` **dentro de una transacción**.
+  Responde 422 si falta `name`/`collectionId` o si la colección no existe.
+- `GET /api/admin/items/:id` — detalle con collection, files, movements y
+  collectedBy.
+- `PUT /api/admin/items/:id` — `name` (regenera slug), `description`, `fileIds`
+  (reemplazo en transacción) y `status`. **No** modifica stock.
+- `DELETE /api/admin/items/:id` — **soft delete**: `status = ARCHIVED`.
 
-Admin (requiere ADMIN):
-- `POST /api/admin/items` (con `collectionId`, archivos, stock inicial)
-- `PUT /api/admin/items/:id`
-- `DELETE /api/admin/items/:id` (soft: estado ARCHIVED)
-
-## Páginas
-- `/collections/[collectionSlug]/[itemSlug]` — galería de imágenes, nombre, colección, descripción, tags,
-  stock/disponibilidad, estado de colección y botón "Conseguido" (según auth).
+## Página
+`/collections/[collectionSlug]/[itemSlug]` — galería (`ItemGallery`), badge de
+estado (`StatusBadge`), indicador de stock (`StockIndicator`), descripción
+Markdown y botón "Conseguir"/"Conseguido" (`useCollectItem`) o login si es anónimo.
 
 ## Reglas
-- Slug único; archivos vía `ItemFile.position` (0 = imagen principal).
-- El stock se gestiona mediante `InventoryMovement` (m08); crear un item con stock inicial genera un movimiento IN.
-- Estado: DRAFT | AVAILABLE | SOLD_OUT | ARCHIVED.
+- Slug único con sufijo `-2`, `-3`… si colisiona.
+- Los archivos se enlazan por `fileIds` con `position = índice` (0 = principal).
+- El stock **nunca** se edita directo desde el CRUD de items.
+- Los items no tienen tags en esta versión (`tags: []`).
 
 ## Boundaries
-- **Always**: validar que el item pertenece a la colección del slug; sanitizar HTML de descripción si hubiera.
-- **Never**: cambiar stock sin pasar por movimientos/transacción.
+- **Always**: validar que la colección existe; gastar movimientos para stock.
+- **Never**: cambiar `stock`/`soldQuantity` fuera de `inventoryService`.
 
-## Success Criteria
-- Un admin puede crear/editar/archivar items con galería.
-- La página pública de item es accesible y SEO-friendly.
-- El botón "Conseguido" refleja el estado de colección del usuario logueado (o pide login).
+## Success Criteria (verificado)
+- Un admin crea/edita/archiva items con galería.
+- Crear con `stockInicial` genera un movimiento `IN` y stock consistente.
+- La página pública muestra galería, estado, stock y el botón de colección.
