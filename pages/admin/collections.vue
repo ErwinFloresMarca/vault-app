@@ -77,8 +77,8 @@ async function save() {
     }
     modalOpen.value = false
     await refresh()
-  } catch (e: any) {
-    formError.value = e?.data?.statusMessage ?? 'Error al guardar'
+  } catch (e) {
+    formError.value = (e as { data?: { statusMessage?: string } })?.data?.statusMessage ?? 'Error al guardar'
   } finally {
     saving.value = false
   }

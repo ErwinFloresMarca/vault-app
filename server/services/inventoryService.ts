@@ -1,8 +1,7 @@
+import type { H3Event } from 'h3'
 import { prisma } from '~/server/utils/db'
-import { requireAdmin, getCurrentUser } from '~/server/utils/auth'
-import type { InventoryMovementType } from '@gen-prisma/client'
-
-type Px = typeof prisma
+import { requireAdmin } from '~/server/utils/auth'
+import type { InventoryMovementType, Prisma } from '@gen-prisma/client'
 
 /**
  * Calcula el nuevo stock y vendidos para un tipo de movimiento dado.
@@ -112,7 +111,7 @@ export async function createInventoryMovement(
     registeredBy?: PersonInput
     customer?: PersonInput
   },
-  event: any,
+  event: H3Event,
 ) {
   const user = await requireAdmin(event)
   validateQuantity(input.quantity)
@@ -142,7 +141,7 @@ export async function createInventoryMovement(
       },
     })
 
-    const movement = await tx.inventoryMovement.create({
+    await tx.inventoryMovement.create({
       data: {
         itemId: input.itemId,
         batchId: batch.id,
@@ -196,7 +195,7 @@ export async function createInventoryBatch(
     registeredBy?: PersonInput
     customer?: PersonInput
   },
-  event: any,
+  event: H3Event,
 ) {
   const user = await requireAdmin(event)
 
@@ -296,7 +295,7 @@ const batchInclude = {
     },
     orderBy: { createdAt: 'asc' },
   },
-}
+} satisfies Prisma.InventoryBatchInclude
 
 /**
  * Lista los lotes (grupos) de movimientos con sus movimientos/items/personas.
@@ -305,7 +304,7 @@ export async function listInventoryBatches(query: { collectionId?: string; page?
   const page = Math.max(1, query.page ?? 1)
   const pageSize = Math.min(100, Math.max(1, query.pageSize ?? 20))
 
-  const where: any = {}
+  const where: Prisma.InventoryBatchWhereInput = {}
   // all=true (o global) lista batches sin filtrar por colección.
   if (query.collectionId && query.collectionId !== 'all') where.collectionId = query.collectionId
 
@@ -316,7 +315,7 @@ export async function listInventoryBatches(query: { collectionId?: string; page?
       orderBy: { createdAt: 'desc' },
       skip: (page - 1) * pageSize,
       take: pageSize,
-      include: batchInclude as any,
+      include: batchInclude,
     }),
   ])
 
@@ -332,9 +331,9 @@ export const inventoryService = {
     const page = Math.max(1, query.page ?? 1)
     const pageSize = Math.min(100, Math.max(1, query.pageSize ?? 20))
 
-    const where: any = {}
+    const where: Prisma.InventoryMovementWhereInput = {}
     if (query.itemId) where.itemId = query.itemId
-    if (query.type) where.type = query.type
+    if (query.type) where.type = query.type as InventoryMovementType
 
     const [total, movements] = await Promise.all([
       prisma.inventoryMovement.count({ where }),

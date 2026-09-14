@@ -1,6 +1,14 @@
+import type { H3Event } from 'h3'
 import { prisma } from '~/server/utils/db'
 import { requireAdmin } from '~/server/utils/auth'
-import type { ItemDetail, ItemSummary } from '~/types'
+import type { Prisma } from '@gen-prisma/client'
+import type { ItemDetail, ItemSummary, ItemStatus, FileDto } from '~/types'
+
+type ItemFilesPayload = Prisma.CollectionItemGetPayload<{
+  include: { files: { include: { file: true } } }
+}>
+
+type ItemFileRow = Prisma.ItemFileGetPayload<{ include: { file: true } }>
 
 function slugify(text: string): string {
   return text
@@ -14,7 +22,6 @@ function slugify(text: string): string {
 async function ensureUniqueItemSlug(slug: string, excludeId?: string): Promise<string> {
   let candidate = slug
   let n = 2
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     const existing = await prisma.collectionItem.findFirst({
       where: { slug: candidate, ...(excludeId ? { NOT: { id: excludeId } } : {}) },
@@ -25,11 +32,11 @@ async function ensureUniqueItemSlug(slug: string, excludeId?: string): Promise<s
   }
 }
 
-function toFiles(files: any[]): { id: string; url: string; alt: string | null; position: number }[] {
-  return files?.map((f) => ({ id: f.file.id, url: f.file.url, alt: f.alt, position: f.position })) ?? []
+function toFiles(files: ItemFileRow[]): FileDto[] {
+  return files.map((f) => ({ id: f.file.id, url: f.file.url, alt: f.alt, position: f.position }))
 }
 
-function toItemSummary(i: any): ItemSummary {
+function toItemSummary(i: ItemFilesPayload): ItemSummary {
   const files = toFiles(i.files)
   const main = files.find((f) => f.position === 0)
   return {
@@ -54,8 +61,8 @@ export const itemService = {
     description?: string
     fileIds?: string[]
     stockInicial?: number
-    status?: any
-  }, event: any) {
+    status?: ItemStatus
+  }, event: H3Event) {
     await requireAdmin(event)
 
     const collection = await prisma.collection.findUnique({ where: { id: input.collectionId } })
@@ -95,13 +102,13 @@ export const itemService = {
     name?: string
     description?: string
     fileIds?: string[]
-    status?: any
-  }, event: any) {
+    status?: ItemStatus
+  }, event: H3Event) {
     await requireAdmin(event)
     const existing = await prisma.collectionItem.findUnique({ where: { id } })
     if (!existing) throw createError({ statusCode: 404, statusMessage: 'Item no encontrado' })
 
-    const data: any = {}
+    const data: Prisma.CollectionItemUpdateInput = {}
     if (input.name) {
       const slug = await ensureUniqueItemSlug(slugify(input.name), id)
       data.name = input.name
@@ -121,7 +128,7 @@ export const itemService = {
     })
   },
 
-  async remove(id: string, event: any) {
+  async remove(id: string, event: H3Event) {
     await requireAdmin(event)
     return prisma.collectionItem.update({ where: { id }, data: { status: 'ARCHIVED' } })
   },

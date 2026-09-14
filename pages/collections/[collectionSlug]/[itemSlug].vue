@@ -13,7 +13,7 @@ useSeoMeta({
   description: () => item.value?.description ? undefined : 'Item de coleccionable impreso en 3D de Volt-3D.',
 })
 
-const { user, isAuthenticated } = useAuthUser()
+const { isAuthenticated } = useAuthUser()
 const { busy, toggle } = useCollectItem()
 
 const collected = ref(item.value?.collected ?? false)

@@ -5,7 +5,7 @@ useSeoMeta({ title: 'Dashboard — Volt Vault Admin' })
 
 definePageMeta({ layout: 'admin', middleware: 'admin' })
 
-const { data, pending, error } = await useFetch<{
+const { data, error } = await useFetch<{
   success: boolean
   data: {
     counts: { collections: number; items: number; users: number; collected: number }

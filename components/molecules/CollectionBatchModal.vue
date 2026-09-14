@@ -2,7 +2,7 @@
   <UModal :open="open" :title="`Inventario · ${collection?.name ?? ''}`" description="Registra un movimiento por grupo afectando a uno o más items de la colección." @update:open="(v) => !v && emit('update:open', false)">
     <template #body>
       <div v-if="collection" class="space-y-4">
-        <UTabs :items="tabs" v-model="tab">
+        <UTabs v-model="tab" :items="tabs">
           <template #movimiento>
             <div class="space-y-4 pt-4">
               <div class="grid grid-cols-2 gap-3">
@@ -208,8 +208,8 @@ watch(items, (list) => {
 }, { deep: true })
 
 function resetState() {
-  Object.keys(selected).forEach((k) => delete selected[k])
-  Object.keys(quantities).forEach((k) => delete quantities[k])
+  Object.keys(selected).forEach((k) => Reflect.deleteProperty(selected, k))
+  Object.keys(quantities).forEach((k) => Reflect.deleteProperty(quantities, k))
   form.type = 'IN'
   form.reason = ''
   form.customerUserId = undefined
@@ -265,12 +265,12 @@ async function submit() {
         customer: buildCustomer(),
       },
     })
-    Object.keys(quantities).forEach((k) => delete quantities[k])
+    Object.keys(quantities).forEach((k) => Reflect.deleteProperty(quantities, k))
     await refreshBatches()
     await refreshItems()
     emit('changed')
-  } catch (e: any) {
-    formError.value = e?.data?.statusMessage ?? 'Error al registrar el movimiento'
+  } catch (e) {
+    formError.value = (e as { data?: { statusMessage?: string } })?.data?.statusMessage ?? 'Error al registrar el movimiento'
   } finally {
     saving.value = false
   }

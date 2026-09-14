@@ -158,8 +158,8 @@ async function submitBatch() {
     batchForm.customerEmail = ''
     await refreshBatches()
     await refreshItems()
-  } catch (e: any) {
-    batchError.value = e?.data?.statusMessage ?? 'Error al registrar el batch'
+  } catch (e) {
+    batchError.value = (e as { data?: { statusMessage?: string } })?.data?.statusMessage ?? 'Error al registrar el batch'
   } finally {
     savingBatch.value = false
   }

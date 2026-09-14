@@ -8,7 +8,7 @@
             src="/logos/volt3d-icon.svg"
             alt="Volt3D"
             class="h-16 w-16 mx-auto"
-          />
+          >
         </div>
         <h1 class="text-3xl font-bold text-white mb-2">Volt3D</h1>
         <p class="text-gray-400">Impresión 3D con Voltaje</p>

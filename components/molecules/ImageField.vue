@@ -19,7 +19,7 @@
       </div>
     </div>
 
-    <input ref="fileInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif" class="hidden" @change="onFileSelected" />
+    <input ref="fileInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif" class="hidden" @change="onFileSelected" >
 
     <UModal v-model:open="galleryOpen" title="Galería de imágenes">
       <template #body>
@@ -95,8 +95,8 @@ async function onFileSelected(event: Event) {
     })
     emit('update:modelValue', res.file.id)
     await refreshFiles()
-  } catch (e: any) {
-    formError.value = e?.data?.statusMessage ?? 'Error al subir la imagen'
+  } catch (e) {
+    formError.value = (e as { data?: { statusMessage?: string } })?.data?.statusMessage ?? 'Error al subir la imagen'
   } finally {
     uploading.value = false
     input.value = ''

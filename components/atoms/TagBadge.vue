@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import type { TagDto } from '~/types'
 
-const props = withDefaults(defineProps<{
+withDefaults(defineProps<{
   tag: TagDto
   to?: string
 }>(), {

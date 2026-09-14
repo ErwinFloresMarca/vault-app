@@ -192,8 +192,8 @@ async function submitMovement() {
     form.customerEmail = ''
     await refreshMovements()
     emit('changed')
-  } catch (e: any) {
-    formError.value = e?.data?.statusMessage ?? 'Error al registrar el movimiento'
+  } catch (e) {
+    formError.value = (e as { data?: { statusMessage?: string } })?.data?.statusMessage ?? 'Error al registrar el movimiento'
   } finally {
     saving.value = false
   }

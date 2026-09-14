@@ -1,6 +1,20 @@
+import type { H3Event } from 'h3'
 import { prisma } from '~/server/utils/db'
 import { requireAdmin } from '~/server/utils/auth'
-import type { CollectionSummary, CollectionWithItems, ItemSummary, CollectionProgress } from '~/types'
+import type { Prisma } from '@gen-prisma/client'
+import type { CollectionSummary, CollectionWithItems, ItemSummary, CollectionProgress, CollectionStatus, FileDto } from '~/types'
+
+type CollectionSummaryInclude = {
+  _count: { select: { items: true } }
+  tags: { include: { tag: true } }
+  files: { include: { file: true } }
+}
+
+type CollectionSummaryPayload = Prisma.CollectionGetPayload<{ include: CollectionSummaryInclude }>
+
+type ItemWithFilesPayload = Prisma.CollectionItemGetPayload<{
+  include: { files: { include: { file: true } } }
+}>
 
 function slugify(text: string): string {
   return text
@@ -14,7 +28,6 @@ function slugify(text: string): string {
 async function ensureUniqueSlug(slug: string, excludeId?: string): Promise<string> {
   let candidate = slug
   let n = 2
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     const existing = await prisma.collection.findFirst({
       where: { slug: candidate, ...(excludeId ? { NOT: { id: excludeId } } : {}) },
@@ -25,9 +38,13 @@ async function ensureUniqueSlug(slug: string, excludeId?: string): Promise<strin
   }
 }
 
-function toCollectionSummary(c: any): CollectionSummary {
-  const files = c.files?.map((cf: any) => ({ id: cf.file.id, url: cf.file.url, alt: cf.alt, position: cf.position })) ?? []
-  const cover = files.find((f: any) => f.position === 0)
+function toFiles(files: { file: { id: string; url: string }; alt: string | null; position: number }[]): FileDto[] {
+  return files.map((cf) => ({ id: cf.file.id, url: cf.file.url, alt: cf.alt, position: cf.position }))
+}
+
+function toCollectionSummary(c: CollectionSummaryPayload): CollectionSummary {
+  const files = toFiles(c.files)
+  const cover = files.find((f) => f.position === 0)
   return {
     id: c.id,
     name: c.name,
@@ -35,14 +52,14 @@ function toCollectionSummary(c: any): CollectionSummary {
     description: c.description,
     status: c.status,
     coverImage: cover ?? null,
-    tags: c.tags?.map((ct: any) => ({ id: ct.tag.id, name: ct.tag.name, slug: ct.tag.slug })) ?? [],
-    itemCount: c._count?.items ?? 0,
+    tags: c.tags.map((ct) => ({ id: ct.tag.id, name: ct.tag.name, slug: ct.tag.slug })),
+    itemCount: c._count.items ?? 0,
   }
 }
 
-function toItemSummary(i: any): ItemSummary {
-  const files = i.files?.map((ifile: any) => ({ id: ifile.file.id, url: ifile.file.url, alt: ifile.alt, position: ifile.position })) ?? []
-  const main = files.find((f: any) => f.position === 0)
+function toItemSummary(i: ItemWithFilesPayload): ItemSummary {
+  const files = toFiles(i.files)
+  const main = files.find((f) => f.position === 0)
   return {
     id: i.id,
     name: i.name,
@@ -110,24 +127,23 @@ export const collectionService = {
     })
     if (!collection) return null
 
-    if (collection.status !== 'PUBLISHED' && collection.items.length === 0) {
-      // Solo expone contenido publicado al público; drafts se manejan en admin.
-    }
-
-    const itemSummaries = collection.items.map((i: any) => {
+    const itemSummaries = collection.items.map((i) => {
       const s = toItemSummary(i)
-      return { ...s, collected: !!userId && i.collectedBy.some((cb: any) => cb.userId === userId) }
+      return { ...s, collected: !!userId && i.collectedBy.some((cb) => cb.userId === userId) }
     })
 
     return {
       ...toCollectionSummary(collection),
-      files: collection.files.map((cf: any) => ({ id: cf.file.id, url: cf.file.url, alt: cf.alt, position: cf.position })),
+      files: toFiles(collection.files),
       items: itemSummaries,
       progress: await computeProgress(collection.id, userId),
     }
   },
 
-  async create(input: { name: string; description?: string; tags?: string[]; fileIds?: string[]; status?: any }, event: any) {
+  async create(
+    input: { name: string; description?: string; tags?: string[]; fileIds?: string[]; status?: CollectionStatus },
+    event: H3Event,
+  ) {
     await requireAdmin(event)
     const slug = await ensureUniqueSlug(slugify(input.name))
     const collection = await prisma.collection.create({
@@ -145,12 +161,16 @@ export const collectionService = {
     return collection
   },
 
-  async update(id: string, input: { name?: string; description?: string; tags?: string[]; fileIds?: string[]; status?: any }, event: any) {
+  async update(
+    id: string,
+    input: { name?: string; description?: string; tags?: string[]; fileIds?: string[]; status?: CollectionStatus },
+    event: H3Event,
+  ) {
     await requireAdmin(event)
     const existing = await prisma.collection.findUnique({ where: { id } })
     if (!existing) throw createError({ statusCode: 404, statusMessage: 'Colección no encontrada' })
 
-    const data: any = {}
+    const data: Prisma.CollectionUpdateInput = {}
     if (input.name) {
       const slug = await ensureUniqueSlug(slugify(input.name), id)
       data.name = input.name
@@ -177,7 +197,7 @@ export const collectionService = {
     return collection
   },
 
-  async remove(id: string, event: any) {
+  async remove(id: string, event: H3Event) {
     await requireAdmin(event)
     // Soft delete: pasa a ARCHIVED (conserva historial)
     return prisma.collection.update({

@@ -1,6 +1,7 @@
 import { itemService } from '~/server/services/itemService'
 import { requireAdmin } from '~/server/utils/auth'
 import { prisma } from '~/server/utils/db'
+import type { Prisma } from '@gen-prisma/client'
 
 export default defineEventHandler(async (event) => {
   switch (event.method) {
@@ -15,7 +16,7 @@ export default defineEventHandler(async (event) => {
     case 'GET': {
       await requireAdmin(event)
       const q = getQuery(event)
-      const where: any = {}
+      const where: Prisma.CollectionItemWhereInput = {}
       if (typeof q.collectionId === 'string' && q.collectionId) {
         where.collectionId = q.collectionId
       }

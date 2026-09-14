@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 422, statusMessage: 'Debes incluir al menos un item (lines)' })
   }
 
-  const lines = body.lines.map((l: any) => ({ itemId: l.itemId, quantity: l.quantity }))
+  const lines = body.lines.map((l: { itemId: string; quantity: number }) => ({ itemId: l.itemId, quantity: l.quantity }))
 
   const batch = await inventoryService.createBatch(
     {
