@@ -89,8 +89,8 @@ Prisma (`server/utils/db.ts`) → DB. Mantén esta dirección.
 - Iconos: colección `lucide` vía `@nuxt/icon` (p.ej. `i-lucide-library`).
 - Imágenes remotas permitidas: `images.unsplash.com` (`@nuxt/image`).
 - Tokens de `DESIGN.md` cableados: `@theme static` en `assets/css/main.css` y
-  `app.config.ts` (`ui.colors.primary: 'volt'` = Volt Blue `#1E90FF`); fuente Inter
-  vía `@nuxt/fonts`. Pendiente: pills/uppercase/peso 400 a nivel de componente.
+  `app.config.ts` (`ui.colors.primary: 'volt'` = Volt Blue `#1E90FF`; botones/badges
+  pill + uppercase + peso 400); fuente Inter vía `@nuxt/fonts`.
 
 ## Preview en navegador (Playwright)
 
