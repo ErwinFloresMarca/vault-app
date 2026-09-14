@@ -18,6 +18,9 @@ logs
 .fleet
 .idea
 
+# Playwright MCP artifacts
+.playwright-mcp/
+
 # Local env files
 .env
 .env.*
