@@ -31,8 +31,9 @@ dinámicos por entidad (p. ej. ``item.name + ' — Volt Vault'``).
   `SITE_URL`; default `http://localhost:3000`).
 - Nuxt ya renderiza las meta por SSR; no se usa `useServerSeoMeta` explícito.
 
-## Pendiente
-- `og:image` para la home y `/collections` (índice) aún sin definir.
+## Cobertura de home e índice
+- Home (`/`) e índice (`/collections`) exponen `canonical`, `og:url`, `og:type`,
+  `og:image` (portada de la primera colección) y `twitter:card`.
 
 ## Reglas
 - El contenido clave (catálogo) se sirve por SSR; no depende de JS de cliente.

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import CollectionGrid from '~/components/organisms/CollectionGrid.vue'
 import type { CollectionSummary, TagDto } from '~/types'
+import { absoluteUrl } from '~/utils/seo'
 
 useSeoMeta({
   title: 'Colecciones — Volt Vault',
@@ -29,6 +30,19 @@ const { data, pending, error } = await useFetch<{
 const collections = computed(() => data.value?.data ?? [])
 const total = computed(() => data.value?.total ?? 0)
 const pageSize = computed(() => data.value?.pageSize ?? 12)
+
+const config = useRuntimeConfig()
+const canonical = computed(() => `${config.public.siteUrl}/collections`)
+const ogImage = computed(() => absoluteUrl(collections.value?.[0]?.coverImage?.url, config.public.siteUrl))
+
+useSeoMeta({
+  ogTitle: 'Colecciones — Volt Vault',
+  ogType: 'website',
+  ogUrl: canonical,
+  ogImage,
+  twitterCard: 'summary_large_image',
+})
+useHead({ link: [{ rel: 'canonical', href: canonical }] })
 
 const { data: tagsData } = await useFetch<{ success: boolean; data: TagDto[] }>('/api/tags')
 const tagItems = computed(() => [

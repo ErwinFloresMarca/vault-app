@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { CollectionSummary } from '~/types'
 import CollectionGrid from '~/components/organisms/CollectionGrid.vue'
+import { absoluteUrl } from '~/utils/seo'
 
 useSeoMeta({
   title: 'Volt Vault — Coleccionables impresos en 3D',
@@ -9,6 +10,19 @@ useSeoMeta({
 
 const { data } = await useFetch<{ success: boolean; data: CollectionSummary[] }>('/api/collections')
 const collections = computed<CollectionSummary[]>(() => data.value?.data?.slice(0, 3) ?? [])
+
+const config = useRuntimeConfig()
+const canonical = computed(() => `${config.public.siteUrl}/`)
+const ogImage = computed(() => absoluteUrl(collections.value?.[0]?.coverImage?.url, config.public.siteUrl))
+
+useSeoMeta({
+  ogTitle: 'Volt Vault — Coleccionables impresos en 3D',
+  ogType: 'website',
+  ogUrl: canonical,
+  ogImage,
+  twitterCard: 'summary_large_image',
+})
+useHead({ link: [{ rel: 'canonical', href: canonical }] })
 </script>
 
 <template>
