@@ -86,8 +86,9 @@ base de datos relacional PostgreSQL dedicada (`vault-volt3d`) en el Postgres Doc
 - **Dashboard simplificado**: solo se implementó `GET /api/admin/dashboard/stats`
   (conteos + top + actividad reciente). No existen `/api/admin/sales` ni la tabla
   de ventas ordenable/filtrable/paginable del plan.
-- **Catálogo público sin filtros**: `GET /api/collections` no soporta filtro por
-  tag, búsqueda ni paginación (el plan los mencionaba).
+- **Catálogo público con filtros** (SEL-39): `GET /api/collections` soporta
+  `tag`, `q`, `page`, `pageSize`; nuevo `GET /api/tags`. UI con búsqueda, filtro
+  por etiqueta y paginación.
 - **SEO por entidad implementado** (SEL-38): `canonical`, `og:image/title/description`
   y `description` derivada del Markdown vía `utils/seo.ts`. Pendiente: `og:image`
   en home e índice de colecciones.

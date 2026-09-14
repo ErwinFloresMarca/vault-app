@@ -94,18 +94,43 @@ async function computeProgress(collectionId: string, userId: string | undefined)
 }
 
 export const collectionService = {
-  async listPublic(): Promise<CollectionSummary[]> {
-    const collections = await prisma.collection.findMany({
-      where: { status: 'PUBLISHED' },
-      orderBy: [{ orderIndex: 'asc' }, { createdAt: 'asc' }],
-      include: {
-        _count: { select: { items: true } },
-        tags: { include: { tag: true } },
-        files: { include: { file: true }, orderBy: { position: 'asc' } },
-        items: { where: { status: { not: 'ARCHIVED' } }, select: { id: true } },
-      },
+  async listPublic(query: { tag?: string; q?: string; page?: number; pageSize?: number } = {}) {
+    const page = Math.max(1, query.page ?? 1)
+    const pageSize = Math.min(48, Math.max(1, query.pageSize ?? 12))
+
+    const where: Prisma.CollectionWhereInput = { status: 'PUBLISHED' }
+    if (query.tag) where.tags = { some: { tag: { slug: query.tag } } }
+    const q = query.q?.trim()
+    if (q) {
+      where.OR = [
+        { name: { contains: q, mode: 'insensitive' } },
+        { description: { contains: q, mode: 'insensitive' } },
+      ]
+    }
+
+    const [total, collections] = await Promise.all([
+      prisma.collection.count({ where }),
+      prisma.collection.findMany({
+        where,
+        orderBy: [{ orderIndex: 'asc' }, { createdAt: 'asc' }],
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        include: {
+          _count: { select: { items: true } },
+          tags: { include: { tag: true } },
+          files: { include: { file: true }, orderBy: { position: 'asc' } },
+          items: { where: { status: { not: 'ARCHIVED' } }, select: { id: true } },
+        },
+      }),
+    ])
+    return { data: collections.map(toCollectionSummary), total, page, pageSize }
+  },
+
+  async listTags(): Promise<{ id: string; name: string; slug: string }[]> {
+    return prisma.tag.findMany({
+      orderBy: { name: 'asc' },
+      select: { id: true, name: true, slug: true },
     })
-    return collections.map(toCollectionSummary)
   },
 
   async getBySlug(slug: string, userId?: string): Promise<CollectionWithItems | null> {
