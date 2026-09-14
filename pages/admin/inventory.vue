@@ -258,7 +258,7 @@ function formatDate(iso: string) {
             </template>
           </UTable>
           <div v-if="filteredItems.length > itemsPageSize" class="mt-4 flex justify-end">
-            <UPagination v-model="itemsPage" :total="filteredItems.length" :items-per-page="itemsPageSize" />
+            <UPagination v-model:page="itemsPage" :total="filteredItems.length" :items-per-page="itemsPageSize" />
           </div>
         </UPageCard>
 
@@ -361,7 +361,7 @@ function formatDate(iso: string) {
               </template>
             </UTable>
             <div v-if="batchesTotal > pageSize" class="mt-4 flex justify-end">
-              <UPagination v-model="batchesPage" :total="batchesTotal" :items-per-page="pageSize" />
+              <UPagination v-model:page="batchesPage" :total="batchesTotal" :items-per-page="pageSize" />
             </div>
           </template>
         </UPageCard>
