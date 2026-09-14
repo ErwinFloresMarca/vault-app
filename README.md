@@ -1,75 +1,94 @@
-# Nuxt Minimal Starter
+# Volt Vault
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Catálogo de coleccionables impresos en 3D de **Volt-3D**. Los usuarios exploran
+colecciones, marcan figuras como conseguidas y los administradores gestionan
+catálogo e inventario.
+
+Nuxt 4 full-stack (SSR): frontend, API REST y SEO en un solo proyecto. Base de
+datos PostgreSQL con Prisma 7.
+
+## Stack
+
+- **Nuxt 4.4** + Vue 3.5 + TypeScript 5.9 (SSR)
+- **Prisma 7** sobre PostgreSQL (driver adapter `@prisma/adapter-pg`)
+- **`nuxt-auth-utils`** — OAuth Google + Facebook (sin contraseñas)
+- **`@nuxt/ui` 4** + Tailwind v4 + `@nuxt/icon` (Lucide)
+- `@nuxt/content`, `@nuxt/image`, `@nuxt/fonts`, `@nuxt/eslint`
+- pnpm (paquete único, sin monorepo)
+
+## Requisitos
+
+- Node.js 20+
+- pnpm
+- Un PostgreSQL accesible
 
 ## Setup
 
-Make sure to install dependencies:
-
 ```bash
-# npm
-npm install
-
-# pnpm
 pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
+cp .env.example .env        # rellena DATABASE_URL, OAuth y NUXT_SESSION_PASSWORD
+pnpm db:generate            # genera el cliente Prisma en generated/prisma
+pnpm db:migrate             # aplica migraciones (o: pnpm db:reset && pnpm db:seed)
+pnpm dev                    # http://localhost:3000
 ```
 
-## Development Server
+Variables de entorno (ver `.env.example`):
 
-Start the development server on `http://localhost:3000`:
+| Variable | Obligatoria | Uso |
+|---|---|---|
+| `DATABASE_URL` | Sí | Conexión PostgreSQL |
+| `NUXT_SESSION_PASSWORD` | Sí (prod) | Firma de sesión `nuxt-auth-utils` |
+| `NUXT_OAUTH_GOOGLE_ID` / `_SECRET` | Sí | Login con Google |
+| `NUXT_OAUTH_FACEBOOK_ID` / `_SECRET` | Opcional | Login con Facebook |
+| `NUXT_API_BASE_URL` | No | URL base de la API |
+| `NUXT_EXCHANGE_RATE_API_KEY` | No | Tipo de cambio USD→BOB |
+| `NUXT_SMTP_*` | No | Email |
 
-```bash
-# npm
-npm run dev
+## Scripts
 
-# pnpm
-pnpm dev
+| Comando | Qué hace |
+|---|---|
+| `pnpm dev` | Servidor de desarrollo en `:3000` |
+| `pnpm build` / `pnpm preview` | Build y preview de producción |
+| `pnpm generate` | Pre-render estático |
+| `pnpm db:generate` | Genera el cliente Prisma |
+| `pnpm db:migrate` | Migraciones en desarrollo |
+| `pnpm db:seed` | Datos de ejemplo |
+| `pnpm db:reset` | Reinicia la BD y reaplica migraciones |
+| `pnpm exec eslint .` | Lint (no hay script `lint`) |
 
-# yarn
-yarn dev
+## Estructura
 
-# bun
-bun run dev
+```
+pages/          rutas públicas y /admin
+components/     Atomic Design: atoms / molecules / organisms
+layouts/        default · admin · minimal
+composables/    useAuth, useCollectItem
+middleware/     auth, admin (ver nota más abajo)
+server/
+  routes/api/   endpoints HTTP
+  routes/auth/  callbacks OAuth
+  services/     lógica de negocio (Prisma)
+  utils/        db, auth
+prisma/         schema, migraciones, seed
+types/          tipos de dominio compartidos
+docs/specs/     specs por módulo (m01–m10) + PLAN.md
+DESIGN.md       design system (tokens y componentes)
+AGENTS.md       guía operativa para agentes de IA
 ```
 
-## Production
+## Roles y auth
 
-Build the application for production:
+- Solo OAuth (Google/Facebook) vía `nuxt-auth-utils`. No hay login con contraseña.
+- Roles: `USER` (default) y `ADMIN` (se asigna manualmente en BD).
+- Las APIs de admin exigen `requireAdmin(event)` en el servidor.
+- ⚠ `middleware/auth.ts` y `middleware/admin.ts` existen pero **no están cableados**
+  en ninguna página; la protección efectiva está en las APIs. Ver `AGENTS.md`.
 
-```bash
-# npm
-npm run build
+## Documentación
 
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+- [`AGENTS.md`](./AGENTS.md) — comandos, convenciones y boundarys para agentes.
+- [`DESIGN.md`](./DESIGN.md) — sistema de diseño visual.
+- [`docs/specs/PLAN.md`](./docs/specs/PLAN.md) — plan y estado por módulo.
+- [`docs/AUTH_SETUP.md`](./docs/AUTH_SETUP.md) — configuración de OAuth.
+- [`docs/LINEAR.md`](./docs/LINEAR.md) — sincronización con Linear.

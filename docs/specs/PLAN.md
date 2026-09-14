@@ -57,13 +57,24 @@ base de datos relacional PostgreSQL dedicada (`vault-volt3d`) en el Postgres Doc
 
 | Módulo | Spec | Implementado |
 |--------|------|--------------|
-| Base | m01-base.md | ☐ |
-| Database | m02-database.md | ☐ |
-| Auth | m03-auth.md | ☐ |
-| Files | m04-files.md | ☐ |
-| Colecciones | m05-collections.md | ☐ |
-| Items | m06-items.md | ☐ |
-| Colección personal | m07-me-collection.md | ☐ |
-| Inventario | m08-inventory.md | ☐ |
-| Dashboard | m09-dashboard.md | ☐ |
-| SEO | m10-seo.md | ☐ |
+| Base | m01-base.md | ☑ |
+| Database | m02-database.md | ☑ |
+| Auth | m03-auth.md | ☑ |
+| Files | m04-files.md | ☑ |
+| Colecciones | m05-collections.md | ☑ |
+| Items | m06-items.md | ☑ |
+| Colección personal | m07-me-collection.md | ☑ |
+| Inventario | m08-inventory.md | ☑ |
+| Dashboard | m09-dashboard.md | ☑ |
+| SEO | m10-seo.md | ☑ |
+
+## Desviaciones respecto al plan original
+
+- **No existe capa `server/repositories/`**: los servicios importan `prisma`
+  directamente desde `server/utils/db.ts`. La dirección real es
+  `route → service → Prisma`.
+- **Middleware de página sin cablear**: `middleware/auth.ts` y `middleware/admin.ts`
+  existen pero ninguna página los referencia. La autorización efectiva vive en las
+  APIs (`requireUser` / `requireAdmin`).
+- **Tokens de `DESIGN.md` sin cablear** en `assets/css/main.css`; la UI usa el tema
+  de `@nuxt/ui` v4.
