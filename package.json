@@ -35,8 +35,16 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
-      "@prisma/client",
-      "better-sqlite3"
+      "@parcel/watcher",
+      "@prisma/engines",
+      "better-sqlite3",
+      "esbuild",
+      "prisma"
+    ],
+    "ignoredBuiltDependencies": [
+      "sharp",
+      "unrs-resolver",
+      "vue-demi"
     ]
   },
   "devDependencies": {
