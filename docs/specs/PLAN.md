@@ -73,9 +73,9 @@ base de datos relacional PostgreSQL dedicada (`vault-volt3d`) en el Postgres Doc
 - **No existe capa `server/repositories/`**: los servicios importan `prisma`
   directamente desde `server/utils/db.ts`. La dirección real es
   `route → service → Prisma`.
-- **Middleware de página sin cablear**: `middleware/auth.ts` y `middleware/admin.ts`
-  existen pero ninguna página los referencia. La autorización efectiva vive en las
-  APIs (`requireUser` / `requireAdmin`).
+- **Middleware cableado** (SEL-32): `middleware/auth.global.ts` (allowlist de
+  rutas públicas) + `middleware/admin.ts` en `/admin/*`. Ya no hay páginas sin
+  redirección de UX.
 - **Tokens de `DESIGN.md` sin cablear** en `assets/css/main.css`; la UI usa el tema
   de `@nuxt/ui` v4.
 - **Inventario con batches y personas** (no previsto en el plan): se añadió el

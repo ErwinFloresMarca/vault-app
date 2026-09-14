@@ -1,10 +1,10 @@
 /**
- * Middleware para proteger rutas del panel admin.
- * Requiere rol ADMIN; si el usuario no está autenticado redirige a login,
- * si no es admin redirige a inicio.
+ * Middleware de páginas de /admin.
+ * Requiere rol ADMIN: sin sesión → /login; sin rol → /.
+ * Se aplica con definePageMeta({ middleware: 'admin' }).
  */
-export default defineNuxtRouteMiddleware(async (to) => {
-  const { data: user } = await useFetch('/api/auth/me')
+export default defineNuxtRouteMiddleware(async () => {
+  const { data: user } = await useFetch('/api/auth/me', { key: 'auth:user' })
 
   if (!user.value) {
     return navigateTo('/login')

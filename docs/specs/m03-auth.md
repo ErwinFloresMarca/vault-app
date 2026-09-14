@@ -36,11 +36,16 @@ oauthProviders[]` (no expone la sesión cruda ni secretos).
 Cliente (`composables/useAuth.ts`): `useAuthUser()`, `useRequireAuth()`,
 `useRequireAdmin()`; el rol se compara `role === 'ADMIN'`.
 
-## ⚠ Estado del middleware (importante)
-`middleware/auth.ts` y `middleware/admin.ts` **existen pero NO están cableados**
-(no son `.global` y ninguna página usa `definePageMeta({ middleware })`). Por
-tanto **no hay redirección de rutas en el cliente**: la autorización real de
-datos ocurre en las APIs con `requireAdmin`. Pendiente: SEL-32.
+## Middleware (cableado)
+- `middleware/auth.global.ts` — **global**: deja pasar las rutas públicas
+  (`/`, `/login`, `/auth`, `/auth/error`, `/collections`, `/collections/**`,
+  `/privacy`, `/terms`). El resto requiere sesión y redirige a `/login`.
+- `middleware/admin.ts` — aplicado en las páginas `/admin/*` mediante
+  `definePageMeta({ middleware: 'admin' })`: sin sesión → `/login`; sin rol
+  `ADMIN` → `/`.
+- El middleware es **UX/redirección**, no la única barrera: la autorización real
+  de datos sigue en las APIs (`requireAdmin`).
+- Al añadir una página pública nueva, agrégala a la allowlist de `auth.global.ts`.
 
 ## Boundaries
 - **Never**: implementar login con contraseña; exponer secretos de sesión.

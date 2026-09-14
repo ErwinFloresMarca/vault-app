@@ -3,7 +3,7 @@ import type { TableColumn } from '@nuxt/ui'
 
 useSeoMeta({ title: 'Dashboard — Volt Vault Admin' })
 
-definePageMeta({ layout: 'admin' })
+definePageMeta({ layout: 'admin', middleware: 'admin' })
 
 const { data, pending, error } = await useFetch<{
   success: boolean

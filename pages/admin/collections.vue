@@ -3,7 +3,7 @@ import type { TableColumn } from '@nuxt/ui'
 
 useSeoMeta({ title: 'Colecciones — Volt Vault Admin' })
 
-definePageMeta({ layout: 'admin' })
+definePageMeta({ layout: 'admin', middleware: 'admin' })
 
 interface CollectionRow {
   id: string

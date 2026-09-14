@@ -44,7 +44,8 @@ Modelos en `prisma/schema.prisma`: `User`, `OAuthAccount`, `File`, `Collection`,
   de carpeta en `nuxt.config.ts` (usa `<CollectionCard>`, no `<MoleculesCollectionCard>`).
 - `layouts/{default,admin,minimal}.vue`.
 - `composables/` — `useAuth.ts`, `useCollectItem.ts`.
-- `middleware/` — `auth.ts`, `admin.ts` (⚠ ver Boundarys: hoy NO están cableados).
+- `middleware/` — `auth.global.ts` (global; allowlist de rutas públicas),
+  `admin.ts` (rol ADMIN en páginas `/admin/*`).
 - `server/routes/api/` — HTTP. `server/services/` — lógica de negocio.
   `server/utils/{db,auth}.ts`. `server/routes/auth/` — callbacks OAuth.
 - `docs/specs/` — specs por módulo (`m01-…` a `m10-…`) + `PLAN.md`. `docs/AUTH_SETUP.md`.
@@ -105,10 +106,9 @@ Prisma (`server/utils/db.ts`) → DB. Mantén esta dirección.
 - `generated/prisma` — generado, nunca a mano.
 - `.env` — nunca commitear (solo `.env.example`). Nunca secretos en código,
   AGENTS.md ni DESIGN.md.
-- `middleware/auth.ts` y `middleware/admin.ts` NO están referenciados por ninguna
-  página (no son `.global` y ninguna usa `definePageMeta({ middleware })`). La
-  protección real de datos está en las APIs (`requireAdmin`). NO asumas que las
-  páginas admin redirigen en el cliente.
+- La autorización real de datos vive en las APIs (`requireAdmin`); el middleware
+  de página es solo redirección de UX. Nueva ruta pública → añadir a la allowlist
+  de `middleware/auth.global.ts`.
 - No cambies el alias `@gen-prisma` de `nuxt.config.ts` ni el adapter `PrismaPg`
   de `server/utils/db.ts`.
 
