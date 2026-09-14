@@ -14,7 +14,8 @@ Stack: Nuxt 4.4, Vue 3.5, TypeScript 5.9, Prisma 7 (PostgreSQL + driver adapter
 - `pnpm db:generate` — regenera el cliente en `generated/prisma` (OBLIGATORIO tras clonar o editar el schema)
 - `pnpm db:migrate` / `pnpm db:seed` / `pnpm db:reset`
 - `pnpm exec eslint .` — lint (NO existe script `lint` en package.json)
-- No hay tests ni script de typecheck configurados.
+- `pnpm exec playwright ...` — Playwright 1.63 (devDependency; browsers ya descargados)
+- No hay tests unitarios ni script de typecheck configurados.
 
 Arranque en frío: `pnpm install` → `cp .env.example .env` (rellenar `DATABASE_URL`,
 OAuth, `NUXT_SESSION_PASSWORD`) → `pnpm db:generate` → `pnpm db:migrate` (o
@@ -89,6 +90,16 @@ Prisma (`server/utils/db.ts`) → DB. Mantén esta dirección.
 - ⚠ Los tokens CSS de `DESIGN.md` aún NO están cableados en `assets/css/main.css`
   (solo importa Tailwind + @nuxt/ui). Hoy la UI usa los componentes/tema de @nuxt/ui.
 
+## Preview en navegador (Playwright)
+
+- `pnpm dev` en `:3000` (usa la BD y OAuth del `.env`). Rutas públicas de smoke:
+  `/`, `/collections`, `/collections/[slug]`, `/login`, `/privacy`, `/terms`.
+  `/me` y `/admin/*` requieren sesión.
+- MCP global `playwright` (headless, en `~/.config/opencode/opencode.jsonc`) para
+  navegar, capturar screenshot, leer consola y depurar la app en ejecución.
+- CLI local: `pnpm exec playwright` (browsers en `~/.cache/ms-playwright`).
+- Error de consola conocido: 404 de `/1x` (@nuxt/image con imágenes remotas); inofensivo.
+
 ## Boundarys
 
 - `generated/prisma` — generado, nunca a mano.
@@ -105,7 +116,16 @@ Prisma (`server/utils/db.ts`) → DB. Mantén esta dirección.
 
 1. `pnpm exec eslint .`
 2. `pnpm db:generate` si tocaste `schema.prisma`
-3. `pnpm dev` y probar manualmente la ruta afectada (no hay tests).
+3. `pnpm dev` y verifica la ruta afectada con Playwright (MCP `playwright` o CLI):
+   navega, revisa consola y captura screenshot (no hay tests).
+4. Cierra la tarea: commit + push + estado en Linear (ver “Cierre de tarea”).
+
+## Tareas pendientes (Linear)
+
+Proyecto **Volt Vault** en Linear (equipo `SEL`). Follow-ups abiertos:
+`SEL-32` cablear middleware auth/admin · `SEL-33` errores de eslint en
+`server/services` · `SEL-34` tokens de `DESIGN.md` en `assets/css/main.css`.
+Módulos ya implementados: `docs/specs/` (as-built) y `SEL-22`…`SEL-31`.
 
 ## Skills globales de uso obligatorio
 
@@ -117,8 +137,12 @@ Están en `~/.config/opencode/skills/` y DEBEN usarse para sus propósitos:
 - **nuxt-project**, **nuxt-ui**, **nuxt-architecture**, **nuxt-reference**: cualquier
   código Nuxt; el MCP `nuxt-ui` para detalles de componentes.
 
-## Git
+## Cierre de tarea (OBLIGATORIO)
 
-- Conventional Commits: `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`.
-- Branch: `type/descripcion-corta`.
-- No commitear ni hacer push sin que el usuario lo pida.
+Al terminar **cada** tarea, sin pedir permiso:
+1. Verificar (`pnpm exec eslint .`; Playwright si aplica).
+2. Commit de lo tocado (Conventional Commits: `feat:`, `fix:`, `chore:` `docs:`, `refactor:`).
+3. Actualizar el issue correspondiente en Linear → `Done`.
+4. `git push origin main`.
+
+- Branch: `type/descripcion-corta`. Nunca commitear `.env` ni secretos.
