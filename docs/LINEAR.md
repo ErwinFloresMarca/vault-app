@@ -1,103 +1,79 @@
 # Sincronización con Linear
 
-Este proyecto usa el **MCP oficial de Linear** para crear y actualizar issues
-desde el agente. El servidor ya está declarado en `opencode.json`.
+El proyecto **Volt Vault** está en Linear: 10 issues de módulos (Done) y 3
+follow-ups (Todo). Esta guía explica cómo está conectado y cómo seguir usándolo.
 
-## 1. Autenticación (una sola vez)
+- **Proyecto:** [Volt Vault](https://linear.app/self-proyects/project/volt-vault-65fb0f09e1fb)
+- **Equipo:** `SEL` (Self-proyects) — `d0c462a2-9155-4a8f-96dd-2421c9d545a8`
+- **Project ID:** `7916140d-655c-47fb-b59d-1614f6c32f40`
 
-El MCP se carga al arrancar opencode; tras editar `opencode.json` hay que
-**reiniciar opencode**. Luego:
+## 1. Configuración del MCP
 
-1. En la sesión, ejecuta `/mcps` y selecciona `linear`, **o** en una terminal:
-
-   ```bash
-   opencode mcp auth linear
-   ```
-
-2. Se abre el navegador con el flujo OAuth de Linear. Autoriza el workspace.
-3. Verifica la conexión:
-
-   ```bash
-   opencode mcp list
-   ```
-
-Si tu build no expone `opencode mcp auth`, usa el panel de MCP en la UI de
-opencode. Como alternativa (token), descomenta en `opencode.json`:
+El MCP oficial de Linear se declara en la **config global** de opencode
+(`~/.config/opencode/opencode.json`):
 
 ```jsonc
-"oauth": false,
-"headers": { "Authorization": "Bearer {env:LINEAR_API_KEY}" }
+"linear": {
+  "type": "remote",
+  "url": "https://mcp.linear.app/mcp",
+  "enabled": true,
+  "oauth": false,
+  "headers": { "Authorization": "Bearer {env:LINEAR_API_KEY}" }
+}
 ```
 
-…y define `LINEAR_API_KEY` en tu entorno (nunca la commitees).
+- `LINEAR_API_KEY` (Linear → Settings → API → Personal API keys) vive en
+  `~/.zshrc`; **nunca** se commitea.
+- **No redeclares `linear` en el `opencode.json` del proyecto.** La config de
+  proyecto sustituye a la global por nombre y volvería a OAuth (que aquí daba
+  401 `invalid_token`).
+- Reinicia opencode tras cambiar la config. Verifica con `opencode mcp list`
+  (`✓ linear connected`).
 
-### Si `opencode mcp list` muestra `linear failed` (timeout)
+> El endpoint `/sse` está deprecado; usa siempre `https://mcp.linear.app/mcp`.
 
-Es normal **antes** de autenticar: el servidor exige OAuth y la conexión inicial
-agota el timeout. Tras autenticar debe aparecer `✓ linear connected`.
+## 2. Proyecto e issues (ya importados)
 
-### Si tras autenticar sigue el 401 (`invalid_token`)
+| Issue | Estado | Label | Spec |
+|---|---|---|---|
+| SEL-22 Base del proyecto y scaffold Atomic Design | Done | `area:base` | `m01-base.md` |
+| SEL-23 Base de datos, migraciones y seed | Done | `area:db` | `m02-database.md` |
+| SEL-24 Auth OAuth y guards | Done | `area:auth` | `m03-auth.md` |
+| SEL-25 Gestión de archivos e imágenes | Done | `area:files` | `m04-files.md` |
+| SEL-26 Colecciones: CRUD y API pública | Done | `area:catalog` | `m05-collections.md` |
+| SEL-27 Items: CRUD, galería y página pública | Done | `area:catalog` | `m06-items.md` |
+| SEL-28 Colección personal del usuario | Done | `area:user` | `m07-me-collection.md` |
+| SEL-29 Inventario y movimientos atómicos | Done | `area:inventory` | `m08-inventory.md` |
+| SEL-30 Dashboard admin y métricas | Done | `area:admin` | `m09-dashboard.md` |
+| SEL-31 SEO: metadata, sitemap y robots | Done | `area:seo` | `m10-seo.md` |
+| SEL-32 Cablear middleware de auth/admin en las páginas | Todo | `area:auth` | — |
+| SEL-33 Corregir errores de eslint en server/services | Todo | `area:chore` | — |
+| SEL-34 Cablear tokens de DESIGN.md en assets/css/main.css | Todo | `area:design` | — |
 
-`opencode mcp debug linear` puede mostrar `Auth status: ✓ authenticated` pero el
-servidor responde `401 Missing or invalid access token`. Suele ser un token
-expirado o de otro workspace. Solución:
-
-```bash
-opencode mcp auth linear     # vuelve a autorizar el workspace correcto
-```
-
-Si persiste, usa una **API key** de Linear (Settings → API → Personal API keys)
-y cambia el bloque MCP a `oauth: false` + header `Authorization: Bearer`.
-
-## 2. Crear el proyecto e importar los módulos
-
-Las specs viven en `docs/specs/` y el plan en `docs/specs/PLAN.md`. Una vez
-autenticado, pide al agente:
-
-> Crea el proyecto "Volt Vault" en Linear e importa los 10 módulos de
-> `docs/specs/PLAN.md` como issues, con labels por área.
-
-Mapeo sugerido (1 issue por módulo, orden del plan):
-
-| Issue | Spec | Label |
-|---|---|---|
-| Base: scaffold, layouts, rutas | `m01-base.md` | `area:base` |
-| Base de datos y seed | `m02-database.md` | `area:db` |
-| Auth OAuth y guards | `m03-auth.md` | `area:auth` |
-| Gestión de archivos/imágenes | `m04-files.md` | `area:files` |
-| Colecciones: CRUD + público | `m05-collections.md` | `area:catalog` |
-| Items: CRUD + galería | `m06-items.md` | `area:catalog` |
-| Colección personal del usuario | `m07-me-collection.md` | `area:user` |
-| Inventario y movimientos | `m08-inventory.md` | `area:inventory` |
-| Dashboard admin | `m09-dashboard.md` | `area:admin` |
-| SEO: metadata, sitemap, robots | `m10-seo.md` | `area:seo` |
-
-Todos los módulos están implementados (ver tabla de estado en `PLAN.md`), así que
-sugerido crearlos ya en estado **Done** o como proyecto histórico.
+La descripción de cada issue de módulo contiene la spec completa.
 
 ## 3. Vincular commits e issues (auto-sync)
 
-Linear detecta la referencia en la **rama, el título del PR o el commit body**:
+Linear detecta la referencia en la **rama, el título del PR o el commit body**.
+El identificador del equipo es `SEL`:
 
 ```
-feat(VLT-123): añadir filtro por estado en el catálogo
+feat(SEL-26): añadir filtro por estado en el catálogo
 ```
 
-- Convención de rama: `type/VLT-123-descripcion-corta` (ej. `feat/VLT-42-galeria-items`).
-- Conventional Commits del repo: `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`.
-- Al hacer push/PR, Linear mueve el issue a *In Progress* / *Done* según configure.
+- Rama: `type/SEL-<n>-descripcion-corta` (ej. `feat/SEL-27-galeria-items`).
+- Conventional Commits: `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`.
+- Al hacer push/PR, Linear mueve el issue según la automatización configurada.
 
 ## 4. Integración GitHub ↔ Linear
 
-1. En Linear: **Settings → Integrations → GitHub** y conecta
+1. Linear → **Settings → Integrations → GitHub** y conecta
    `ErwinFloresMarca/vault-app`.
-2. Vincula cada equipo de Linear a un repo.
-3. A partir de ahí, las PR que mencionen `VLT-<n>` actualizan el issue solas.
+2. Vincula el equipo `SEL` al repo.
+3. Las PR que mencionen `SEL-<n>` actualizan el issue automáticamente.
 
 ## Notas
 
-- `opencode.json` no contiene secretos: solo la URL del MCP y OAuth.
-- El servidor remoto es `https://mcp.linear.app/mcp` (Streamable HTTP). El
-  endpoint `/sse` está deprecado.
+- El repo no contiene secretos: `opencode.json` solo declara `$schema`.
 - Workspaces distintos requieren contextos de auth distintos; no reutilices la
   misma sesión para dos workspaces.
