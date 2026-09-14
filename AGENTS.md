@@ -88,8 +88,9 @@ Prisma (`server/utils/db.ts`) → DB. Mantén esta dirección.
   un solo peso 400, Volt Blue `#1E90FF` como único acento interactivo.
 - Iconos: colección `lucide` vía `@nuxt/icon` (p.ej. `i-lucide-library`).
 - Imágenes remotas permitidas: `images.unsplash.com` (`@nuxt/image`).
-- ⚠ Los tokens CSS de `DESIGN.md` aún NO están cableados en `assets/css/main.css`
-  (solo importa Tailwind + @nuxt/ui). Hoy la UI usa los componentes/tema de @nuxt/ui.
+- Tokens de `DESIGN.md` cableados: `@theme static` en `assets/css/main.css` y
+  `app.config.ts` (`ui.colors.primary: 'volt'` = Volt Blue `#1E90FF`); fuente Inter
+  vía `@nuxt/fonts`. Pendiente: pills/uppercase/peso 400 a nivel de componente.
 
 ## Preview en navegador (Playwright)
 

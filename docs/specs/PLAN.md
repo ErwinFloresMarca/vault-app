@@ -76,8 +76,10 @@ base de datos relacional PostgreSQL dedicada (`vault-volt3d`) en el Postgres Doc
 - **Middleware cableado** (SEL-32): `middleware/auth.global.ts` (allowlist de
   rutas públicas) + `middleware/admin.ts` en `/admin/*`. Ya no hay páginas sin
   redirección de UX.
-- **Tokens de `DESIGN.md` sin cablear** en `assets/css/main.css`; la UI usa el tema
-  de `@nuxt/ui` v4.
+- **Tokens de `DESIGN.md` cableados** (SEL-34): `@theme static` en
+  `assets/css/main.css` + `app.config.ts` (`primary: 'volt'` = Volt Blue `#1E90FF`),
+  fuente Inter vía `@nuxt/fonts`. Falta llevar a componente las reglas de
+  pills 9999px, uppercase y peso 400.
 - **Inventario con batches y personas** (no previsto en el plan): se añadió el
   modelo `InventoryBatch` y los campos `registeredBy*` / `customer*` en batch y
   movimiento. Documentado en `m08-inventory.md`.

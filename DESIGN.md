@@ -4,10 +4,12 @@
 **Theme:** light
 
 > **Estado de implementación:** este documento es la **fuente de verdad visual**.
-> Los tokens (colores, tipografía, spacing, radii) todavía **NO están cableados** en
-> `assets/css/main.css`, que solo importa `tailwindcss` + `@nuxt/ui`. Hoy la UI se
-> construye con componentes y tema de `@nuxt/ui` v4. Al implementar tokens nuevos,
-> añádelos en `assets/css/main.css` (bloque `@theme`) y actualiza este archivo.
+> Los colores de marca, la paleta `primary` (Volt Blue) y la escala tipográfica
+> están cableados en `assets/css/main.css` (`@theme static`). El color semántico
+> `primary` de `@nuxt/ui` se asigna en `app.config.ts` (`ui.colors.primary: 'volt'`).
+> Fuente **Inter** (sustituto de Akkurat) vía `@nuxt/fonts`.
+> **Pendiente:** pills 9999px, uppercase y peso único 400 a nivel de componente
+> (requiere personalizar los temas de `@nuxt/ui`).
 
 Volt Vault operates as an industrial 3D printing catalog in monochrome with electric accents: a near-color-zero system where the only chromatic surface is the product itself (3D-printed collectibles bleeding Volt Blue, Volt Yellow, and shadow depths). The UI is a grid of black, white, and concrete gray, serving as a neutral stage for the circular-economy merchandise. Typography is compressed and uppercase-driven (Akkurat Standard), line-heights tight as machinery, letterspacing wide on labels, and interactive elements shaped as horizontal pills with hard-edged 1px outlines. Layout follows a strict modular grid — full-bleed 50/50 hero, then 3-column category blocks, then 6-column product matrices. The signature trick: the site reads as a technical specification sheet or shipping manifest, not a fashion storefront. Components feel like they're stamped on the page rather than designed — pill buttons, thin rules, hairline grids, and almost no shadow depth.
 
