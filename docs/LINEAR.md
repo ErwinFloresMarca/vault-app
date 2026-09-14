@@ -31,6 +31,24 @@ opencode. Como alternativa (token), descomenta en `opencode.json`:
 
 …y define `LINEAR_API_KEY` en tu entorno (nunca la commitees).
 
+### Si `opencode mcp list` muestra `linear failed` (timeout)
+
+Es normal **antes** de autenticar: el servidor exige OAuth y la conexión inicial
+agota el timeout. Tras autenticar debe aparecer `✓ linear connected`.
+
+### Si tras autenticar sigue el 401 (`invalid_token`)
+
+`opencode mcp debug linear` puede mostrar `Auth status: ✓ authenticated` pero el
+servidor responde `401 Missing or invalid access token`. Suele ser un token
+expirado o de otro workspace. Solución:
+
+```bash
+opencode mcp auth linear     # vuelve a autorizar el workspace correcto
+```
+
+Si persiste, usa una **API key** de Linear (Settings → API → Personal API keys)
+y cambia el bloque MCP a `oauth: false` + header `Authorization: Bearer`.
+
 ## 2. Crear el proyecto e importar los módulos
 
 Las specs viven en `docs/specs/` y el plan en `docs/specs/PLAN.md`. Una vez
