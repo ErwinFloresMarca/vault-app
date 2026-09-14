@@ -9,8 +9,8 @@
 > `primary` de `@nuxt/ui` se asigna en `app.config.ts` (`ui.colors.primary: 'volt'`).
 > Fuente **Inter** (sustituto de Akkurat) vía `@nuxt/fonts`.
 > **Aplicado a componentes:** botones y badges como pills (9999px), uppercase y
-> peso 400 vía `app.config.ts` (`ui.button` / `ui.badge`).
-> **Pendiente:** normalizar el peso 400 en el resto de componentes.
+> peso 400 vía `app.config.ts`. El peso único 400 se fuerza globalmente en
+> `assets/css/main.css` (headings, `strong`/`b` y utilidades de peso).
 
 Volt Vault operates as an industrial 3D printing catalog in monochrome with electric accents: a near-color-zero system where the only chromatic surface is the product itself (3D-printed collectibles bleeding Volt Blue, Volt Yellow, and shadow depths). The UI is a grid of black, white, and concrete gray, serving as a neutral stage for the circular-economy merchandise. Typography is compressed and uppercase-driven (Akkurat Standard), line-heights tight as machinery, letterspacing wide on labels, and interactive elements shaped as horizontal pills with hard-edged 1px outlines. Layout follows a strict modular grid — full-bleed 50/50 hero, then 3-column category blocks, then 6-column product matrices. The signature trick: the site reads as a technical specification sheet or shipping manifest, not a fashion storefront. Components feel like they're stamped on the page rather than designed — pill buttons, thin rules, hairline grids, and almost no shadow depth.
 

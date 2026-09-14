@@ -77,9 +77,8 @@ base de datos relacional PostgreSQL dedicada (`vault-volt3d`) en el Postgres Doc
   rutas públicas) + `middleware/admin.ts` en `/admin/*`. Ya no hay páginas sin
   redirección de UX.
 - **Tokens de `DESIGN.md` cableados** (SEL-34) y reglas de componente aplicadas
-  (SEL-40): botones y badges pill (9999px) + uppercase + peso 400 vía
-  `app.config.ts`. Pendiente menor: normalizar el peso 400 en el resto de
-  componentes.
+  (SEL-40/42): botones/badges pill + uppercase y peso único 400 global
+  (`app.config.ts` + `main.css`).
 - **Inventario con batches y personas** (no previsto en el plan): se añadió el
   modelo `InventoryBatch` y los campos `registeredBy*` / `customer*` en batch y
   movimiento. Documentado en `m08-inventory.md`.
