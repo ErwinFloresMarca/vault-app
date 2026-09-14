@@ -21,12 +21,18 @@ Implementado en: home, `/collections`, `/collections/[slug]`,
 `/collections/[collectionSlug]/[itemSlug]`, `/me` y páginas admin. Títulos
 dinámicos por entidad (p. ej. ``item.name + ' — Volt Vault'``).
 
-## ⚠ No implementado respecto al plan original
-- No se generan `og:image` ni `canonical` por entidad.
-- No hay `useServerSeoMeta` explícito (SSR de Nuxt ya renderiza el contenido).
-- La `description` de colección/item tiene la lógica invertida: devuelve
-  `undefined` cuando la entidad **sí** tiene descripción y el texto por defecto
-  cuando **no** la tiene. Corregir a futuro.
+## Metadata por entidad (implementado)
+- Colección (`/collections/[slug]`) e item (`/collections/[collectionSlug]/[itemSlug]`)
+  generan: `title`, `description` derivada del Markdown
+  (`utils/seo.ts#metaDescription`), `og:title`, `og:description`, `og:type`
+  (`website`/`article`), `og:url`, `og:image` (portada/imagen principal
+  absolutizada con `absoluteUrl`), `twitter:card` y `<link rel="canonical">`.
+- Base del sitio: `runtimeConfig.public.siteUrl` (env `NUXT_PUBLIC_SITE_URL` o
+  `SITE_URL`; default `http://localhost:3000`).
+- Nuxt ya renderiza las meta por SSR; no se usa `useServerSeoMeta` explícito.
+
+## Pendiente
+- `og:image` para la home y `/collections` (índice) aún sin definir.
 
 ## Reglas
 - El contenido clave (catálogo) se sirve por SSR; no depende de JS de cliente.

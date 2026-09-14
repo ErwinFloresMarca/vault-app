@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { CollectionWithItems } from '~/types'
+import { metaDescription, absoluteUrl } from '~/utils/seo'
 
 const route = useRoute()
 const slug = computed(() => String(route.params.slug))
@@ -7,10 +8,25 @@ const slug = computed(() => String(route.params.slug))
 const { data, pending, error } = await useFetch<{ success: boolean; data: CollectionWithItems }>(`/api/collections/${slug.value}`)
 const collection = computed<CollectionWithItems | null>(() => data.value?.data ?? null)
 
+const config = useRuntimeConfig()
+const canonical = computed(() => `${config.public.siteUrl}/collections/${slug.value}`)
+const metaDesc = computed(() =>
+  metaDescription(collection.value?.description, 'Colección de coleccionables impresos en 3D de Volt-3D.'),
+)
+const ogImage = computed(() => absoluteUrl(collection.value?.coverImage?.url, config.public.siteUrl))
+
 useSeoMeta({
   title: () => (collection.value?.name || 'Colección') + ' — Volt Vault',
-  description: () => collection.value?.description ? undefined : 'Colección de coleccionables impresos en 3D de Volt-3D.',
+  description: metaDesc,
+  ogTitle: () => collection.value?.name || 'Colección',
+  ogDescription: metaDesc,
+  ogType: 'website',
+  ogUrl: canonical,
+  ogImage,
+  twitterCard: 'summary_large_image',
 })
+
+useHead({ link: [{ rel: 'canonical', href: canonical }] })
 </script>
 
 <template>

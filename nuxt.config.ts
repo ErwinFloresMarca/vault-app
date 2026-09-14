@@ -74,6 +74,7 @@ export default defineNuxtConfig({
     // Public keys - disponibles en cliente
     public: {
       apiBase: process.env.NUXT_API_BASE_URL || 'http://localhost:3000',
+      siteUrl: process.env.NUXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'http://localhost:3000',
       exchangeRateApiKey: process.env.NUXT_EXCHANGE_RATE_API_KEY || '',
     },
   },

@@ -88,8 +88,9 @@ base de datos relacional PostgreSQL dedicada (`vault-volt3d`) en el Postgres Doc
   de ventas ordenable/filtrable/paginable del plan.
 - **Catálogo público sin filtros**: `GET /api/collections` no soporta filtro por
   tag, búsqueda ni paginación (el plan los mencionaba).
-- **SEO incompleto**: sin `og:image` ni `canonical` por entidad. Además la
-  `description` de colección/item tiene la lógica invertida (ver `m10-seo.md`).
+- **SEO por entidad implementado** (SEL-38): `canonical`, `og:image/title/description`
+  y `description` derivada del Markdown vía `utils/seo.ts`. Pendiente: `og:image`
+  en home e índice de colecciones.
 - **Specs as-built**: los 10 specs se reconstruyeron desde el código el
   2026-09-13 para reflejar la implementación real, no el plan inicial.
 
