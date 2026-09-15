@@ -83,6 +83,13 @@ enum ItemStatus {
   ARCHIVED
 }
 
+enum Rarity {
+  COMMON
+  RARE
+  EPIC
+  LEGENDARY
+}
+
 model Collection {
   id          String           @id @default(cuid())
   name        String
@@ -110,6 +117,7 @@ model CollectionItem {
   stock        Int        @default(0) // denormalizado, se actualiza atómicamente con movimientos
   soldQuantity Int        @default(0) // denormalizado, derivado de movimientos SALE
   status       ItemStatus @default(DRAFT)
+  rarity       Rarity     @default(COMMON)
   orderIndex   Int        @default(0)
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt

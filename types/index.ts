@@ -2,6 +2,7 @@
 
 export type CollectionStatus = 'DRAFT' | 'PUBLISHED' | 'ARCHIVED'
 export type ItemStatus = 'DRAFT' | 'AVAILABLE' | 'SOLD_OUT' | 'ARCHIVED'
+export type Rarity = 'COMMON' | 'RARE' | 'EPIC' | 'LEGENDARY'
 
 export interface FileDto {
   id: string
@@ -42,6 +43,7 @@ export interface ItemSummary {
   stock: number
   soldQuantity: number
   status: ItemStatus
+  rarity: Rarity
   mainImage?: FileDto | null
   collected?: boolean
 }

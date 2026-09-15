@@ -2,7 +2,7 @@ import type { H3Event } from 'h3'
 import { prisma } from '~/server/utils/db'
 import { requireAdmin } from '~/server/utils/auth'
 import type { Prisma } from '@gen-prisma/client'
-import type { ItemDetail, ItemSummary, ItemStatus, FileDto } from '~/types'
+import type { ItemDetail, ItemSummary, ItemStatus, Rarity, FileDto } from '~/types'
 
 type ItemFilesPayload = Prisma.CollectionItemGetPayload<{
   include: { files: { include: { file: true } } }
@@ -47,6 +47,7 @@ function toItemSummary(i: ItemFilesPayload): ItemSummary {
     stock: i.stock,
     soldQuantity: i.soldQuantity,
     status: i.status,
+    rarity: i.rarity,
     mainImage: main ?? null,
   }
 }
@@ -62,6 +63,7 @@ export const itemService = {
     fileIds?: string[]
     stockInicial?: number
     status?: ItemStatus
+    rarity?: Rarity
   }, event: H3Event) {
     await requireAdmin(event)
 
@@ -79,6 +81,7 @@ export const itemService = {
           slug,
           description: input.description,
           status: input.status ?? 'AVAILABLE',
+          rarity: input.rarity,
           files: input.fileIds?.length
             ? { create: input.fileIds.map((fileId, idx) => ({ fileId, position: idx })) }
             : undefined,
@@ -103,6 +106,7 @@ export const itemService = {
     description?: string
     fileIds?: string[]
     status?: ItemStatus
+    rarity?: Rarity
   }, event: H3Event) {
     await requireAdmin(event)
     const existing = await prisma.collectionItem.findUnique({ where: { id } })
@@ -116,6 +120,7 @@ export const itemService = {
     }
     if (input.description !== undefined) data.description = input.description
     if (input.status !== undefined) data.status = input.status
+    if (input.rarity !== undefined) data.rarity = input.rarity
 
     return prisma.$transaction(async (tx) => {
       if (input.fileIds) {

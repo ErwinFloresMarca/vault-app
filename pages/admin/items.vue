@@ -10,6 +10,7 @@ interface ItemRow {
   name: string
   slug: string
   status: string
+  rarity: string
   stock: number
   soldQuantity: number
   collection?: { id: string; name: string }
@@ -40,7 +41,7 @@ const collections = computed<CollectionOption[]>(() => collectionsData.value?.da
 const modalOpen = ref(false)
 const editing = ref<ItemRow | null>(null)
 const saving = ref(false)
-const form = reactive({ name: '', description: '', status: 'AVAILABLE', collectionId: '', stockInicial: 0, fileId: null as string | null })
+const form = reactive({ name: '', description: '', status: 'AVAILABLE', rarity: 'COMMON', collectionId: '', stockInicial: 0, fileId: null as string | null })
 const formError = ref('')
 
 const inventoryOpen = ref(false)
@@ -60,6 +61,7 @@ function openCreate() {
   form.name = ''
   form.description = ''
   form.status = 'AVAILABLE'
+  form.rarity = 'COMMON'
   form.collectionId = collections.value[0]?.id ?? ''
   form.stockInicial = 0
   form.fileId = null
@@ -72,6 +74,7 @@ function openEdit(row: ItemRow) {
   form.name = row.name
   form.description = ''
   form.status = row.status
+  form.rarity = row.rarity
   form.collectionId = row.collection?.id ?? ''
   form.stockInicial = 0
   form.fileId = mainImageOf(row)?.id ?? null
@@ -96,6 +99,7 @@ async function save() {
         name: form.name,
         description: form.description || undefined,
         status: form.status,
+        rarity: form.rarity,
         fileIds: form.fileId ? [form.fileId] : undefined,
       }
       await $fetch(`/api/admin/items/${editing.value.id}`, { method: 'PUT', body: payload })
@@ -106,6 +110,7 @@ async function save() {
           name: form.name,
           description: form.description || undefined,
           status: form.status,
+          rarity: form.rarity,
           collectionId: form.collectionId,
           stockInicial: Number(form.stockInicial) || 0,
           fileIds: form.fileId ? [form.fileId] : undefined,
@@ -182,6 +187,9 @@ async function remove(row: ItemRow) {
         </UFormField>
         <UFormField label="Estado">
           <USelect v-model="form.status" :items="['AVAILABLE', 'DRAFT', 'SOLD_OUT', 'ARCHIVED']" />
+        </UFormField>
+        <UFormField label="Rareza">
+          <USelect v-model="form.rarity" :items="['COMMON', 'RARE', 'EPIC', 'LEGENDARY']" />
         </UFormField>
         <UFormField v-if="!editing" label="Stock inicial">
           <UInput v-model.number="form.stockInicial" type="number" min="0" />

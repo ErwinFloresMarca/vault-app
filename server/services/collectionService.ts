@@ -68,6 +68,7 @@ function toItemSummary(i: ItemWithFilesPayload): ItemSummary {
     stock: i.stock,
     soldQuantity: i.soldQuantity,
     status: i.status,
+    rarity: i.rarity,
     mainImage: main ?? null,
   }
 }

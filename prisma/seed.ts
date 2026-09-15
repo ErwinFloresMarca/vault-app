@@ -58,12 +58,13 @@ async function main() {
 
   const cat = await prisma.collectionItem.upsert({
     where: { slug: 'gato' },
-    update: {},
+    update: { rarity: 'COMMON' },
     create: {
       collectionId: coll1.id,
       name: 'Gato',
       slug: 'gato',
       description: 'Un gato flexible articulado.',
+      rarity: 'COMMON',
       stock: 0,
       soldQuantity: 0,
       status: 'AVAILABLE',
@@ -72,12 +73,13 @@ async function main() {
   })
   const dog = await prisma.collectionItem.upsert({
     where: { slug: 'perro' },
-    update: {},
+    update: { rarity: 'RARE' },
     create: {
       collectionId: coll1.id,
       name: 'Perro',
       slug: 'perro',
       description: 'Un perro flexible articulado.',
+      rarity: 'RARE',
       stock: 0,
       soldQuantity: 0,
       status: 'AVAILABLE',
@@ -86,12 +88,13 @@ async function main() {
   })
   const fox = await prisma.collectionItem.upsert({
     where: { slug: 'zorro' },
-    update: {},
+    update: { rarity: 'EPIC' },
     create: {
       collectionId: coll1.id,
       name: 'Zorro',
       slug: 'zorro',
       description: 'Un zorro flexible articulado.',
+      rarity: 'EPIC',
       stock: 0,
       soldQuantity: 0,
       status: 'AVAILABLE',

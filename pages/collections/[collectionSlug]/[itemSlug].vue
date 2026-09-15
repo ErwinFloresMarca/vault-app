@@ -57,6 +57,7 @@ async function onToggle() {
           <div class="flex items-center gap-2">
             <StatusBadge :status="item.status" />
             <StockIndicator :stock="item.stock" />
+            <RarityBadge :rarity="item.rarity" />
           </div>
 
           <MarkdownContent v-if="item.description" :source="item.description" />

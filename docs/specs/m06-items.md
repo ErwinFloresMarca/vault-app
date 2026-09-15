@@ -12,20 +12,21 @@ pública. El stock se gestiona exclusivamente vía movimientos de inventario (m0
 - `GET /api/items/:slug` → `itemService.getBySlug`. Un visitante anónimo solo ve
   items `AVAILABLE` o `SOLD_OUT` (404 en otro estado). Devuelve `ItemDetail`:
   `collection {id,name,slug}`, `files[]`, `tags[]` (hoy siempre vacío),
-  `stock, soldQuantity, status, collected`.
+  `stock, soldQuantity, status, rarity, collected`.
 
 ## API admin (requiere ADMIN)
 - `GET /api/admin/items?collectionId=` — lista (colección, `_count.collectedBy`,
   files).
 - `POST /api/admin/items` — body `{ name*, collectionId*, description?,
-  fileIds?: string[], stockInicial?: number, status? }`. `status` default
-  `AVAILABLE`. Si `stockInicial > 0`, crea un `InventoryMovement` tipo `IN`
-  (reason `stock inicial`) y fija `stock` **dentro de una transacción**.
-  Responde 422 si falta `name`/`collectionId` o si la colección no existe.
+  fileIds?: string[], stockInicial?: number, status?, rarity? }`. `status` default
+  `AVAILABLE`; `rarity` (`COMMON|RARE|EPIC|LEGENDARY`) default `COMMON`. Si
+  `stockInicial > 0`, crea un `InventoryMovement` tipo `IN` (reason `stock inicial`)
+  y fija `stock` **dentro de una transacción**. Responde 422 si falta
+  `name`/`collectionId` o si la colección no existe.
 - `GET /api/admin/items/:id` — detalle con collection, files, movements y
   collectedBy.
 - `PUT /api/admin/items/:id` — `name` (regenera slug), `description`, `fileIds`
-  (reemplazo en transacción) y `status`. **No** modifica stock.
+  (reemplazo en transacción), `status` y `rarity`. **No** modifica stock.
 - `DELETE /api/admin/items/:id` — **soft delete**: `status = ARCHIVED`.
 
 ## Página

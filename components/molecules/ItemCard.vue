@@ -11,6 +11,7 @@
         <StockIndicator :stock="item.stock" class="shrink-0" />
       </div>
       <div class="mt-2 flex items-center gap-2">
+        <RarityBadge :rarity="item.rarity" />
         <UBadge v-if="item.collected" color="success" variant="subtle" icon="i-lucide-check">
           Conseguido
         </UBadge>
