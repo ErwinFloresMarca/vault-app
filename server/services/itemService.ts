@@ -145,9 +145,17 @@ export const itemService = {
         collection: { select: { id: true, name: true, slug: true } },
         files: { include: { file: true }, orderBy: { position: 'asc' } },
         collectedBy: { select: { userId: true } },
+        _count: { select: { collectedBy: true, wishlist: true } },
       },
     })
     if (!item) return null
+
+    const wishlisted = userId
+      ? !!(await prisma.userWishlistItem.findUnique({
+          where: { userId_itemId: { userId, itemId: item.id } },
+          select: { id: true },
+        }))
+      : false
 
     const base = toItemSummary(item)
     return {
@@ -156,6 +164,9 @@ export const itemService = {
       files: toFiles(item.files),
       tags: [],
       collected: !!userId && item.collectedBy.some((cb) => cb.userId === userId),
+      wishlisted,
+      collectedCount: item._count.collectedBy,
+      wishlistCount: item._count.wishlist,
     }
   },
 

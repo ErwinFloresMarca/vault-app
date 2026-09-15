@@ -67,7 +67,7 @@ base de datos relacional PostgreSQL dedicada (`vault-volt3d`) en el Postgres Doc
 | Inventario | m08-inventory.md | ☑ |
 | Dashboard | m09-dashboard.md | ☑ |
 | SEO | m10-seo.md | ☑ |
-| Volt Arcade | m11-volt-arcade.md | ◐ (fase 1 ☑; gamificación 3/4) |
+| Volt Arcade | m11-volt-arcade.md | ◐ (fase 1 ☑; gamificación 4/4 ☑) |
 
 ## Desviaciones respecto al plan original
 

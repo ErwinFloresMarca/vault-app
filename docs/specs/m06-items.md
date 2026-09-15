@@ -12,7 +12,14 @@ pública. El stock se gestiona exclusivamente vía movimientos de inventario (m0
 - `GET /api/items/:slug` → `itemService.getBySlug`. Un visitante anónimo solo ve
   items `AVAILABLE` o `SOLD_OUT` (404 en otro estado). Devuelve `ItemDetail`:
   `collection {id,name,slug}`, `files[]`, `tags[]` (hoy siempre vacío),
-  `stock, soldQuantity, status, rarity, collected`.
+  `stock, soldQuantity, status, rarity, collected`, más `wishlisted`,
+  `collectedCount` y `wishlistCount` (contador social).
+
+## Wishlist ("lo quiero")
+- `POST /api/items/:id/wishlist` / `DELETE /api/items/:id/wishlist` — requieren
+  `requireUser`; idempotentes (`upsert`/`deleteMany` sobre `@@unique([userId, itemId])`).
+- Se consume con `composables/useWishlistItem.ts`; el detalle muestra el botón
+  "Lo quiero" y los contadores "N lo tienen" / "N lo quieren".
 
 ## API admin (requiere ADMIN)
 - `GET /api/admin/items?collectionId=` — lista (colección, `_count.collectedBy`,

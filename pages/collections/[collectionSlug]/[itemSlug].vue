@@ -31,10 +31,22 @@ useHead({ link: [{ rel: 'canonical', href: canonical }] })
 
 const { isAuthenticated } = useAuthUser()
 const { busy, toggle } = useCollectItem()
+const { busy: wishlistBusy, toggle: toggleWishlist } = useWishlistItem()
 const toast = useToast()
 
 const collected = ref(item.value?.collected ?? false)
 const celebrate = ref(false)
+const wishlisted = ref(item.value?.wishlisted ?? false)
+const wishlistCount = ref(item.value?.wishlistCount ?? 0)
+
+async function onWishlist() {
+  if (!item.value) return
+  const was = wishlisted.value
+  const ok = await toggleWishlist(item.value.id, was)
+  if (!ok) return
+  wishlisted.value = !was
+  wishlistCount.value += was ? -1 : 1
+}
 
 async function checkCollectionCompleted() {
   try {
@@ -123,6 +135,28 @@ async function onToggle() {
             <UButton to="/login" variant="subtle" icon="i-lucide-log-in">
               Inicia sesión para marcar este elemento como conseguido
             </UButton>
+          </div>
+
+          <div v-if="isAuthenticated" class="pt-2">
+            <UButton
+              :color="wishlisted ? 'error' : 'neutral'"
+              :variant="wishlisted ? 'solid' : 'outline'"
+              icon="i-lucide-heart"
+              :loading="wishlistBusy"
+              :disabled="wishlistBusy"
+              @click="onWishlist"
+            >
+              {{ wishlisted ? 'En mi lista' : 'Lo quiero' }}
+            </UButton>
+          </div>
+
+          <div class="flex items-center gap-4 pt-2 text-xs text-muted">
+            <span class="inline-flex items-center gap-1">
+              <UIcon name="i-lucide-users" /> {{ item.collectedCount ?? 0 }} lo tienen
+            </span>
+            <span class="inline-flex items-center gap-1">
+              <UIcon name="i-lucide-heart" /> {{ wishlistCount }} lo quieren
+            </span>
           </div>
         </div>
       </div>

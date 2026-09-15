@@ -56,6 +56,9 @@ export interface ItemDetail extends ItemSummary {
   }
   files: FileDto[]
   tags: TagDto[]
+  wishlisted?: boolean
+  collectedCount?: number
+  wishlistCount?: number
 }
 
 export interface CollectionProgress {
