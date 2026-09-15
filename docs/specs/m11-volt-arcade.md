@@ -54,5 +54,6 @@ paleta con más energía (Volt Arcade), gamificación y catálogo/detalle más r
 - Fase 1 (tokens): ☑ `SEL-45`.
 - Fase 2 (gamificación): rareza ☑ `SEL-49`; anillo de progreso + stats ☑ `SEL-50`;
   animación al conseguir + logro ☑ `SEL-51`; wishlist + contador social ☑ `SEL-52`.
-- Fase 3 (catálogo): `SEL-47` pendiente.
+- Fase 3 (catálogo): ☑ `SEL-47` (hero con collage, cards con fallback/progreso,
+  grid denso, filtros sticky + contador + orden).
 - Fase 4 (detalle): `SEL-48` pendiente.

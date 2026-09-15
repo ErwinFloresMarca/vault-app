@@ -95,7 +95,7 @@ async function computeProgress(collectionId: string, userId: string | undefined)
 }
 
 export const collectionService = {
-  async listPublic(query: { tag?: string; q?: string; page?: number; pageSize?: number } = {}) {
+  async listPublic(query: { tag?: string; q?: string; page?: number; pageSize?: number; sort?: string } = {}, userId?: string) {
     const page = Math.max(1, query.page ?? 1)
     const pageSize = Math.min(48, Math.max(1, query.pageSize ?? 12))
 
@@ -109,11 +109,18 @@ export const collectionService = {
       ]
     }
 
+    const orderBy: Prisma.CollectionOrderByWithRelationInput[] =
+      query.sort === 'name'
+        ? [{ name: 'asc' }]
+        : query.sort === 'recent'
+          ? [{ createdAt: 'desc' }]
+          : [{ orderIndex: 'asc' }, { createdAt: 'asc' }]
+
     const [total, collections] = await Promise.all([
       prisma.collection.count({ where }),
       prisma.collection.findMany({
         where,
-        orderBy: [{ orderIndex: 'asc' }, { createdAt: 'asc' }],
+        orderBy,
         skip: (page - 1) * pageSize,
         take: pageSize,
         include: {
@@ -124,7 +131,34 @@ export const collectionService = {
         },
       }),
     ])
-    return { data: collections.map(toCollectionSummary), total, page, pageSize }
+
+    let collectedSet = new Set<string>()
+    if (userId && collections.length) {
+      const itemIds = collections.flatMap((c) => c.items.map((i) => i.id))
+      const rows = itemIds.length
+        ? await prisma.userCollectedItem.findMany({
+            where: { userId, itemId: { in: itemIds } },
+            select: { itemId: true },
+          })
+        : []
+      collectedSet = new Set(rows.map((r) => r.itemId))
+    }
+
+    const data = collections.map((c) => {
+      const summary = toCollectionSummary(c)
+      if (userId) {
+        const itemTotal = c.items.length
+        const collected = c.items.filter((i) => collectedSet.has(i.id)).length
+        summary.progress = {
+          total: itemTotal,
+          collected,
+          percent: itemTotal === 0 ? 0 : Math.round((collected / itemTotal) * 100),
+        }
+      }
+      return summary
+    })
+
+    return { data, total, page, pageSize }
   },
 
   async listTags(): Promise<{ id: string; name: string; slug: string }[]> {

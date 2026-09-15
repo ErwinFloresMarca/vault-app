@@ -11,11 +11,19 @@ useSeoMeta({
 const search = ref('')
 const debouncedSearch = ref('')
 const selectedTag = ref('all')
+const sort = ref('featured')
 const page = ref(1)
+
+const sortItems = [
+  { label: 'Destacados', value: 'featured' },
+  { label: 'Nombre A-Z', value: 'name' },
+  { label: 'Más recientes', value: 'recent' },
+]
 
 const query = computed(() => ({
   q: debouncedSearch.value || undefined,
   tag: selectedTag.value !== 'all' ? selectedTag.value : undefined,
+  sort: sort.value,
   page: page.value,
 }))
 
@@ -59,6 +67,7 @@ watch(search, (value) => {
   }, 300)
 })
 watch(selectedTag, () => { page.value = 1 })
+watch(sort, () => { page.value = 1 })
 </script>
 
 <template>
@@ -67,17 +76,26 @@ watch(selectedTag, () => { page.value = 1 })
 
     <UPageBody>
       <UContainer>
-        <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <UInput
-            v-model="search"
-            icon="i-lucide-search"
-            placeholder="Buscar colección..."
-            class="w-full sm:max-w-xs"
-          />
-          <USelect v-model="selectedTag" :items="tagItems" class="w-full sm:w-60" />
+        <div class="sticky top-16 z-10 -mx-4 mb-6 border-b border-default bg-default/80 px-4 py-3 backdrop-blur">
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <UInput
+              v-model="search"
+              icon="i-lucide-search"
+              placeholder="Buscar colección..."
+              class="w-full sm:max-w-xs"
+            />
+            <div class="flex items-center gap-3">
+              <USelect v-model="selectedTag" :items="tagItems" class="w-full sm:w-52" />
+              <USelect v-model="sort" :items="sortItems" class="w-full sm:w-44" />
+            </div>
+          </div>
         </div>
 
-        <div v-if="pending" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <p v-if="!pending && !error" class="mb-4 text-sm text-muted">
+          {{ total }} {{ total === 1 ? 'colección' : 'colecciones' }}
+        </p>
+
+        <div v-if="pending" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           <USkeleton v-for="i in 6" :key="i" class="h-64 rounded-lg" />
         </div>
 

@@ -7,11 +7,12 @@ CRUD de colecciones (admin) + API pública + páginas. Una colección tiene slug
 único, descripción Markdown, tags y archivos (portada + galería), y muchos items.
 
 ## API pública
-- `GET /api/collections?tag=&q=&page=&pageSize=` → `collectionService.listPublic`.
-  Solo `PUBLISHED`, orden `orderIndex asc, createdAt asc`, paginado (default
-  `page=1`, `pageSize=12`, máx 48). `tag` filtra por slug de tag; `q` busca en
-  `name`/`description` (insensible a mayúsculas). Devuelve
-  `{ success, data: CollectionSummary[], total, page, pageSize }`.
+- `GET /api/collections?tag=&q=&sort=&page=&pageSize=` → `collectionService.listPublic`.
+  Solo `PUBLISHED`, paginado (default `page=1`, `pageSize=12`, máx 48). `tag`
+  filtra por slug de tag; `q` busca en `name`/`description` (insensible);
+  `sort` = `featured` (default, `orderIndex`), `name` o `recent`. Devuelve
+  `{ success, data: CollectionSummary[], total, page, pageSize }`. Con sesión,
+  cada `CollectionSummary` incluye `progress { total, collected, percent }`.
 - `GET /api/tags` → todas las tags (`id, name, slug`) ordenadas por nombre.
 - `GET /api/collections/:slug` → `getBySlug(slug, userId)`. Un visitante anónimo
   solo ve `PUBLISHED` (404 si no lo está). Devuelve `CollectionWithItems`:

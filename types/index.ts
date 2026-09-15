@@ -26,6 +26,7 @@ export interface CollectionSummary {
   coverImage?: FileDto | null
   tags: TagDto[]
   itemCount: number
+  progress?: { total: number; collected: number; percent: number } | null
 }
 
 export interface CollectionWithItems extends CollectionSummary {
