@@ -1,9 +1,14 @@
 <script setup lang="ts">
+import type { UserStats } from '~/types'
+
 useSeoMeta({
   title: 'Mi colección — Volt Vault',
 })
 
 const { user } = useAuthUser()
+
+const { data: statsData } = await useFetch<{ success: boolean; data: UserStats }>('/api/me/stats')
+const stats = computed<UserStats | null>(() => statsData.value?.data ?? null)
 
 const { data, pending, error } = await useFetch<{ success: boolean; total: number; data: Array<{
   id: string
@@ -23,6 +28,14 @@ const items = computed(() => data.value?.data ?? [])
 
     <UPageBody>
       <UContainer>
+        <div v-if="stats" class="mb-8 flex flex-wrap items-center gap-6 rounded-lg border border-muted p-4">
+          <ProgressRing :percent="stats.percent" :size="96" label="global" />
+          <div class="text-sm">
+            <p>{{ stats.collectedItems }} / {{ stats.totalItems }} conseguidos</p>
+            <p class="text-muted">{{ stats.completedCollections }} de {{ stats.collections }} colecciones completadas</p>
+          </div>
+        </div>
+
         <div v-if="pending" class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           <USkeleton v-for="i in 8" :key="i" class="h-48 rounded-lg" />
         </div>

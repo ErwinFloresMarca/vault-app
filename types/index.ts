@@ -64,3 +64,11 @@ export interface CollectionProgress {
   percent: number
   collectedItemIds: string[]
 }
+
+export interface UserStats {
+  totalItems: number
+  collectedItems: number
+  percent: number
+  collections: number
+  completedCollections: number
+}

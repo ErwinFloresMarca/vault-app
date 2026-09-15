@@ -2,7 +2,7 @@ import type { H3Event } from 'h3'
 import { prisma } from '~/server/utils/db'
 import { requireAdmin } from '~/server/utils/auth'
 import type { Prisma } from '@gen-prisma/client'
-import type { CollectionSummary, CollectionWithItems, ItemSummary, CollectionProgress, CollectionStatus, FileDto } from '~/types'
+import type { CollectionSummary, CollectionWithItems, ItemSummary, CollectionProgress, CollectionStatus, FileDto, UserStats } from '~/types'
 
 type CollectionSummaryInclude = {
   _count: { select: { items: true } }
@@ -132,6 +132,33 @@ export const collectionService = {
       orderBy: { name: 'asc' },
       select: { id: true, name: true, slug: true },
     })
+  },
+
+  async getUserStats(userId: string): Promise<UserStats> {
+    const collections = await prisma.collection.findMany({
+      where: { status: 'PUBLISHED' },
+      select: { id: true, items: { where: { status: { not: 'ARCHIVED' } }, select: { id: true } } },
+    })
+    const allItemIds = collections.flatMap((c) => c.items.map((i) => i.id))
+    const collected = allItemIds.length
+      ? await prisma.userCollectedItem.findMany({
+          where: { userId, itemId: { in: allItemIds } },
+          select: { itemId: true },
+        })
+      : []
+    const collectedSet = new Set(collected.map((c) => c.itemId))
+    const totalItems = allItemIds.length
+    const collectedItems = collectedSet.size
+    const completedCollections = collections.filter(
+      (c) => c.items.length > 0 && c.items.every((i) => collectedSet.has(i.id)),
+    ).length
+    return {
+      totalItems,
+      collectedItems,
+      percent: totalItems === 0 ? 0 : Math.round((collectedItems / totalItems) * 100),
+      collections: collections.length,
+      completedCollections,
+    }
   },
 
   async getBySlug(slug: string, userId?: string): Promise<CollectionWithItems | null> {

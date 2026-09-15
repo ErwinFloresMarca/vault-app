@@ -51,13 +51,18 @@ useHead({ link: [{ rel: 'canonical', href: canonical }] })
     <UPageBody>
       <UContainer class="space-y-8">
         <template v-if="collection.progress">
-          <div class="rounded-lg border border-muted p-4">
-            <div class="flex items-center justify-between text-sm">
-              <span class="font-medium">Tu progreso</span>
-              <span class="text-muted">{{ collection.progress.collected }} / {{ collection.progress.total }} conseguidos</span>
+          <div class="flex items-center gap-4 rounded-lg border border-muted p-4">
+            <ProgressRing :percent="collection.progress.percent" :size="88" label="completado" />
+            <div class="text-sm">
+              <p>Tu progreso</p>
+              <p class="text-muted">{{ collection.progress.collected }} / {{ collection.progress.total }} conseguidos</p>
+              <p
+                v-if="collection.progress.percent === 100"
+                class="mt-1 text-[11px] uppercase tracking-wide text-primary"
+              >
+                Colección completada
+              </p>
             </div>
-            <UProgress :value="collection.progress.percent" class="mt-2" />
-            <p class="mt-1 text-xs text-muted">Colección completada: {{ collection.progress.percent }}%</p>
           </div>
         </template>
 
