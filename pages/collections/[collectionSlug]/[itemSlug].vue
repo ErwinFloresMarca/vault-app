@@ -89,7 +89,7 @@ async function onToggle() {
 
 <template>
   <UPage v-if="item">
-    <UContainer class="py-8">
+    <UContainer class="py-8 pb-28 lg:pb-8">
       <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
         <ItemGallery :files="item.files" />
 
@@ -98,7 +98,7 @@ async function onToggle() {
             ← {{ item.collection.name }}
           </NuxtLink>
 
-          <h1 class="text-3xl font-bold">{{ item.name }}</h1>
+          <h1 class="text-3xl">{{ item.name }}</h1>
 
           <div class="flex items-center gap-2">
             <StatusBadge :status="item.status" />
@@ -161,6 +161,36 @@ async function onToggle() {
         </div>
       </div>
     </UContainer>
+
+    <div class="fixed inset-x-0 bottom-0 z-20 border-t border-default bg-default/95 p-3 backdrop-blur lg:hidden">
+      <div class="flex items-center gap-2">
+        <template v-if="isAuthenticated">
+          <UButton
+            class="flex-1"
+            :color="collected ? 'success' : 'primary'"
+            :icon="collected ? 'i-lucide-check-check' : 'i-lucide-check'"
+            :loading="busy"
+            :disabled="busy"
+            @click="onToggle"
+          >
+            {{ collected ? 'Conseguido' : 'Conseguir' }}
+          </UButton>
+          <UButton
+            :color="wishlisted ? 'error' : 'neutral'"
+            :variant="wishlisted ? 'solid' : 'outline'"
+            icon="i-lucide-heart"
+            :loading="wishlistBusy"
+            :disabled="wishlistBusy"
+            @click="onWishlist"
+          >
+            {{ wishlisted ? 'En mi lista' : 'Lo quiero' }}
+          </UButton>
+        </template>
+        <UButton v-else to="/login" variant="subtle" icon="i-lucide-log-in" class="flex-1">
+          Inicia sesión
+        </UButton>
+      </div>
+    </div>
   </UPage>
 
   <div v-else class="py-10">

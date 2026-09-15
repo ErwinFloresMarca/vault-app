@@ -37,9 +37,11 @@ pública. El stock se gestiona exclusivamente vía movimientos de inventario (m0
 - `DELETE /api/admin/items/:id` — **soft delete**: `status = ARCHIVED`.
 
 ## Página
-`/collections/[collectionSlug]/[itemSlug]` — galería (`ItemGallery`), badge de
-estado (`StatusBadge`), indicador de stock (`StockIndicator`), descripción
-Markdown y botón "Conseguir"/"Conseguido" (`useCollectItem`) o login si es anónimo.
+`/collections/[collectionSlug]/[itemSlug]` — galería `ItemGallery` con **thumbnails
+y lightbox** (clic para ampliar; prev/next), badges de estado/rareza, indicador de
+stock, descripción Markdown, botón "Conseguir"/"Conseguido" (`useCollectItem`, con
+celebración), wishlist ("Lo quiero") y contadores sociales. En móvil hay una **barra
+CTA sticky** inferior (`lg:hidden`).
 
 ## Reglas
 - Slug único con sufijo `-2`, `-3`… si colisiona.

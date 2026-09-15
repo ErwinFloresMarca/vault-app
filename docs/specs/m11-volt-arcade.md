@@ -56,4 +56,5 @@ paleta con más energía (Volt Arcade), gamificación y catálogo/detalle más r
   animación al conseguir + logro ☑ `SEL-51`; wishlist + contador social ☑ `SEL-52`.
 - Fase 3 (catálogo): ☑ `SEL-47` (hero con collage, cards con fallback/progreso,
   grid denso, filtros sticky + contador + orden).
-- Fase 4 (detalle): `SEL-48` pendiente.
+- Fase 4 (detalle): ☑ `SEL-48` (galería con thumbnails/lightbox + CTA sticky móvil).
+  **Volt Arcade completo (fases 1-4).**
