@@ -41,6 +41,12 @@ percent, collectedItemIds }`), solo cuando hay sesión.
 - Las operaciones solo afectan al usuario de la sesión.
 - La unicidad `(userId, itemId)` garantiza colección sin duplicados.
 
+## Feedback al conseguir
+Al marcar un item (`POST`) el detalle muestra un `CollectedBurst` (confeti CSS) y un
+toast “¡Conseguido!”; si tras la acción la colección llega al 100%, aparece el logro
+“¡Colección completada!” (toast con trofeo). Respeta `prefers-reduced-motion`
+(`animate-pop`/`vv-piece` se desactivan).
+
 ## Success Criteria (verificado)
 - Un usuario marca/desmarca items y ve su lista en `/me`.
 - La página de colección muestra progreso en % y `collected` por item.

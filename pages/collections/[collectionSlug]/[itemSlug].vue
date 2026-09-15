@@ -31,13 +31,47 @@ useHead({ link: [{ rel: 'canonical', href: canonical }] })
 
 const { isAuthenticated } = useAuthUser()
 const { busy, toggle } = useCollectItem()
+const toast = useToast()
 
 const collected = ref(item.value?.collected ?? false)
+const celebrate = ref(false)
+
+async function checkCollectionCompleted() {
+  try {
+    const res = await $fetch<{ data: { progress?: { percent: number } | null } }>(
+      `/api/collections/${collectionSlug.value}`,
+    )
+    if (res.data.progress?.percent === 100) {
+      toast.add({
+        title: '¡Colección completada!',
+        description: 'Has conseguido todos los items de esta colección.',
+        icon: 'i-lucide-trophy',
+        color: 'primary',
+        duration: 6000,
+      })
+    }
+  } catch {
+    // El logro es opcional: si falla la comprobación no rompemos la acción.
+  }
+}
 
 async function onToggle() {
   if (!item.value) return
-  const ok = await toggle(item.value.id, collected.value)
-  if (ok) collected.value = !collected.value
+  const wasCollected = collected.value
+  const ok = await toggle(item.value.id, wasCollected)
+  if (!ok) return
+  collected.value = !wasCollected
+  if (!wasCollected) {
+    celebrate.value = true
+    setTimeout(() => { celebrate.value = false }, 800)
+    toast.add({
+      title: '¡Conseguido!',
+      description: item.value.name,
+      icon: 'i-lucide-check-check',
+      color: 'success',
+    })
+    await checkCollectionCompleted()
+  }
 }
 </script>
 
@@ -62,7 +96,8 @@ async function onToggle() {
 
           <MarkdownContent v-if="item.description" :source="item.description" />
 
-          <div v-if="isAuthenticated" class="pt-2">
+          <div v-if="isAuthenticated" class="relative inline-block pt-2">
+            <CollectedBurst v-if="celebrate" />
             <UButton
               v-if="!collected"
               icon="i-lucide-check"
@@ -74,13 +109,14 @@ async function onToggle() {
             </UButton>
             <UButton
               v-else
+              :class="{ 'animate-pop': celebrate }"
               color="success"
               icon="i-lucide-check-check"
               :loading="busy"
               :disabled="busy"
               @click="onToggle"
             >
-              ✓ Conseguido
+              Conseguido
             </UButton>
           </div>
           <div v-else class="pt-2">
