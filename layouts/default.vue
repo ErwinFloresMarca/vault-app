@@ -2,12 +2,8 @@
   <div class="min-h-screen flex flex-col">
     <UHeader>
       <template #title>
-        <div class="flex items-center gap-2">
-          <div class="flex items-center justify-center rounded-lg bg-primary text-primary-foreground h-8 w-8">
-            <Icon name="i-lucide-box" class="h-5 w-5" />
-          </div>
-          <span class="font-semibold text-xl tracking-tight">Volt Vault</span>
-        </div>
+        <img src="/icon-192.png" alt="" class="h-8 w-8">
+        <span class="text-xl tracking-tight">Volt Vault</span>
       </template>
 
       <UNavigationMenu :items="navItems" />
@@ -38,12 +34,15 @@
 
     <UFooter>
       <template #left>
-        <p class="text-muted text-sm">
-          © {{ new Date().getFullYear() }} Volt Vault · Volt-3D. Coleccionables impresos en 3D.
-        </p>
+        <div class="flex items-center gap-2">
+          <img src="/icon-192.png" alt="" class="h-5 w-5">
+          <p class="text-muted text-sm">
+            © {{ new Date().getFullYear() }} Volt Vault · Volt-3D. Coleccionables impresos en 3D.
+          </p>
+        </div>
       </template>
       <template #right>
-        <UButton icon="i-lucide-box" color="neutral" variant="ghost" to="/collections" label="Colecciones" />
+        <UButton icon="i-lucide-library" color="neutral" variant="ghost" to="/collections" label="Colecciones" />
         <NuxtLink to="/privacy" class="text-muted text-sm hover:text-default">
           Privacidad
         </NuxtLink>
