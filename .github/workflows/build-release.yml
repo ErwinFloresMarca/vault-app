@@ -75,6 +75,7 @@ jobs:
       - name: Build con preset node-server
         env:
           NITRO_PRESET: node-server
+          NODE_OPTIONS: --max-old-space-size=4096
         run: pnpm build
 
       - name: Empaquetar .output
