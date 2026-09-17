@@ -15,6 +15,7 @@ Stack: Nuxt 4.4, Vue 3.5, TypeScript 5.9, Prisma 7 (PostgreSQL + driver adapter
 - `pnpm db:migrate` / `pnpm db:seed` / `pnpm db:reset`
 - `pnpm exec eslint .` — lint (NO existe script `lint` en package.json)
 - `pnpm typecheck` — vue-tsc (script `typecheck`)
+- `pnpm release` / `pnpm deploy` — release + deploy a la VPS (`docs/DEPLOY.md`)
 - CI en `.github/workflows/ci.yml` (lint + typecheck + build). Sin tests unitarios.
 
 Arranque en frío: `pnpm install` → `cp .env.example .env` (rellenar `DATABASE_URL`,
@@ -122,12 +123,10 @@ Prisma (`server/utils/db.ts`) → DB. Mantén esta dirección.
    navega, revisa consola y captura screenshot (no hay tests).
 4. Cierra la tarea: commit + push + estado en Linear (ver “Cierre de tarea”).
 
-## Tareas pendientes (Linear)
+## Linear
 
-Proyecto **Volt Vault** en Linear (equipo `SEL`). Follow-ups abiertos:
-`SEL-32` cablear middleware auth/admin · `SEL-33` errores de eslint en
-`server/services` · `SEL-34` tokens de `DESIGN.md` en `assets/css/main.css`.
-Módulos ya implementados: `docs/specs/` (as-built) y `SEL-22`…`SEL-31`.
+Proyecto **Volt Vault** (equipo `SEL`): https://linear.app/self-proyects/project/volt-vault-65fb0f09e1fb
+Specs as-built en `docs/specs/`. Deploy en `docs/DEPLOY.md`.
 
 ## Skills globales de uso obligatorio
 

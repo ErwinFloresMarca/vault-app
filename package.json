@@ -1,7 +1,8 @@
 {
-  "name": "nuxt-app",
+  "name": "vault-app",
   "private": true,
   "type": "module",
+  "version": "0.1.0",
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
@@ -12,8 +13,11 @@
     "e2e": "node scripts/e2e-auth.mjs",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
+    "db:migrate:deploy": "prisma migrate deploy",
     "db:seed": "tsx prisma/seed.ts",
-    "db:reset": "prisma migrate reset"
+    "db:reset": "prisma migrate reset",
+    "release": "bash scripts/release.sh",
+    "deploy": "bash deploy.sh"
   },
   "dependencies": {
     "@nuxt/content": "3.14.0",

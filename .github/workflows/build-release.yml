@@ -1,0 +1,162 @@
+name: Build & Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-release
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.tag.outputs.tag }}
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      NUXT_SESSION_PASSWORD: ${{ secrets.NUXT_SESSION_PASSWORD }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Definir versión
+        id: version
+        run: |
+          if [ "${{ github.ref_type }}" = "tag" ]; then
+            echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+          else
+            echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Instalar dependencias
+        run: pnpm install --frozen-lockfile
+
+      - name: Verificar DATABASE_URL
+        run: |
+          if [ -z "${DATABASE_URL}" ]; then
+            echo "::error::Falta el secret DATABASE_URL; no se pueden aplicar migraciones."
+            exit 1
+          fi
+          node -e "const u=new URL(process.env.DATABASE_URL); console.log('Migrando DB -> host='+u.hostname+':'+(u.port||'5432')+' db='+u.pathname.replace(/^\//,''))"
+
+      - name: Migraciones de base de datos
+        run: pnpm db:migrate:deploy
+
+      - name: Estado de migraciones
+        run: pnpm exec prisma migrate status
+
+      - name: Generar Prisma Client
+        run: pnpm db:generate
+
+      - name: Lint
+        run: pnpm exec eslint .
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Build con preset node-server
+        env:
+          NITRO_PRESET: node-server
+        run: pnpm build
+
+      - name: Empaquetar .output
+        run: tar -czf vault-app-v${{ steps.version.outputs.version }}.tar.gz .output
+
+      - name: Subir artifact para deploy
+        uses: actions/upload-artifact@v4
+        with:
+          name: vault-app-output
+          path: vault-app-v${{ steps.version.outputs.version }}.tar.gz
+          retention-days: 7
+
+      - name: Definir tag de release
+        id: tag
+        run: |
+          if [ "${{ github.event_name }}" = "push" ] && [ "${{ github.ref_type }}" = "tag" ]; then
+            echo "tag=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=deploy-$(date +%Y%m%d-%H%M%S)-$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publicar release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: v${{ steps.version.outputs.version }}
+          body: |
+            Artifact de producción (.output) para deploy en VPS.
+            - Versión: ${{ steps.version.outputs.version }}
+            - Commit: ${{ github.sha }}
+            - Trigger: ${{ github.event_name }}
+          files: vault-app-v${{ steps.version.outputs.version }}.tar.gz
+          fail_on_unmatched_files: true
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      VPS_HOST: ${{ secrets.VPS_HOST }}
+      VPS_USER: ${{ secrets.VPS_USER }}
+      VPS_PORT: ${{ secrets.VPS_PORT || '22' }}
+      VPS_KEY: ${{ secrets.VPS_SSH_KEY }}
+      VPS_PASSPHRASE: ${{ secrets.VPS_SSH_KEY_PASSPHRASE }}
+    steps:
+      - name: Descargar artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: vault-app-output
+          path: .
+
+      - name: Copiar a la VPS
+        if: ${{ env.VPS_HOST != '' && env.VPS_KEY != '' }}
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ env.VPS_HOST }}
+          username: ${{ env.VPS_USER }}
+          port: ${{ env.VPS_PORT }}
+          key: ${{ env.VPS_KEY }}
+          passphrase: ${{ env.VPS_PASSPHRASE }}
+          source: vault-app-v${{ needs.build.outputs.version }}.tar.gz
+          target: /tmp
+
+      - name: Desplegar en la VPS
+        if: ${{ env.VPS_HOST != '' && env.VPS_KEY != '' }}
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ env.VPS_HOST }}
+          username: ${{ env.VPS_USER }}
+          port: ${{ env.VPS_PORT }}
+          key: ${{ env.VPS_KEY }}
+          passphrase: ${{ env.VPS_PASSPHRASE }}
+          script: |
+            set -e
+            cd /var/www/vault-app
+            ARCHIVE="/tmp/vault-app-v${{ needs.build.outputs.version }}.tar.gz"
+            test -f "$ARCHIVE"
+            rm -rf current/.output
+            tar -xzf "$ARCHIVE" -C current
+            rm -f /tmp/vault-app-*.tar.gz
+            pm2 restart vault-app --update-env || pm2 start current/ecosystem.config.cjs
+            pm2 save
+            sleep 3
+            curl -sf http://127.0.0.1:3001/ > /dev/null && echo "Health check OK" || { echo "Health check FALLIDO"; exit 1; }
