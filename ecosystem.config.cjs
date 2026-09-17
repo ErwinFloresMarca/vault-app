@@ -11,8 +11,8 @@ module.exports = {
       max_memory_restart: '512M',
       env: {
         NODE_ENV: 'production',
-        // Puerto distinto al de coin-holder (3000) para convivir en la misma VPS.
-        PORT: 3001,
+        // Puerto distinto al de coin-holder (3000) y sindicato-api (3001).
+        PORT: 3010,
       },
       autorestart: true,
       exp_backoff_restart_delay: 100,

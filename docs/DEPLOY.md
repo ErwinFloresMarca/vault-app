@@ -2,7 +2,7 @@
 
 Mismo patrón que **coin-holder-generator**: build en GitHub Actions → release con
 el `.output` en tar.gz → deploy a la VPS con PM2. Convive con coin-holder en la
-misma VPS, usando **puerto 3001** (coin-holder usa 3000) y la **misma Postgres**
+misma VPS, usando **puerto 3010** (coin-holder usa 3000) y la **misma Postgres**
 contenedor `coin-holder-db` (base `vault-volt3d`).
 
 ## Layout en la VPS
@@ -17,7 +17,7 @@ contenedor `coin-holder-db` (base `vault-volt3d`).
 ```
 
 - PM2 app: **`vault-app`** (`ecosystem.config.cjs`, `.output/server/index.mjs`,
-  `--env-file=.env`, `PORT=3001`).
+  `--env-file=.env`, `PORT=3010`).
 - Postgres: contenedor `coin-holder-db` (`docker-compose.yml` de coin-holder),
   `127.0.0.1:5432`. BD dedicada `vault-volt3d`.
 
@@ -55,7 +55,7 @@ pnpm release patch   # gates: main limpio, al día, lint+typecheck+build; bump+t
 La CI (`build-release.yml`, on tag `v*` o `workflow_dispatch`) ejecuta:
 migraciones (`prisma migrate deploy`) → generate → lint → typecheck → build
 (`NITRO_PRESET=node-server`) → publica release `vault-app-v<version>.tar.gz` →
-SCP + SSH a la VPS → `pm2 restart vault-app` → health check `127.0.0.1:3001`.
+SCP + SSH a la VPS → `pm2 restart vault-app` → health check `127.0.0.1:3010`.
 
 Deploy manual en la VPS (sin CI):
 
@@ -71,7 +71,7 @@ server {
     server_name vault.example.com;   # ajustar al dominio real
 
     location / {
-        proxy_pass http://127.0.0.1:3001;
+        proxy_pass http://127.0.0.1:3010;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;

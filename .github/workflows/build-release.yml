@@ -159,4 +159,4 @@ jobs:
             pm2 restart vault-app --update-env || pm2 start current/ecosystem.config.cjs
             pm2 save
             sleep 3
-            curl -sf http://127.0.0.1:3001/ > /dev/null && echo "Health check OK" || { echo "Health check FALLIDO"; exit 1; }
+            curl -sf http://127.0.0.1:3010/ > /dev/null && echo "Health check OK" || { echo "Health check FALLIDO"; exit 1; }
