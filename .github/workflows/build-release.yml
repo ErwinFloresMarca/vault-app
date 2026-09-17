@@ -22,7 +22,6 @@ jobs:
       tag: ${{ steps.tag.outputs.tag }}
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      NUXT_SESSION_PASSWORD: ${{ secrets.NUXT_SESSION_PASSWORD }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
