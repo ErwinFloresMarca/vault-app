@@ -144,7 +144,7 @@ watch(item, async (val) => {
     form.type = 'IN'
     form.quantity = 1
     form.reason = ''
-    form.customerUserId = undefined
+    form.customerUserId = ''
     form.customerName = ''
     form.customerEmail = ''
     formError.value = ''
@@ -187,7 +187,7 @@ async function submitMovement() {
     })
     form.quantity = 1
     form.reason = ''
-    form.customerUserId = undefined
+    form.customerUserId = ''
     form.customerName = ''
     form.customerEmail = ''
     await refreshMovements()

@@ -14,8 +14,9 @@ Stack: Nuxt 4.4, Vue 3.5, TypeScript 5.9, Prisma 7 (PostgreSQL + driver adapter
 - `pnpm db:generate` — regenera el cliente en `generated/prisma` (OBLIGATORIO tras clonar o editar el schema)
 - `pnpm db:migrate` / `pnpm db:seed` / `pnpm db:reset`
 - `pnpm exec eslint .` — lint (NO existe script `lint` en package.json)
+- `pnpm typecheck` — vue-tsc (script `typecheck`)
 - `pnpm exec playwright ...` — Playwright 1.63 (devDependency; browsers ya descargados)
-- No hay tests unitarios ni script de typecheck configurados.
+- CI en `.github/workflows/ci.yml` (lint + typecheck + build). Sin tests unitarios.
 
 Arranque en frío: `pnpm install` → `cp .env.example .env` (rellenar `DATABASE_URL`,
 OAuth, `NUXT_SESSION_PASSWORD`) → `pnpm db:generate` → `pnpm db:migrate` (o
@@ -115,7 +116,7 @@ Prisma (`server/utils/db.ts`) → DB. Mantén esta dirección.
 
 ## Verificación antes de terminar
 
-1. `pnpm exec eslint .`
+1. `pnpm exec eslint .` y `pnpm typecheck`
 2. `pnpm db:generate` si tocaste `schema.prisma`
 3. `pnpm dev` y verifica la ruta afectada con Playwright (MCP `playwright` o CLI):
    navega, revisa consola y captura screenshot (no hay tests).

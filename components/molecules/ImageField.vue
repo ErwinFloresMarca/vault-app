@@ -13,7 +13,7 @@
           <UButton icon="i-lucide-upload" :label="fileId ? 'Reemplazar' : 'Subir imagen'" :loading="uploading" @click="triggerUpload" />
           <UButton v-if="fileId" icon="i-lucide-x" variant="ghost" color="error" size="sm" label="Quitar" @click="remove" />
         </div>
-        <UButton v-if="existingFiles.length" icon="i-lucide-images" variant="ghost" color="neutral" size="xs" label="Elegir de la galería" @click="galleryOpen = true" />
+        <UButton v-if="existingFiles.length" icon="i-lucide-images" variant="ghost" color="neutral" size="xs" label="Elegir de la galería" @click="() => { galleryOpen = true }" />
         <p class="text-xs text-muted">JPG, PNG, WebP o GIF · máx. 5 MB</p>
         <p v-if="formError" class="text-xs text-(--ui-error)">{{ formError }}</p>
       </div>

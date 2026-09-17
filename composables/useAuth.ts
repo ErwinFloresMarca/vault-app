@@ -31,7 +31,7 @@ export const useAuthUser = () => {
 
   const logout = async () => {
     await $fetch('/api/auth/logout', { method: 'POST' })
-    user.value = null
+    user.value = undefined
     await navigateTo('/')
   }
 

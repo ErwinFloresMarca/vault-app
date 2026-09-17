@@ -212,7 +212,7 @@ function resetState() {
   Object.keys(quantities).forEach((k) => Reflect.deleteProperty(quantities, k))
   form.type = 'IN'
   form.reason = ''
-  form.customerUserId = undefined
+  form.customerUserId = ''
   form.customerName = ''
   form.customerEmail = ''
   formError.value = ''

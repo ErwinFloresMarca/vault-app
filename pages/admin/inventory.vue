@@ -153,7 +153,7 @@ async function submitBatch() {
     })
     batchLines.value = []
     batchForm.reason = ''
-    batchForm.customerUserId = undefined
+    batchForm.customerUserId = ''
     batchForm.customerName = ''
     batchForm.customerEmail = ''
     await refreshBatches()
