@@ -43,9 +43,10 @@ Migraciones aplicadas:
   (userId/name/email), con FK opcionales a `User`.
 
 ## Seed (`prisma/seed.ts`)
-Idempotente (upserts): 6 tags, 2 colecciones PUBLISHED ("Animalitos Flexibles",
-"Criaturas Fantásticas"), 3 items (Gato/Perro/Zorro) con archivos de Unsplash, y
-movimientos de ejemplo IN/SALE que dejan stock y `soldQuantity` consistentes.
+Idempotente (upserts): 6 tags; 4 colecciones PUBLISHED ("Animalitos Flexibles",
+"Criaturas Fantásticas", "Macetas Geométricas", "Llaveros Gamer") con **portada**
+(`CollectionFile`), 7 items con imágenes de Unsplash y `rarity`, y movimientos de
+ejemplo IN/SALE que dejan stock y `soldQuantity` consistentes.
 
 ## Boundaries
 - **Always**: `pnpm db:generate` tras tocar `schema.prisma`.
@@ -53,5 +54,5 @@ movimientos de ejemplo IN/SALE que dejan stock y `soldQuantity` consistentes.
 
 ## Success Criteria (verificado)
 - Las 3 migraciones se aplican en `vault-volt3d`.
-- El seed crea 2 colecciones con items, tags y archivos de ejemplo.
+- El seed crea 4 colecciones con portada, items, tags y archivos de ejemplo.
 - El cliente compila con `@gen-prisma/client`.

@@ -135,9 +135,9 @@ async function main() {
   }
   console.log('✓ Movimientos de inventario de ejemplo')
 
-  // ===== COLECCIÓN 2: Edición Especial (placeholder básica) =====
+  // ===== COLECCIÓN 2: Criaturas Fantásticas =====
   const coll2Slug = 'edicion-especial-dragones'
-  await prisma.collection.upsert({
+  const coll2 = await prisma.collection.upsert({
     where: { slug: coll2Slug },
     update: {},
     create: {
@@ -152,6 +152,75 @@ async function main() {
     },
   })
   console.log('✓ Colección "Criaturas Fantásticas"')
+
+  // ===== Portadas de colección + colecciones adicionales (SEL-72) =====
+  async function ensureCollectionCover(collectionId: string, url: string, alt: string) {
+    const file = await ensureFile(url)
+    await prisma.collectionFile.upsert({
+      where: { collectionId_fileId: { collectionId, fileId: file.id } },
+      update: { position: 0, alt },
+      create: { collectionId, fileId: file.id, position: 0, alt },
+    })
+  }
+
+  async function ensureItem(
+    collectionId: string,
+    name: string,
+    slug: string,
+    coverUrl: string,
+    rarity: 'COMMON' | 'RARE' | 'EPIC' | 'LEGENDARY',
+  ) {
+    const file = await ensureFile(coverUrl)
+    await prisma.collectionItem.upsert({
+      where: { slug },
+      update: { rarity },
+      create: {
+        collectionId,
+        name,
+        slug,
+        description: `${name}, figura impresa en 3D por Volt-3D.`,
+        rarity,
+        status: 'AVAILABLE',
+        files: { create: [{ fileId: file.id, position: 0, alt: name }] },
+      },
+    })
+  }
+
+  await ensureCollectionCover(coll1.id, 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=600', 'Animalitos Flexibles')
+  await ensureCollectionCover(coll2.id, 'https://images.unsplash.com/photo-1503919545889-aef636e10ad4?w=600', 'Criaturas Fantásticas')
+
+  const coll3 = await prisma.collection.upsert({
+    where: { slug: 'macetas-geometricas' },
+    update: {},
+    create: {
+      name: 'Macetas Geométricas',
+      slug: 'macetas-geometricas',
+      description: '# Macetas Geométricas\n\nMacetas y maceteros de diseño geométrico impresos en 3D.',
+      status: 'PUBLISHED',
+      orderIndex: 2,
+      tags: { create: [{ tag: { connect: { id: tags.get('Macetas')! } } }] },
+    },
+  })
+  await ensureCollectionCover(coll3.id, 'https://images.unsplash.com/photo-1425082661705-1834bfd09dca?w=600', 'Macetas Geométricas')
+  await ensureItem(coll3.id, 'Maceta Hexagonal', 'maceta-hexagonal', 'https://images.unsplash.com/photo-1474511320723-9a56873867b5?w=600', 'COMMON')
+  await ensureItem(coll3.id, 'Maceta Espiral', 'maceta-espiral', 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=600', 'RARE')
+
+  const coll4 = await prisma.collection.upsert({
+    where: { slug: 'llaveros-gamer' },
+    update: {},
+    create: {
+      name: 'Llaveros Gamer',
+      slug: 'llaveros-gamer',
+      description: '# Llaveros Gamer\n\nLlaveros con iconos gamer y pixel art impresos en 3D.',
+      status: 'PUBLISHED',
+      orderIndex: 3,
+      tags: { create: [{ tag: { connect: { id: tags.get('Personalizado')! } } }] },
+    },
+  })
+  await ensureCollectionCover(coll4.id, 'https://images.unsplash.com/photo-1592194996308-7b43878e84a6?w=600', 'Llaveros Gamer')
+  await ensureItem(coll4.id, 'Llavero Pixel', 'llavero-pixel', 'https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=600', 'COMMON')
+  await ensureItem(coll4.id, 'Llavero Volt', 'llavero-volt', 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600', 'EPIC')
+  console.log('✓ Portadas y colecciones adicionales')
 
   console.log('✨ Seeding Volt Vault completado!')
 }
