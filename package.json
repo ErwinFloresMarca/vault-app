@@ -9,6 +9,7 @@
     "preview": "nuxt preview",
     "postinstall": "prisma generate && nuxt prepare",
     "typecheck": "nuxt typecheck",
+    "e2e": "node scripts/e2e-auth.mjs",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",

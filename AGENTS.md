@@ -15,7 +15,6 @@ Stack: Nuxt 4.4, Vue 3.5, TypeScript 5.9, Prisma 7 (PostgreSQL + driver adapter
 - `pnpm db:migrate` / `pnpm db:seed` / `pnpm db:reset`
 - `pnpm exec eslint .` — lint (NO existe script `lint` en package.json)
 - `pnpm typecheck` — vue-tsc (script `typecheck`)
-- `pnpm exec playwright ...` — Playwright 1.63 (devDependency; browsers ya descargados)
 - CI en `.github/workflows/ci.yml` (lint + typecheck + build). Sin tests unitarios.
 
 Arranque en frío: `pnpm install` → `cp .env.example .env` (rellenar `DATABASE_URL`,
@@ -100,7 +99,8 @@ Prisma (`server/utils/db.ts`) → DB. Mantén esta dirección.
   `/me` y `/admin/*` requieren sesión.
 - MCP global `playwright` (headless, en `~/.config/opencode/opencode.jsonc`) para
   navegar, capturar screenshot, leer consola y depurar la app en ejecución.
-- CLI local: `pnpm exec playwright` (browsers en `~/.cache/ms-playwright`).
+- CLI local: `pnpm exec playwright` (browsers en `~/.cache/ms-playwright`). E2E
+  autenticado: `pnpm e2e` (`scripts/e2e-auth.mjs`; login `/api/test/login` dev-only).
 - Error de consola conocido: 404 de `/1x` (@nuxt/image con imágenes remotas); inofensivo.
 
 ## Boundarys
