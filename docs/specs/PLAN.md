@@ -68,6 +68,7 @@ base de datos relacional PostgreSQL dedicada (`vault-volt3d`) en el Postgres Doc
 | Dashboard | m09-dashboard.md | ☑ |
 | SEO | m10-seo.md | ☑ |
 | Volt Arcade | m11-volt-arcade.md | ☑ (fases 1-4) |
+| MCP Server | m12-mcp-server.md | ☐ (spec; sin implementar) |
 
 ## Desviaciones respecto al plan original
 
