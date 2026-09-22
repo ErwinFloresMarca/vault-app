@@ -225,4 +225,6 @@ docs/MCP.md
 - Fase 3 (inventario/personal/admin): ☑ `SEL-104` — `adjust_stock`,
   `create_inventory_batch`, `collect_item`/`uncollect_item`, `add_wishlist`/`remove_wishlist`,
   `list_my_collection`, `get_my_stats`, `list_users` y `set_user_role`.
-- Fase 4 (resources/prompts/docs/E2E): `SEL-105` pendiente.
+- Fase 4 (resources/prompts/docs/E2E): ☑ `SEL-105` — 5 resources (3 estáticos +
+  2 plantillas), 3 prompts, `docs/MCP.md` y E2E `pnpm e2e:mcp` (28 checks).
+  **MCP completo (fases 1-4).**

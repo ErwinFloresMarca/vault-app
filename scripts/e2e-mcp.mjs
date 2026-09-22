@@ -33,6 +33,18 @@ try {
   const { tools } = await client.listTools()
   check(`listTools (${tools.length})`, tools.length > 0)
 
+  const { resources } = await client.listResources()
+  check(`listResources (${resources.length})`, resources.length > 0)
+
+  const { resourceTemplates } = await client.listResourceTemplates()
+  check(`listResourceTemplates (${resourceTemplates.length})`, resourceTemplates.length > 0)
+
+  const { prompts } = await client.listPrompts()
+  check(`listPrompts (${prompts.length})`, prompts.length > 0)
+
+  const collectionsRes = await client.readResource({ uri: 'voltvault://collections' })
+  check('readResource voltvault://collections', !!collectionsRes.contents?.[0]?.text)
+
   const collections = await client.callTool({ name: 'list_collections', arguments: { pageSize: 2 } })
   check('list_collections responde con datos', !collections.isError && (collections.content?.[0]?.text ?? '').includes('Animalitos'))
 
@@ -97,6 +109,9 @@ try {
     check('archive_item sin confirm → error', (await client.callTool({ name: 'archive_item', arguments: { id: itemId } })).isError === true)
     check('archive_item con confirm → ok', !(await client.callTool({ name: 'archive_item', arguments: { id: itemId, confirm: true } })).isError)
     check('archive_collection con confirm → ok', !(await client.callTool({ name: 'archive_collection', arguments: { id: collectionId, confirm: true } })).isError)
+
+    const prompt = await client.getPrompt({ name: 'describe_collection', arguments: { slug: 'animalitos-flexibles' } })
+    check('getPrompt describe_collection', (prompt.messages?.length ?? 0) > 0)
   }
 
   await client.close()
