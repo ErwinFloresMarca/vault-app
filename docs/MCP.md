@@ -28,6 +28,23 @@ pnpm mcp:key --name "Claude" --email tu@email.com \
 | `stats:read` | Métricas del dashboard (admin) |
 | `users:read` / `users:write` | Listar usuarios / cambiar rol (admin) |
 
+### Crear una key en producción
+
+El hash usa `MCP_KEY_PEPPER` o, si no existe, `NUXT_SESSION_PASSWORD`. Para que la
+key valide en el servidor de producción hay que ejecutar el CLI con el
+`DATABASE_URL` **y** el `NUXT_SESSION_PASSWORD` de producción:
+
+```bash
+PGPASS=$(ssh hostinger "sed -n 's/^POSTGRES_PASSWORD=//p' /root/apps/docker-postgres-db/.env | tr -d '\"'")
+PROD_SESSION=$(ssh hostinger "sed -n 's/^NUXT_SESSION_PASSWORD=//p' /var/www/vault-app/current/.env | tr -d '\"'")
+DATABASE_URL="postgresql://volt3d-coins:${PGPASS}@72.61.55.208:5432/vault-volt3d" \
+NUXT_SESSION_PASSWORD="$PROD_SESSION" \
+pnpm mcp:key --name "Claude" --scopes catalog:read,personal:read
+```
+
+> Mejor aún: define un `MCP_KEY_PEPPER` propio en el `.env` de producción y usa el
+> mismo valor al crear keys (así no dependes de la contraseña de sesión).
+
 ## 2. Conectar un cliente
 
 Header obligatorio: `Authorization: Bearer vvk_…` (nunca por query string; solo HTTPS).
