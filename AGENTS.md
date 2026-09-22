@@ -15,6 +15,7 @@ Stack: Nuxt 4.4, Vue 3.5, TypeScript 5.9, Prisma 7 (PostgreSQL + driver adapter
 - `pnpm db:migrate` / `pnpm db:seed` / `pnpm db:reset`
 - `pnpm exec eslint .` — lint (NO existe script `lint` en package.json)
 - `pnpm typecheck` — vue-tsc (script `typecheck`)
+- `pnpm mcp:key` — API keys del servidor MCP (`/mcp`; spec `docs/specs/m12-mcp-server.md`)
 - `pnpm release` / `pnpm deploy` — release + deploy a la VPS (`docs/DEPLOY.md`)
 - CI en `.github/workflows/ci.yml` (lint + typecheck + build). Sin tests unitarios.
 

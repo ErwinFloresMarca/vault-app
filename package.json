@@ -11,6 +11,7 @@
     "postinstall": "nuxt prepare && prisma generate",
     "typecheck": "nuxt typecheck",
     "e2e": "node scripts/e2e-auth.mjs",
+    "mcp:key": "tsx scripts/mcp-key.ts",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:migrate:deploy": "prisma migrate deploy",
@@ -20,6 +21,7 @@
     "deploy": "bash deploy.sh"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
     "@nuxt/content": "3.14.0",
     "@nuxt/eslint": "1.15.2",
     "@nuxt/fonts": "0.14.0",
@@ -37,7 +39,8 @@
     "pg": "^8.21.0",
     "tailwindcss": "^4.3.0",
     "typescript": "^5.9.3",
-    "vue": "^3.5.35"
+    "vue": "^3.5.35",
+    "zod": "^4.6.5"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

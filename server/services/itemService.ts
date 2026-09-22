@@ -186,4 +186,48 @@ export const itemService = {
       collected: !!userId && i.collectedBy.some((cb) => cb.userId === userId),
     }))
   },
+
+  /** Listado con filtros (admin/MCP). */
+  async list(filters: {
+    collectionId?: string
+    status?: ItemStatus
+    rarity?: Rarity
+    page?: number
+    pageSize?: number
+  } = {}) {
+    const page = Math.max(1, filters.page ?? 1)
+    const pageSize = Math.min(100, Math.max(1, filters.pageSize ?? 50))
+
+    const where: Prisma.CollectionItemWhereInput = {}
+    if (filters.collectionId) where.collectionId = filters.collectionId
+    if (filters.status) where.status = filters.status
+    if (filters.rarity) where.rarity = filters.rarity
+
+    const [total, items] = await Promise.all([
+      prisma.collectionItem.count({ where }),
+      prisma.collectionItem.findMany({
+        where,
+        orderBy: { createdAt: 'asc' },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        include: {
+          collection: { select: { id: true, name: true, slug: true } },
+          files: { include: { file: true }, orderBy: { position: 'asc' } },
+          _count: { select: { collectedBy: true, wishlist: true } },
+        },
+      }),
+    ])
+
+    return {
+      data: items.map((i) => ({
+        ...toItemSummary(i),
+        collection: i.collection,
+        collectedCount: i._count.collectedBy,
+        wishlistCount: i._count.wishlist,
+      })),
+      total,
+      page,
+      pageSize,
+    }
+  },
 }

@@ -30,6 +30,7 @@ model User {
   oauthAccounts OAuthAccount[]
   collected     UserCollectedItem[]
   wishlist      UserWishlistItem[]
+  apiKeys       ApiKey[]
 
   registeredBatches InventoryBatch[] @relation("RegisteredBy")
   customerBatches   InventoryBatch[] @relation("Customer")
@@ -286,4 +287,41 @@ model InventoryMovement {
   @@index([batchId])
   @@index([registeredByUserId])
   @@index([customerUserId])
+}
+
+// ===== MCP (servidor para asistentes IA) =====
+
+model ApiKey {
+  id         String    @id @default(cuid())
+  name       String
+  keyHash    String    @unique
+  prefix     String
+  userId     String
+  scopes     String[]
+  lastUsedAt DateTime?
+  expiresAt  DateTime?
+  revokedAt  DateTime?
+  createdAt  DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model McpAuditLog {
+  id         String   @id @default(cuid())
+  apiKeyId   String?
+  userId     String?
+  tool       String
+  args       Json
+  result     String
+  statusCode Int?
+  error      String?
+  ip         String?
+  userAgent  String?
+  durationMs Int
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([apiKeyId])
 }
