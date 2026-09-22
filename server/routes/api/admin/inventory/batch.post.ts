@@ -4,7 +4,7 @@ import { requireAdmin } from '~/server/utils/auth'
 const TYPES = ['IN', 'OUT', 'ADJUSTMENT', 'SALE']
 
 export default defineEventHandler(async (event) => {
-  await requireAdmin(event)
+  const admin = await requireAdmin(event)
 
   const body = await readBody(event)
   if (!body?.type || !TYPES.includes(body.type)) {
@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
       registeredBy: body.registeredBy ?? undefined,
       customer: body.customer ?? undefined,
     },
-    event,
+    admin,
   )
 
   return { success: true, data: batch }

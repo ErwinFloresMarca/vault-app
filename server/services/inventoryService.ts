@@ -1,7 +1,8 @@
-import type { H3Event } from 'h3'
 import { prisma } from '~/server/utils/db'
-import { requireAdmin } from '~/server/utils/auth'
 import type { InventoryMovementType, Prisma } from '@gen-prisma/client'
+
+/** Actor que registra el movimiento (usuario de sesión o de una API key MCP). */
+export type InventoryActor = { id: string; name: string; email: string } | null
 
 /**
  * Calcula el nuevo stock y vendidos para un tipo de movimiento dado.
@@ -111,15 +112,14 @@ export async function createInventoryMovement(
     registeredBy?: PersonInput
     customer?: PersonInput
   },
-  event: H3Event,
+  actor: InventoryActor,
 ) {
-  const user = await requireAdmin(event)
   validateQuantity(input.quantity)
 
   const item = await prisma.collectionItem.findUnique({ where: { id: input.itemId } })
   if (!item) throw createError({ statusCode: 404, statusMessage: 'Item no encontrado' })
 
-  const registeredBy = resolveRegisteredBy(input, user)
+  const registeredBy = resolveRegisteredBy(input, actor)
   const customer = resolveCustomer(input.type, input)
 
   return prisma.$transaction(async (tx) => {
@@ -195,10 +195,8 @@ export async function createInventoryBatch(
     registeredBy?: PersonInput
     customer?: PersonInput
   },
-  event: H3Event,
+  actor: InventoryActor,
 ) {
-  const user = await requireAdmin(event)
-
   if (!Array.isArray(input.lines) || input.lines.length === 0) {
     throw createError({ statusCode: 422, statusMessage: 'Debes incluir al menos un item' })
   }
@@ -222,7 +220,7 @@ export async function createInventoryBatch(
   }
   const itemMap = new Map(items.map((i) => [i.id, i]))
 
-  const registeredBy = resolveRegisteredBy(input, user)
+  const registeredBy = resolveRegisteredBy(input, actor)
   const customer = resolveCustomer(input.type, input)
 
   // collectionId auto: si no se especifica, se deriva de los items —

@@ -2,7 +2,7 @@ import { inventoryService } from '~/server/services/inventoryService'
 import { requireAdmin } from '~/server/utils/auth'
 
 export default defineEventHandler(async (event) => {
-  await requireAdmin(event)
+  const admin = await requireAdmin(event)
 
   switch (event.method) {
     case 'POST': {
@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
           registeredBy: body.registeredBy ?? undefined,
           customer: body.customer ?? undefined,
         },
-        event,
+        admin,
       )
       return { success: true, data: item }
     }

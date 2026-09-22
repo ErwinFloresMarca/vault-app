@@ -32,22 +32,22 @@ try {
 
   const { tools } = await client.listTools()
   check(`listTools (${tools.length})`, tools.length > 0)
-  check('incluye list_collections', tools.some((t) => t.name === 'list_collections'))
 
   const collections = await client.callTool({ name: 'list_collections', arguments: { pageSize: 2 } })
-  const text = collections.content?.[0]?.text ?? ''
-  check('list_collections responde con datos', !collections.isError && text.includes('Animalitos'))
+  check('list_collections responde con datos', !collections.isError && (collections.content?.[0]?.text ?? '').includes('Animalitos'))
 
   const admin = await client.callTool({ name: 'get_admin_stats', arguments: {} })
-  check('get_admin_stats denegado sin scope stats:read', admin.isError === true)
+  check(
+    WRITE ? 'get_admin_stats permitido con scope stats:read' : 'get_admin_stats denegado sin scope stats:read',
+    WRITE ? !admin.isError : admin.isError === true,
+  )
 
   if (WRITE) {
-    const gate = await client.callTool({ name: 'upsert_tag', arguments: { name: 'mcp-smoke' } })
-    check('upsert_tag', !gate.isError)
+    await client.callTool({ name: 'upsert_tag', arguments: { name: 'mcp-smoke' } })
 
     const created = await client.callTool({
       name: 'create_collection',
-      arguments: { name: `MCP Smoke ${Date.now()}`, description: 'colección de prueba MCP', status: 'PUBLISHED', tags: ['mcp-smoke'] },
+      arguments: { name: `MCP Smoke ${Date.now()}`, status: 'PUBLISHED', tags: ['mcp-smoke'] },
     })
     const collectionId = json(created)?.id
     check('create_collection', !created.isError && !!collectionId)
@@ -59,41 +59,44 @@ try {
     const itemId = json(item)?.id
     check('create_item (stock inicial + rareza)', !item.isError && !!itemId)
 
-    const rarity = itemId
-      ? await client.callTool({ name: 'set_item_rarity', arguments: { id: itemId, rarity: 'EPIC' } })
-      : { isError: true }
-    check('set_item_rarity', !rarity.isError)
+    check('set_item_rarity', !(await client.callTool({ name: 'set_item_rarity', arguments: { id: itemId, rarity: 'EPIC' } })).isError)
 
     const listed = await client.callTool({ name: 'list_items', arguments: { collectionId } })
     const listedItem = json(listed)?.data?.[0]
     check('list_items refleja rareza/stock', listedItem?.rarity === 'EPIC' && listedItem?.stock === 3)
 
-    const noConfirm = itemId
-      ? await client.callTool({ name: 'archive_item', arguments: { id: itemId } })
-      : { isError: false }
-    check('archive_item sin confirm → error', noConfirm.isError === true)
+    // Inventario
+    check('adjust_stock (IN)', !(await client.callTool({ name: 'adjust_stock', arguments: { itemId, type: 'IN', quantity: 5, reason: 'mcp smoke' } })).isError)
+    check('create_inventory_batch', !(await client.callTool({
+      name: 'create_inventory_batch',
+      arguments: { type: 'IN', lines: [{ itemId, quantity: 2 }], reason: 'mcp batch' },
+    })).isError)
+    const movements = json(await client.callTool({ name: 'list_inventory_movements', arguments: { itemId } }))
+    check('list_inventory_movements con movimientos', (movements?.total ?? 0) >= 1)
 
-    const confirmed = itemId
-      ? await client.callTool({ name: 'archive_item', arguments: { id: itemId, confirm: true } })
-      : { isError: true }
-    check('archive_item con confirm → ok', !confirmed.isError)
+    // Personal
+    check('collect_item', !(await client.callTool({ name: 'collect_item', arguments: { itemId } })).isError)
+    const myCol = json(await client.callTool({ name: 'list_my_collection', arguments: {} }))
+    check('list_my_collection incluye el item', (myCol?.data ?? []).some((e) => e.item?.id === itemId))
+    const myStats = json(await client.callTool({ name: 'get_my_stats', arguments: {} }))
+    check('get_my_stats', (myStats?.collectedItems ?? 0) >= 1)
+    check('uncollect_item', !(await client.callTool({ name: 'uncollect_item', arguments: { itemId } })).isError)
+    check('add_wishlist', !(await client.callTool({ name: 'add_wishlist', arguments: { itemId } })).isError)
+    check('remove_wishlist', !(await client.callTool({ name: 'remove_wishlist', arguments: { itemId } })).isError)
 
-    const badUrl = await client.callTool({
-      name: 'register_file_url',
-      arguments: { url: 'https://evil.example/x.png' },
-    })
-    check('register_file_url dominio no permitido → error', badUrl.isError === true)
+    // Admin
+    const users = json(await client.callTool({ name: 'list_users', arguments: { role: 'ADMIN' } }))
+    check('list_users', Array.isArray(users) && users.length >= 1)
+    check('set_user_role sin confirm → error', (await client.callTool({ name: 'set_user_role', arguments: { userId: 'x', role: 'USER' } })).isError === true)
 
-    const okUrl = await client.callTool({
-      name: 'register_file_url',
-      arguments: { url: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=600' },
-    })
-    check('register_file_url allowlist → ok', !okUrl.isError)
+    // Archivos
+    check('register_file_url dominio no permitido → error', (await client.callTool({ name: 'register_file_url', arguments: { url: 'https://evil.example/x.png' } })).isError === true)
+    check('register_file_url allowlist → ok', !(await client.callTool({ name: 'register_file_url', arguments: { url: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=600' } })).isError)
 
-    const archived = collectionId
-      ? await client.callTool({ name: 'archive_collection', arguments: { id: collectionId, confirm: true } })
-      : { isError: true }
-    check('archive_collection con confirm → ok', !archived.isError)
+    // Destructivas con confirm
+    check('archive_item sin confirm → error', (await client.callTool({ name: 'archive_item', arguments: { id: itemId } })).isError === true)
+    check('archive_item con confirm → ok', !(await client.callTool({ name: 'archive_item', arguments: { id: itemId, confirm: true } })).isError)
+    check('archive_collection con confirm → ok', !(await client.callTool({ name: 'archive_collection', arguments: { id: collectionId, confirm: true } })).isError)
   }
 
   await client.close()

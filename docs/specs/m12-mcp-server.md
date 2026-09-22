@@ -222,5 +222,7 @@ docs/MCP.md
   stateless), auth por API key, scopes, rate limit, auditoría y 9 tools de lectura.
 - Fase 2 (escritura de catálogo): ☑ `SEL-103` — colecciones, items, rareza, tags y
   `register_file_url` (allowlist); `confirm: true` en destructivas.
-- Fase 3 (inventario/personal/admin): `SEL-104` pendiente.
+- Fase 3 (inventario/personal/admin): ☑ `SEL-104` — `adjust_stock`,
+  `create_inventory_batch`, `collect_item`/`uncollect_item`, `add_wishlist`/`remove_wishlist`,
+  `list_my_collection`, `get_my_stats`, `list_users` y `set_user_role`.
 - Fase 4 (resources/prompts/docs/E2E): `SEL-105` pendiente.
