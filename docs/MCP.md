@@ -30,20 +30,20 @@ pnpm mcp:key --name "Claude" --email tu@email.com \
 
 ### Crear una key en producción
 
-El hash usa `MCP_KEY_PEPPER` o, si no existe, `NUXT_SESSION_PASSWORD`. Para que la
-key valide en el servidor de producción hay que ejecutar el CLI con el
-`DATABASE_URL` **y** el `NUXT_SESSION_PASSWORD` de producción:
+El hash usa `MCP_KEY_PEPPER` (o `NUXT_SESSION_PASSWORD` si no está definido).
+Producción ya tiene un **`MCP_KEY_PEPPER` propio** en
+`/var/www/vault-app/current/.env`. Para crear una key que valide en producción,
+usa ese pepper y el `DATABASE_URL` de producción:
 
 ```bash
 PGPASS=$(ssh hostinger "sed -n 's/^POSTGRES_PASSWORD=//p' /root/apps/docker-postgres-db/.env | tr -d '\"'")
-PROD_SESSION=$(ssh hostinger "sed -n 's/^NUXT_SESSION_PASSWORD=//p' /var/www/vault-app/current/.env | tr -d '\"'")
+PEPPER=$(ssh hostinger "sed -n 's/^MCP_KEY_PEPPER=//p' /var/www/vault-app/current/.env | tr -d '\"'")
 DATABASE_URL="postgresql://volt3d-coins:${PGPASS}@72.61.55.208:5432/vault-volt3d" \
-NUXT_SESSION_PASSWORD="$PROD_SESSION" \
+MCP_KEY_PEPPER="$PEPPER" \
 pnpm mcp:key --name "Claude" --scopes catalog:read,personal:read
 ```
 
-> Mejor aún: define un `MCP_KEY_PEPPER` propio en el `.env` de producción y usa el
-> mismo valor al crear keys (así no dependes de la contraseña de sesión).
+> El pepper es un secreto: **no lo commitees**. Rotarlo invalida todas las keys existentes.
 
 ## 2. Conectar un cliente
 
