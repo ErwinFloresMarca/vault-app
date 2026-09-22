@@ -1,6 +1,4 @@
-import type { H3Event } from 'h3'
 import { prisma } from '~/server/utils/db'
-import { requireAdmin } from '~/server/utils/auth'
 import type { Prisma } from '@gen-prisma/client'
 import type { ItemDetail, ItemSummary, ItemStatus, Rarity, FileDto } from '~/types'
 
@@ -64,9 +62,7 @@ export const itemService = {
     stockInicial?: number
     status?: ItemStatus
     rarity?: Rarity
-  }, event: H3Event) {
-    await requireAdmin(event)
-
+  }) {
     const collection = await prisma.collection.findUnique({ where: { id: input.collectionId } })
     if (!collection) throw createError({ statusCode: 422, statusMessage: 'La colección no existe' })
 
@@ -107,8 +103,7 @@ export const itemService = {
     fileIds?: string[]
     status?: ItemStatus
     rarity?: Rarity
-  }, event: H3Event) {
-    await requireAdmin(event)
+  }) {
     const existing = await prisma.collectionItem.findUnique({ where: { id } })
     if (!existing) throw createError({ statusCode: 404, statusMessage: 'Item no encontrado' })
 
@@ -133,8 +128,7 @@ export const itemService = {
     })
   },
 
-  async remove(id: string, event: H3Event) {
-    await requireAdmin(event)
+  async remove(id: string) {
     return prisma.collectionItem.update({ where: { id }, data: { status: 'ARCHIVED' } })
   },
 

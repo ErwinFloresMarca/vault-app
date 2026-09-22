@@ -11,6 +11,7 @@
     "postinstall": "nuxt prepare && prisma generate",
     "typecheck": "nuxt typecheck",
     "e2e": "node scripts/e2e-auth.mjs",
+    "e2e:mcp": "node scripts/e2e-mcp.mjs",
     "mcp:key": "tsx scripts/mcp-key.ts",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",

@@ -1,6 +1,4 @@
-import type { H3Event } from 'h3'
 import { prisma } from '~/server/utils/db'
-import { requireAdmin } from '~/server/utils/auth'
 import type { Prisma } from '@gen-prisma/client'
 import type { CollectionSummary, CollectionWithItems, ItemSummary, CollectionProgress, CollectionStatus, FileDto, UserStats } from '~/types'
 
@@ -168,6 +166,17 @@ export const collectionService = {
     })
   },
 
+  /** Crea/actualiza una etiqueta por nombre (slug derivado). */
+  async upsertTagByName(name: string): Promise<{ id: string; name: string; slug: string }> {
+    const slug = slugify(name)
+    return prisma.tag.upsert({
+      where: { slug },
+      update: { name },
+      create: { name, slug },
+      select: { id: true, name: true, slug: true },
+    })
+  },
+
   async getUserStats(userId: string): Promise<UserStats> {
     const collections = await prisma.collection.findMany({
       where: { status: 'PUBLISHED' },
@@ -227,11 +236,7 @@ export const collectionService = {
     }
   },
 
-  async create(
-    input: { name: string; description?: string; tags?: string[]; fileIds?: string[]; status?: CollectionStatus },
-    event: H3Event,
-  ) {
-    await requireAdmin(event)
+  async create(input: { name: string; description?: string; tags?: string[]; fileIds?: string[]; status?: CollectionStatus }) {
     const slug = await ensureUniqueSlug(slugify(input.name))
     const collection = await prisma.collection.create({
       data: {
@@ -251,9 +256,7 @@ export const collectionService = {
   async update(
     id: string,
     input: { name?: string; description?: string; tags?: string[]; fileIds?: string[]; status?: CollectionStatus },
-    event: H3Event,
   ) {
-    await requireAdmin(event)
     const existing = await prisma.collection.findUnique({ where: { id } })
     if (!existing) throw createError({ statusCode: 404, statusMessage: 'Colección no encontrada' })
 
@@ -284,8 +287,7 @@ export const collectionService = {
     return collection
   },
 
-  async remove(id: string, event: H3Event) {
-    await requireAdmin(event)
+  async remove(id: string) {
     // Soft delete: pasa a ARCHIVED (conserva historial)
     return prisma.collection.update({
       where: { id },

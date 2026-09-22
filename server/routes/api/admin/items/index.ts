@@ -6,11 +6,12 @@ import type { Prisma } from '@gen-prisma/client'
 export default defineEventHandler(async (event) => {
   switch (event.method) {
     case 'POST': {
+      await requireAdmin(event)
       const body = await readBody(event)
       if (!body?.name || !body?.collectionId) {
         throw createError({ statusCode: 422, statusMessage: 'Faltan campos obligatorios (name, collectionId)' })
       }
-      const item = await itemService.create(body, event)
+      const item = await itemService.create(body)
       return { success: true, data: item }
     }
     case 'GET': {

@@ -21,12 +21,14 @@ export default defineEventHandler(async (event) => {
       return { success: true, data: collection }
     }
     case 'PUT': {
+      await requireAdmin(event)
       const body = await readBody(event)
-      const collection = await collectionService.update(id, body, event)
+      const collection = await collectionService.update(id, body)
       return { success: true, data: collection }
     }
     case 'DELETE': {
-      const collection = await collectionService.remove(id, event)
+      await requireAdmin(event)
+      const collection = await collectionService.remove(id)
       return { success: true, data: collection }
     }
     default:

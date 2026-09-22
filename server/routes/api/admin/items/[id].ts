@@ -22,12 +22,14 @@ export default defineEventHandler(async (event) => {
       return { success: true, data: item }
     }
     case 'PUT': {
+      await requireAdmin(event)
       const body = await readBody(event)
-      const item = await itemService.update(id, body, event)
+      const item = await itemService.update(id, body)
       return { success: true, data: item }
     }
     case 'DELETE': {
-      const item = await itemService.remove(id, event)
+      await requireAdmin(event)
+      const item = await itemService.remove(id)
       return { success: true, data: item }
     }
     default:

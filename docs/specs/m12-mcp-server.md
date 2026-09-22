@@ -216,3 +216,11 @@ docs/MCP.md
 4. ¿Qué clientes MCP primero (Claude, Cursor, ChatGPT, opencode)?
 5. ¿Límites de rate y retención de auditoría concretos?
 6. ¿Tools de usuarios/roles (riesgo) o solo lectura en v1?
+
+## Estado
+- Fase 1 (fundamentos + lectura): ☑ `SEL-102` — `ApiKey`/`McpAuditLog`, `/mcp` (Streamable HTTP
+  stateless), auth por API key, scopes, rate limit, auditoría y 9 tools de lectura.
+- Fase 2 (escritura de catálogo): ☑ `SEL-103` — colecciones, items, rareza, tags y
+  `register_file_url` (allowlist); `confirm: true` en destructivas.
+- Fase 3 (inventario/personal/admin): `SEL-104` pendiente.
+- Fase 4 (resources/prompts/docs/E2E): `SEL-105` pendiente.

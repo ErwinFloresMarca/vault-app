@@ -1,6 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import type { McpContext } from './types'
 import { registerReadTools } from './tools/read'
+import { registerCatalogTools } from './tools/catalog'
 
 /**
  * Crea una instancia de McpServer con los tools disponibles según el contexto.
@@ -9,5 +10,6 @@ import { registerReadTools } from './tools/read'
 export function createMcpServer(ctx: McpContext): McpServer {
   const server = new McpServer({ name: 'volt-vault', version: '0.1.0' })
   registerReadTools(server, ctx)
+  registerCatalogTools(server, ctx)
   return server
 }

@@ -21,7 +21,7 @@ export function errorResult(message: string): CallToolResult {
  */
 export async function runTool(
   ctx: McpContext,
-  meta: { tool: string; scope: McpScope },
+  meta: { tool: string; scope: McpScope; destructive?: boolean },
   args: unknown,
   fn: () => Promise<unknown>,
 ): Promise<CallToolResult> {
@@ -29,6 +29,9 @@ export async function runTool(
   try {
     if (!ctx.scopes.includes(meta.scope)) {
       throw createError({ statusCode: 403, statusMessage: `Scope requerido: ${meta.scope}` })
+    }
+    if (meta.destructive && (args as { confirm?: boolean } | null)?.confirm !== true) {
+      throw createError({ statusCode: 400, statusMessage: 'Acción destructiva: requiere confirm: true' })
     }
     const rl = checkRateLimit(ctx.apiKeyId)
     if (!rl.ok) {

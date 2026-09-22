@@ -5,9 +5,10 @@ import { prisma } from '~/server/utils/db'
 export default defineEventHandler(async (event) => {
   switch (event.method) {
     case 'POST': {
+      await requireAdmin(event)
       const body = await readBody(event)
       if (!body?.name) throw createError({ statusCode: 422, statusMessage: 'El nombre es obligatorio' })
-      const collection = await collectionService.create(body, event)
+      const collection = await collectionService.create(body)
       return { success: true, data: collection }
     }
     case 'GET': {
