@@ -98,6 +98,12 @@ export default defineNuxtConfig({
     },
   },
 
+  // Tema oscuro (Cyber-Luxe) por defecto; el usuario puede cambiar a claro.
+  colorMode: {
+    preference: 'dark',
+    fallback: 'dark',
+  },
+
   css: ['~/assets/css/main.css'],
 
   alias: {

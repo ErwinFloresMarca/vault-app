@@ -1,47 +1,34 @@
 export default defineAppConfig({
   ui: {
     colors: {
-      // Paleta definida en assets/css/main.css (@theme), derivada de DESIGN.md.
-      primary: 'volt',
+      // Paletas definidas en assets/css/main.css (@theme static).
+      primary: 'gold',
+      secondary: 'volt',
+      neutral: 'slate',
     },
-    // DESIGN.md: pills con radius 9999px, tipografía uppercase y peso único 400.
+    // Botones: pill, tipografía display y negrita (DESIGN.md).
     button: {
       slots: {
-        base: 'rounded-full font-normal uppercase tracking-wide',
+        base: 'rounded-full font-display font-bold',
       },
     },
+    // Badges/chips: pill + etiqueta técnica (label-caps).
     badge: {
       slots: {
-        base: 'rounded-full font-normal uppercase',
+        base: 'rounded-full font-display font-bold uppercase tracking-wider',
       },
     },
-    // Navegación: mayúsculas y tracking de etiqueta (nav-elements 16px de radio).
-    navigationMenu: {
+    // Tarjetas: enclosures grandes (rounded-2xl = 3rem).
+    card: {
       slots: {
-        link: 'uppercase tracking-wide text-xs',
-        label: 'uppercase tracking-wide text-[11px]',
+        root: 'rounded-2xl',
       },
     },
-    // Formularios: radios generosos (16px, nav-elements) y labels uppercase.
-    input: {
-      slots: {
-        base: 'rounded-2xl',
-      },
-    },
-    textarea: {
-      slots: {
-        base: 'rounded-2xl',
-      },
-    },
-    select: {
-      slots: {
-        base: 'rounded-2xl',
-      },
-    },
-    formField: {
-      slots: {
-        label: 'block uppercase tracking-wide text-[11px]',
-      },
-    },
+    // Inputs y controles: rounded-xl (2rem) según DESIGN.md.
+    input: { slots: { base: 'rounded-xl' } },
+    textarea: { slots: { base: 'rounded-xl' } },
+    select: { slots: { base: 'rounded-xl' } },
+    formField: { slots: { label: 'label-caps text-default' } },
+    navigationMenu: { slots: { link: 'font-display font-semibold' } },
   },
 })

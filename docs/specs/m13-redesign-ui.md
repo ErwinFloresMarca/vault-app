@@ -14,9 +14,9 @@ visuales de los diseños (anillos, tarjetas de bóveda, checklist, telemetría).
 
 ## Supuestos (validar)
 
-1. **Dark-first** (tema oscuro como base; sin modo claro en v1).
+1. **Claro y oscuro**; **oscuro por defecto** (los diseños son oscuros; el claro se deriva).
 2. Se conservan las entidades actuales; los elementos nuevos de los diseños que
-   requieren **datos inexistentes** se implementan solo si se aprueban (ver Fase 5).
+   requieren **datos inexistentes** se implementan en la Fase 5 (**aprobada**).
 3. Se usa **@nuxt/ui** como base de componentes, re-tematizado con `app.config.ts`.
 4. Fuentes vía `@nuxt/fonts` (Plus Jakarta Sans, Hanken Grotesk).
 5. El copy de producto/coleccionable es el actual (los diseños traen copy de ejemplo).
@@ -79,7 +79,7 @@ visuales de los diseños (anillos, tarjetas de bóveda, checklist, telemetría).
 - **Colecciones / Items / Inventario**: tablas y formularios re-tematizados, modales y
   batch con el nuevo sistema.
 
-### Fase 5 — Extras que requieren datos nuevos (requieren aprobación)
+### Fase 5 — Extras que requieren datos nuevos (APROBADA)
 - **Ficha técnica** del producto: `ItemSpec` (escala/altura, material/acabado,
   iluminación, base/soporte, manifiesto). Migración + admin + display.
 - **XP / niveles / insignias / logros**: modelo de gamificación (`Achievement`,
@@ -105,9 +105,18 @@ visuales de los diseños (anillos, tarjetas de bóveda, checklist, telemetría).
 
 ## Open Questions
 
-1. ¿**Dark-only** o incluir modo claro?
-2. ¿Se aprueba la **Fase 5** (ficha técnica + XP/niveles/insignias)? Es lo único que
-   requiere cambios de schema.
+1. ~~¿Dark-only o claro?~~ **Resuelto: claro + oscuro (oscuro por defecto).**
+2. ~~¿Se aprueba la Fase 5?~~ **Resuelto: aprobada (incluye migraciones de schema).**
 3. ¿La **telemetría** del admin es real (derivada) o solo visual?
 4. ¿Se traducen/conservan los textos de ejemplo de los diseños (nombres de producto)?
 5. ¿Prioridad: público primero (Fases 1-3) y luego admin (4), o al revés?
+
+## Estado
+
+- **Fase 1 (tokens, tema y fuentes): ☑** `SEL-107`. `assets/css/main.css` (`@theme static` +
+  semántica claro/oscuro), `app.config.ts` (primary gold, secondary volt, neutral slate,
+  formas), `@nuxt/fonts` (Plus Jakarta Sans + Hanken Grotesk), oscuro por defecto.
+- Fase 2 (componentes base): `SEL-108` pendiente.
+- Fase 3 (páginas públicas): `SEL-109` pendiente.
+- Fase 4 (admin): `SEL-110` pendiente.
+- Fase 5 (datos nuevos: ficha técnica, XP/insignias): `SEL-111` pendiente.

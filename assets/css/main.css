@@ -1,23 +1,33 @@
-/* Volt Vault — design tokens. Fuente de verdad: DESIGN.md.
-   Los colores de marca y la paleta `volt` (primary) se definen aquí; el color
-   semántico `primary` de @nuxt/ui se asigna en app.config.ts. */
+/* Volt Vault — tokens Cyber-Luxe (fuente: DESIGN.md / diseños Stitch).
+   Son los tokens del sistema; @nuxt/ui consume `--ui-*` (abajo, por modo). */
 @import "tailwindcss";
 @import "@nuxt/ui";
 
 @theme static {
-  /* Colores de marca (DESIGN.md) */
-  --color-carbon-black: #000000;
-  --color-paper-white: #ffffff;
-  --color-concrete-gray: #cacaca;
-  --color-mist-gray: #f1f1f1;
-  --color-iron-gray: #404040;
-  --color-ash-gray: #616161;
-  --color-ink: #1a1b1e;
-  --color-volt-blue: #1e90ff;
-  --color-volt-dark-blue: #1258a0;
-  --color-volt-yellow: #ffd700;
+  /* Fuentes (cargadas por @nuxt/fonts) */
+  --font-sans: 'Hanken Grotesk', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 
-  /* Paleta `volt` — usada como `primary` por @nuxt/ui (app.config.ts) */
+  /* Acentos de marca */
+  --color-gold: #ffd700;
+  --color-volt: #1e90ff;
+  --color-neon: #a855f7;
+  --color-ink: #0a1a2f;
+
+  /* Paleta gold (primary) */
+  --color-gold-50: #fffbe6;
+  --color-gold-100: #fff6c2;
+  --color-gold-200: #ffee8a;
+  --color-gold-300: #ffe452;
+  --color-gold-400: #ffdc28;
+  --color-gold-500: #ffd700;
+  --color-gold-600: #d9b500;
+  --color-gold-700: #b08f00;
+  --color-gold-800: #8a7000;
+  --color-gold-900: #6b5600;
+  --color-gold-950: #3d3100;
+
+  /* Paleta volt (secondary) */
   --color-volt-50: #ebf5ff;
   --color-volt-100: #d6ebff;
   --color-volt-200: #add6ff;
@@ -30,50 +40,115 @@
   --color-volt-900: #0a3a6b;
   --color-volt-950: #062748;
 
-  /* Volt Arcade — superficies navy */
+  /* Superficies navy (compatibilidad + marca) */
   --color-navy-900: #0a1a2f;
   --color-navy-800: #0e2340;
+  --color-volt-blue: #1e90ff;
+  --color-volt-yellow: #ffd700;
 
-  /* Volt Arcade — rarezas */
+  /* Rarezas */
   --color-rarity-common: #64748b;
   --color-rarity-rare: #1e90ff;
   --color-rarity-epic: #a855f7;
   --color-rarity-legendary: #ffd700;
 
-  /* Tipografía (DESIGN.md; Akkurat Standard → sustituto Inter) */
-  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  /* Estados */
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-danger: #ffb4ab;
 
-  --text-label-sm: 11px;
-  --text-label-sm--line-height: 1.15;
-  --text-label-sm--letter-spacing: 0.44px;
-  --text-body: 16px;
-  --text-body--line-height: 1.5;
-  --text-body--letter-spacing: 0.32px;
-  --text-subheading: 24px;
-  --text-subheading--line-height: 1.28;
-  --text-heading: 32px;
-  --text-heading--line-height: 0.97;
-  --text-heading--letter-spacing: -0.16px;
-  --text-display: 48px;
-  --text-display--line-height: 0.97;
-  --text-display--letter-spacing: -0.48px;
+  /* Radios (mapeo a utilidades rounded-*) */
+  --radius-sm: 0.5rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.5rem;
+  --radius-xl: 2rem;
+  --radius-2xl: 3rem;
 
-  /* Sombras (DESIGN.md) */
-  --shadow-subtle: 0 -1px 0 0 #404040;
-  --shadow-pill: 2px 2px 10px 0 rgba(0, 0, 0, 0.12);
+  /* Glows / elevación */
+  --shadow-glow-gold: 0 0 25px -4px rgba(255, 215, 0, 0.35);
+  --shadow-glow-volt: 0 0 20px -3px rgba(30, 144, 255, 0.3);
+  --shadow-glow-epic: 0 0 20px -3px rgba(168, 85, 247, 0.3);
+  --shadow-tier2: 0 20px 40px -15px rgba(2, 6, 18, 0.7);
+
+  /* Escala tipográfica */
+  --text-display: 3.5rem;
+  --text-display--line-height: 4rem;
+  --text-display--letter-spacing: -0.03em;
+  --text-headline: 2.25rem;
+  --text-headline--line-height: 2.75rem;
+  --text-headline--letter-spacing: -0.02em;
 }
 
-/* DESIGN.md: peso único 400. El énfasis se logra con tamaño, caja y tracking.
-   Sin @layer para ganar a las utilidades de Tailwind (@layer utilities). */
-h1, h2, h3, h4, h5, h6, b, strong {
-  font-weight: 400;
-}
-.font-thin, .font-extralight, .font-light, .font-medium, .font-semibold,
-.font-bold, .font-extrabold, .font-black {
-  font-weight: 400;
+/* ===== Semántica por modo: claro ===== */
+:root {
+  --cx-base: #f8fafc;
+  --cx-surface-1: #ffffff;
+  --cx-surface-2: #f1f5f9;
+  --cx-border: #e2e8f0;
+  --cx-border-strong: #cbd5e1;
+  --cx-text: #0f172a;
+  --cx-text-muted: #64748b;
+
+  --ui-bg: #f8fafc;
+  --ui-bg-muted: #f1f5f9;
+  --ui-bg-elevated: #ffffff;
+  --ui-bg-accented: #e2e8f0;
+  --ui-text: #0f172a;
+  --ui-text-muted: #64748b;
+  --ui-text-dimmed: #94a3b8;
+  --ui-text-highlighted: #020617;
+  --ui-border: #e2e8f0;
+  --ui-border-muted: #e2e8f0;
+  --ui-border-accented: #cbd5e1;
+  /* Ámbar oscuro: legible con texto blanco en claro (el dorado puro no contrasta). */
+  --ui-primary: #b45309;
 }
 
-/* Volt Arcade — celebración al conseguir (respeta prefers-reduced-motion) */
+/* ===== Semántica por modo: oscuro (Cyber-Luxe) ===== */
+.dark {
+  --cx-base: #041428;
+  --cx-surface-1: #0e2340;
+  --cx-surface-2: #132d50;
+  --cx-border: #1e3a5f;
+  --cx-border-strong: #254b78;
+  --cx-text: #f8fafc;
+  --cx-text-muted: #94a3b8;
+
+  --ui-bg: #041428;
+  --ui-bg-muted: #0e2340;
+  --ui-bg-elevated: #132d50;
+  --ui-bg-accented: #1c2a40;
+  --ui-text: #f8fafc;
+  --ui-text-muted: #94a3b8;
+  --ui-text-dimmed: #64748b;
+  --ui-text-highlighted: #ffffff;
+  --ui-text-inverted: #0a1a2f; /* texto navy sobre botones dorados */
+  --ui-border: #1e3a5f;
+  --ui-border-muted: #1e3a5f;
+  --ui-border-accented: #254b78;
+  --ui-primary: #ffd700;
+}
+
+/* ===== Base ===== */
+body {
+  @apply bg-default text-default antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+}
+
+/* Etiquetas técnicas (label-caps de DESIGN.md) */
+.label-caps {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 700;
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+/* Volt Arcade — celebración al conseguir (reduce-motion safe) */
 @keyframes vv-pop {
   0% { transform: scale(1); }
   35% { transform: scale(1.16); }
@@ -101,4 +176,8 @@ h1, h2, h3, h4, h5, h6, b, strong {
 @media (prefers-reduced-motion: reduce) {
   .animate-pop { animation: none; }
   .vv-piece { animation: none; opacity: 0; }
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

@@ -103,6 +103,28 @@
 - **Desktop (>1024)**: 12 col, contenedor máx 1440 centrado.
 - Densidad: paddings internos en múltiplos de 4px; separación entre tarjetas amplia.
 
+## Temas (claro y oscuro)
+
+**Oscuro por defecto** (los diseños Stitch son oscuros); el usuario puede cambiar a
+claro con el botón de color mode. La semántica de `@nuxt/ui` (`--ui-*`) se mapea por modo.
+
+| Token | Oscuro (base) | Claro |
+|---|---|---|
+| `--ui-bg` (canvas) | `#041428` | `#F8FAFC` |
+| `--ui-bg-muted` (surface‑1) | `#0E2340` | `#FFFFFF` |
+| `--ui-bg-elevated` (surface‑2) | `#132D50` | `#F1F5F9` |
+| `--ui-border` | `#1E3A5F` | `#E2E8F0` |
+| `--ui-border-accented` | `#254B78` | `#CBD5E1` |
+| `--ui-text` | `#F8FAFC` | `#0F172A` |
+| `--ui-text-muted` | `#94A3B8` | `#64748B` |
+| **Primary (CTA)** | `#FFD700` (texto navy) | `#B45309` (texto blanco) |
+
+- En **oscuro** el dorado se usa como CTA con texto navy (`--ui-text-inverted` oscuro).
+- En **claro** el dorado puro no contrasta: el primary pasa a **ámbar oscuro `#B45309`**
+  (AA con texto blanco). Los tokens de marca (`--color-gold`) siguen disponibles para
+  detalles decorativos.
+- Respeta `prefers-color-scheme` como fallback.
+
 ## Accesibilidad
 
 - Contraste **AA** (>4.5:1) sobre navy; blancos `#F8FAFC`/`#E2E8F0`.
@@ -117,7 +139,7 @@
    `neutral` navy, y slots de componentes (button/badge/input/card…) según este doc.
 3. **Fuentes** con `@nuxt/fonts` (Plus Jakarta Sans + Hanken Grotesk) vía `--font-display`/`--font-sans`.
 4. **Iconos** `lucide` (`@nuxt/icon`).
-5. **Modo**: dark-first (tema oscuro como base).
+5. **Tema**: oscuro por defecto + claro (`colorMode`), con la semántica de arriba.
 
 ## Mapa de pantallas (Stitch → proyecto)
 
@@ -136,7 +158,7 @@
 
 ## Estado
 
-- **Actual**: tema claro "industrial" (Inter, acento Volt Blue). **Objetivo**: tema
-  oscuro Cyber-Luxe de este documento.
-- Implementación por fases en `docs/specs/m13-redesign-ui.md` (tokens/tema, componentes,
-  páginas públicas, admin, progreso/checklist/rarezas, extras).
+- **Fase 1 (tokens, tema y fuentes): ☑** — cableado en `assets/css/main.css` (`@theme static`
+  + semántica claro/oscuro), `app.config.ts` (primary gold, secondary volt, neutral slate,
+  formas) y `@nuxt/fonts` (Plus Jakarta Sans + Hanken Grotesk). Oscuro por defecto.
+- Fases 2-5 en `docs/specs/m13-redesign-ui.md` (componentes, públicas, admin, datos nuevos).
