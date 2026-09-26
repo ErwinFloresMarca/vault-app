@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,300..900;1,300..900&amp;family=Plus+Jakarta+Sans:ital,wght@0,400..800;1,400..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"surface-container":"#112035","on-tertiary-fixed-variant":"#6900b3","tertiary":"#fdf3ff","on-secondary":"#00315f","on-background":"#d5e3ff","on-tertiary-fixed":"#2c0051","primary-container":"#ffd700","surface-container-lowest":"#000e23","primary":"#fff6df","tertiary-fixed-dim":"#ddb7ff","secondary-fixed":"#d4e3ff","tertiary-container":"#ead0ff","on-primary":"#3a3000","error":"#ffb4ab","on-secondary-container":"#002a53","surface-container-highest":"#27354c","on-surface-variant":"#d0c6ab","primary-fixed-dim":"#e9c400","primary-fixed":"#ffe16d","surface":"#041428","secondary":"#a5c8ff","on-secondary-fixed":"#001c3a","tertiary-fixed":"#f0dbff","on-primary-fixed-variant":"#544600","on-tertiary":"#490080","background":"#041428","on-surface":"#d5e3ff","on-primary-fixed":"#221b00","error-container":"#93000a","surface-bright":"#2b3a50","secondary-container":"#2792ff","secondary-fixed-dim":"#a5c8ff","surface-variant":"#27354c","inverse-surface":"#d5e3ff","surface-dim":"#041428","on-tertiary-container":"#842cd3","on-primary-container":"#705e00","inverse-primary":"#705d00","on-secondary-fixed-variant":"#004786","surface-container-low":"#0c1c31","inverse-on-surface":"#223147","on-error-container":"#ffdad6","outline":"#999077","on-error":"#690005","surface-tint":"#e9c400","surface-container-high":"#1c2a40","outline-variant":"#4d4732"},"borderRadius":{"DEFAULT":"1rem","lg":"2rem","xl":"3rem","full":"9999px"},"spacing":{"margin-tablet":"2rem","space-xs":"0.25rem","space-lg":"1.5rem","margin":"3rem","space-md":"1rem","space-xl":"2.5rem","margin-mobile":"1rem","space-sm":"0.5rem","gutter-mobile":"1rem","gutter":"1.5rem"},"fontFamily":{"body-sm":["Hanken Grotesk"],"headline-sm":["Plus Jakarta Sans"],"label-caps":["Plus Jakarta Sans"],"display":["Plus Jakarta Sans"],"body-md":["Hanken Grotesk"],"headline-lg":["Plus Jakarta Sans"],"metric-display":["Plus Jakarta Sans"],"display-mobile":["Plus Jakarta Sans"],"body-lg":["Hanken Grotesk"],"metric-counter":["Hanken Grotesk"],"headline-lg-mobile":["Plus Jakarta Sans"],"headline-md":["Plus Jakarta Sans"]},"fontSize":{"body-sm":["0.875rem",{"lineHeight":"1.25rem","fontWeight":"400"}],"headline-sm":["1.25rem",{"lineHeight":"1.75rem","fontWeight":"600"}],"label-caps":["0.75rem",{"lineHeight":"1rem","letterSpacing":"0.12em","fontWeight":"700"}],"display":["3.5rem",{"lineHeight":"4rem","letterSpacing":"-0.03em","fontWeight":"800"}],"body-md":["1rem",{"lineHeight":"1.5rem","fontWeight":"400"}],"headline-lg":["2.25rem",{"lineHeight":"2.75rem","letterSpacing":"-0.02em","fontWeight":"700"}],"metric-display":["1.75rem",{"lineHeight":"2rem","letterSpacing":"-0.02em","fontWeight":"800"}],"display-mobile":["2.25rem",{"lineHeight":"2.75rem","letterSpacing":"-0.02em","fontWeight":"800"}],"body-lg":["1.125rem",{"lineHeight":"1.75rem","fontWeight":"400"}],"metric-counter":["1rem",{"lineHeight":"1.25rem","fontWeight":"600"}],"headline-lg-mobile":["1.75rem",{"lineHeight":"2.25rem","letterSpacing":"-0.01em","fontWeight":"700"}],"headline-md":["1.5rem",{"lineHeight":"2rem","letterSpacing":"-0.01em","fontWeight":"600"}]}}}}</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 left-0 right-0 z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-20 w-full px-gutter-mobile md:px-margin-tablet lg:px-margin max-w-[1440px] mx-auto flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-md shrink-0"><a class="flex items-center gap-space-sm group" data-path="inicio" href="#"><img alt="Volt Vault Insignia Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UpcaP6JedGeF5UTr6Rtx8ZMKI1CmFNh6WvihcdsRyZWLuIQ3lJr8HjemGrBRQU6RYOdMmPna-fbWcPwdQiKZZ_-rPxk8iET3oCC_1KPQUGs1gqd_7sl9QFJ_wlAW1oR4RQBdTqm18gQmYt0XmkY3cGaovQ9hKhl9hSjv5Xy2Js-xCwuHA-iXxoKHwXWkjHKbcWX9UzJsadfrAWpYhfoCARtK9cDQJx1KCEztXIidDRQJ0-KmfovxStVnAo"/><span class="font-headline-sm text-headline-sm font-bold tracking-tight text-primary group-hover:text-primary-fixed-dim transition-colors">Volt <span class="text-primary-container">Vault</span></span></a></div><nav class="hidden md:flex items-center gap-space-xs p-space-xs rounded-full bg-surface-container-low" data-active-classes="bg-surface-container-high text-on-surface font-headline-sm"><a class="px-space-lg py-space-xs rounded-full font-headline-sm text-body-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="inicio" href="#">Inicio</a><a class="px-space-lg py-space-xs rounded-full font-headline-sm text-body-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="colecciones" href="#">Colecciones</a></nav><div class="flex items-center gap-space-sm"><div class="hidden sm:flex items-center gap-space-xs bg-surface-container-low px-space-md py-space-xs rounded-full"><span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span><span class="font-label-caps text-label-caps uppercase text-on-surface-variant">Nivel 14</span><svg class="w-5 h-5 -rotate-90 ml-space-xs" viewbox="0 0 36 36"><circle cx="18" cy="18" fill="none" r="14" stroke="#1c2a40" stroke-width="3"></circle><circle cx="18" cy="18" fill="none" r="14" stroke="#ffd700" stroke-dasharray="88" stroke-dashoffset="25" stroke-linecap="round" stroke-width="3"></circle></svg></div><div class="relative group"><button class="flex items-center gap-space-xs p-space-xs rounded-full bg-surface-container-low hover:bg-surface-container transition-colors" type="button"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><span class="material-symbols-outlined text-on-surface-variant text-[20px] pr-space-xs hidden md:inline">expand_more</span></button><div class="absolute right-0 top-full mt-space-xs w-56 rounded-xl bg-surface-container-high p-space-xs shadow-[0_20px_40px_-15px_rgba(2,6,18,0.7)] hidden group-hover:flex flex-col gap-space-xs"><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="mi-coleccion" href="#"><span class="font-body-sm text-body-sm">Mi colección</span><span class="material-symbols-outlined text-[16px] text-secondary">lock_open</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="panel-admin" href="#"><span class="font-body-sm text-body-sm">Panel admin</span><span class="material-symbols-outlined text-[16px] text-primary-container">admin_panel_settings</span></a><div class="h-[1px] bg-surface-variant my-space-xs"></div><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-error hover:bg-error-container hover:text-on-error-container transition-colors" data-path="login" href="#"><span class="font-body-sm text-body-sm font-semibold">Cerrar sesión</span><span class="material-symbols-outlined text-[16px]">logout</span></a></div></div></div></div></header><main class="w-full pt-20 bg-surface min-h-[calc(100vh-280px)]"><div class="flex flex-col w-full">
+<!-- Dynamic Series Ambient Background -->
+<div class="relative w-full overflow-hidden">
+<div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[400px] bg-gradient-to-b from-secondary-container/15 via-primary-container/10 to-transparent blur-3xl pointer-events-none -z-10"></div>
+<div class="absolute top-80 right-0 w-96 h-96 bg-tertiary-container/10 blur-3xl pointer-events-none -z-10"></div>
+<!-- Main Content Container -->
+<div class="max-w-[1440px] w-full mx-auto px-gutter-mobile md:px-margin-tablet lg:px-margin py-space-lg flex flex-col gap-space-xl">
+<!-- Top Breadcrumb & Metadata -->
+<div class="flex flex-wrap items-center justify-between gap-space-md">
+<a class="inline-flex items-center gap-space-xs text-on-surface-variant hover:text-primary transition-colors font-headline-sm text-body-sm group" href="#">
+<span class="material-symbols-outlined text-[18px] group-hover:-translate-x-1 transition-transform">arrow_back</span>
+<span>Colecciones</span>
+<span class="text-surface-variant font-normal">/</span>
+<span class="text-primary font-semibold">Cyber Storm Protocol</span>
+</a>
+<div class="flex items-center gap-space-xs flex-wrap">
+<span class="px-space-md py-0.5 rounded-full bg-surface-container-low text-secondary font-label-caps text-label-caps">#CYBERPUNK</span>
+<span class="px-space-md py-0.5 rounded-full bg-surface-container-low text-primary-container font-label-caps text-label-caps">#MECHA</span>
+<span class="px-space-md py-0.5 rounded-full bg-surface-container-low text-tertiary-fixed-dim font-label-caps text-label-caps">#EDICIÓN_LIMITADA</span>
+<div class="h-4 w-[1px] bg-surface-container-highest mx-space-xs hidden sm:block"></div>
+<span class="px-space-md py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-caps text-label-caps flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container animate-ping"></span>
+            SERIE ACTIVA · TEMP 04
+          </span>
+</div>
+</div>
+<!-- Vault Hero Telemetry Card -->
+<section class="relative rounded-lg bg-surface-container-low p-space-lg md:p-space-xl shadow-xl overflow-hidden">
+<!-- Glow highlight lines -->
+<div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-primary-container/80 to-transparent"></div>
+<div class="absolute -right-20 -bottom-20 w-80 h-80 rounded-full bg-secondary-container/10 blur-2xl pointer-events-none"></div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center relative z-10">
+<!-- Left: Series Meta & Rationale -->
+<div class="lg:col-span-7 flex flex-col gap-space-md">
+<div class="flex items-center gap-space-sm">
+<span class="px-space-md py-1 rounded-full bg-primary-container/15 text-primary-container font-label-caps text-label-caps flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px]">stars</span>
+                BÓVEDA OFICIAL VOLT VAULT
+              </span>
+<span class="text-on-surface-variant font-metric-counter text-body-sm">ID: #CSP-2025-V</span>
+</div>
+<div class="flex flex-col gap-space-xs">
+<h1 class="font-headline-lg text-headline-lg text-primary tracking-tight">Cyber Storm Protocol</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+                Unidades mecanizadas y pilotos cibernéticos forjados en titanio oscuro con matriz lumínica reactiva. Completa la serie para desbloquear el trofeo holográfico de bóveda y la reliquia Apex de temporada.
+              </p>
+</div>
+<!-- Stats Bar -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-space-sm pt-space-xs">
+<div class="p-space-md rounded-DEFAULT bg-surface-container flex flex-col">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">Colección Total</span>
+<span class="font-metric-display text-metric-display text-primary mt-1">24 <span class="font-body-sm text-body-sm text-on-surface-variant">piezas</span></span>
+</div>
+<div class="p-space-md rounded-DEFAULT bg-surface-container flex flex-col">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">En tu Bóveda</span>
+<span class="font-metric-display text-metric-display text-primary-container mt-1" id="hero-owned-counter">18 <span class="font-body-sm text-body-sm text-on-surface-variant">items</span></span>
+</div>
+<div class="p-space-md rounded-DEFAULT bg-surface-container flex flex-col">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">Rarezas</span>
+<span class="font-metric-display text-metric-display text-secondary mt-1">4 <span class="font-body-sm text-body-sm text-on-surface-variant">niveles</span></span>
+</div>
+<div class="p-space-md rounded-DEFAULT bg-surface-container flex flex-col">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">Coleccionistas</span>
+<span class="font-metric-display text-metric-display text-on-surface mt-1">1.4k <span class="font-body-sm text-body-sm text-on-surface-variant">activos</span></span>
+</div>
+</div>
+</div>
+<!-- Right: Circular Telemetry & Progression HUD -->
+<div class="lg:col-span-5 flex flex-col sm:flex-row lg:flex-col items-center justify-center gap-space-lg p-space-lg rounded-DEFAULT bg-surface-container/70 backdrop-blur-md">
+<div class="flex items-center gap-space-lg">
+<!-- Radial Meter -->
+<div class="relative w-32 h-32 shrink-0 flex items-center justify-center">
+<svg class="w-full h-full -rotate-90" viewbox="0 0 100 100">
+<circle cx="50" cy="50" fill="none" r="42" stroke="#1c2a40" stroke-width="8"></circle>
+<circle class="transition-all duration-700 ease-out" cx="50" cy="50" fill="none" id="radial-progress-fill" r="42" stroke="#ffd700" stroke-dasharray="264" stroke-dashoffset="66" stroke-linecap="round" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="font-display text-headline-lg font-extrabold text-primary-container" id="hero-percentage-text">75%</span>
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">Completado</span>
+</div>
+</div>
+<!-- Progression Description -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary-container text-[20px]">military_tech</span>
+<span class="font-headline-sm text-headline-sm text-primary">Insignia Dorada</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+<strong class="text-primary-container" id="hero-missing-text">¡Solo te faltan 6 piezas!</strong> Adquiérelas o márcalas en tu checklist para reclamar tu certificado on-chain y vitrina física.
+                </p>
+<div class="flex items-center gap-space-xs mt-1">
+<span class="w-2 h-2 rounded-full bg-secondary-container"></span>
+<span class="font-label-caps text-label-caps uppercase text-secondary">Récord de bóveda: Top 5%</span>
+</div>
+</div>
+</div>
+<!-- Master Linear Bar with Glow Shimmer -->
+<div class="w-full flex flex-col gap-1.5">
+<div class="flex justify-between items-center font-metric-counter text-body-sm text-on-surface-variant">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary-container">verified</span>
+                  Progreso de serie
+                </span>
+<span class="text-primary font-bold"><span id="hero-bar-counter">18</span> / 24 Conseguidos</span>
+</div>
+<div class="w-full h-3 rounded-full bg-surface-container-lowest overflow-hidden p-0.5 relative">
+<div class="h-full rounded-full bg-gradient-to-r from-secondary-container via-primary-container to-primary-fixed transition-all duration-500 relative" id="master-linear-progress" style="width: 75%;">
+<div class="absolute inset-0 bg-white/20 animate-pulse"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Vault Control Matrix: Sticky Search & Filters Toolbar -->
+<section class="sticky top-20 z-30 -mx-gutter-mobile md:-mx-margin-tablet lg:-mx-margin px-gutter-mobile md:px-margin-tablet lg:px-margin py-space-sm bg-surface/90 backdrop-blur-xl transition-all">
+<div class="p-space-md rounded-DEFAULT bg-surface-container-high/90 shadow-lg flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-space-md">
+<!-- Search Input Pill -->
+<div class="relative flex-1 min-w-[260px]">
+<span class="material-symbols-outlined absolute left-space-md top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+<input class="w-full pl-11 pr-space-md py-2.5 rounded-full bg-surface-container-lowest text-on-surface placeholder:text-on-surface-variant/60 font-body-md text-body-sm focus:outline-none focus:ring-2 focus:ring-secondary-container transition-all" id="item-search-input" placeholder="Buscar por nombre, unidad o serie (ej: Unit 734)..." type="text"/>
+</div>
+<!-- Status Segmented Control (Checklist Filter) -->
+<div class="flex items-center gap-1 p-1 rounded-full bg-surface-container-lowest overflow-x-auto scrollbar-none">
+<button class="filter-status-btn px-space-md py-1.5 rounded-full font-headline-sm text-body-sm transition-all bg-surface-container-high text-primary shadow-sm" data-status-filter="all">
+              Todos <span class="text-on-surface-variant text-label-caps ml-1" id="filter-count-all">24</span>
+</button>
+<button class="filter-status-btn px-space-md py-1.5 rounded-full font-headline-sm text-body-sm transition-all text-on-surface-variant hover:text-on-surface" data-status-filter="owned">
+              Conseguidos <span class="text-primary-container text-label-caps ml-1" id="filter-count-owned">18</span>
+</button>
+<button class="filter-status-btn px-space-md py-1.5 rounded-full font-headline-sm text-body-sm transition-all text-on-surface-variant hover:text-on-surface" data-status-filter="missing">
+              Faltantes <span class="text-error text-label-caps ml-1" id="filter-count-missing">6</span>
+</button>
+<button class="filter-status-btn px-space-md py-1.5 rounded-full font-headline-sm text-body-sm transition-all text-on-surface-variant hover:text-on-surface" data-status-filter="wishlist">
+              Deseados <span class="text-tertiary-fixed-dim text-label-caps ml-1" id="filter-count-wishlist">3</span>
+</button>
+</div>
+<!-- Quick Tier & Layout Toggles -->
+<div class="flex items-center gap-space-sm justify-between lg:justify-end">
+<!-- Rarity Dropdown Pill -->
+<div class="relative">
+<select class="appearance-none pl-space-md pr-9 py-2 rounded-full bg-surface-container-lowest text-on-surface font-body-sm text-body-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-secondary-container" id="rarity-select">
+<option value="all">Todas las Rarezas</option>
+<option value="legendary">Legendaria (★ 4)</option>
+<option value="epic">Épica (★ 3)</option>
+<option value="rare">Rara (★ 2)</option>
+<option value="common">Común (★ 1)</option>
+</select>
+<span class="material-symbols-outlined absolute right-space-sm top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[18px]">expand_more</span>
+</div>
+<!-- Grid vs Checklist Mode Toggle -->
+<div class="flex items-center bg-surface-container-lowest p-1 rounded-full">
+<button class="p-1.5 rounded-full bg-surface-container text-primary transition-all" id="view-mode-grid" title="Vista Vitrina">
+<span class="material-symbols-outlined text-[18px]">grid_view</span>
+</button>
+<button class="p-1.5 rounded-full text-on-surface-variant hover:text-on-surface transition-all" id="view-mode-list" title="Modo Checklist Compacto">
+<span class="material-symbols-outlined text-[18px]">checklist</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Checklist Interactive Status Banner / Auto-Save Alert -->
+<div class="flex items-center justify-between px-space-lg py-space-sm rounded-full bg-surface-container border border-primary-container/20 shadow-md" id="status-toast">
+<div class="flex items-center gap-space-sm">
+<span class="w-2.5 h-2.5 rounded-full bg-primary-container animate-pulse"></span>
+<span class="font-body-sm text-body-sm text-on-surface">
+<strong>Modo Checklist Rápido Activo:</strong> Haz clic en el botón de cualquier pieza para marcarla o desmarcarla en tu bóveda en tiempo real.
+          </span>
+</div>
+<span class="font-label-caps text-label-caps uppercase text-primary-container hidden md:inline">Sincronización instantánea</span>
+</div>
+<!-- Items Grid: Responsive Showcase Matrix -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-space-lg" id="items-grid-container">
+<!-- Item 1: DataStore IMAGE_13 Cybernetic Warrior Unit 734 (Epic, Owned) -->
+<article class="collectible-card group relative rounded-lg bg-surface-container-low hover:bg-surface-container transition-all duration-300 shadow-md hover:shadow-xl flex flex-col overflow-hidden" data-id="CSP-04" data-rarity="epic" data-status="owned" data-title="cybernetic warrior unit 734">
+<div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-tertiary-container via-tertiary-fixed-dim to-transparent"></div>
+<!-- Image Box with Vault Showcase Frame -->
+<div class="relative w-full aspect-square bg-surface-container-lowest overflow-hidden flex items-center justify-center p-space-md">
+<img alt="Cybernetic Warrior Unit 734 en vitrina acrílica con peana grabada y luces de neón cian" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida/AEtjO1W0e90V6ro2ZNgGSgRum7bUtMF2YEZXMGGq-lCXRiIPqIU-Gs2x7CLcqHnCUAyRaTLL0CC67E7MkAjsCazChBey53hkuKDd-utVNpnJssETlunjt-r2WF0e2QmrdtQ_Ff84egYDvGnVQ4nZaZN2tyuzeikpPD0utRNdBR4-1cn8P2EichD0r31Ourk17muao5HqHfL0nHrEEau8p0hVNjSMXodUm7JbZX-5KQGh93go3q54qzauUKPbBzM"/>
+<!-- Badges Layer -->
+<div class="absolute top-space-md left-space-md flex flex-col gap-1 items-start">
+<span class="px-space-md py-0.5 rounded-full bg-surface-container-lowest/80 backdrop-blur-md text-tertiary-fixed-dim font-label-caps text-label-caps flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
+                ÉPICA
+              </span>
+<span class="px-space-sm py-0.5 rounded-full bg-surface-container-high/90 text-on-surface-variant font-label-caps text-[10px]">#04 DE 24</span>
+</div>
+<!-- Wishlist Quick Heart Button -->
+<button class="wishlist-toggle absolute top-space-md right-space-md w-8 h-8 rounded-full bg-surface-container-lowest/80 backdrop-blur-md flex items-center justify-center text-on-surface-variant hover:text-tertiary-container transition-colors" title="Añadir a lista de deseos">
+<span class="material-symbols-outlined text-[18px]">favorite</span>
+</button>
+<!-- Status Indicator Overlay Badge -->
+<div class="status-badge-container absolute bottom-space-md left-space-md">
+<span class="inline-flex items-center gap-1 px-space-md py-0.5 rounded-full bg-surface-container-high text-primary-container font-label-caps text-label-caps shadow-sm">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                CONSEGUIDO
+              </span>
+</div>
+</div>
+<!-- Item Telemetry & Details -->
+<div class="p-space-md flex flex-col gap-space-sm flex-1 justify-between">
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between text-on-surface-variant font-label-caps text-[11px]">
+<span>CYBER-STORM SERIES</span>
+<span class="text-secondary font-medium">Bóveda verificada</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary leading-tight">Cybernetic Warrior Unit 734</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">
+                Figura de vinilo con peana mecanizada y acabado de armadura en grafito con iluminación frontal cian.
+              </p>
+</div>
+<div class="pt-space-xs flex flex-col gap-space-sm">
+<div class="flex items-center justify-between text-on-surface-variant font-metric-counter text-[12px] bg-surface-container-lowest/60 px-space-md py-1 rounded-DEFAULT">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">group</span> 148 lo tienen
+                </span>
+<span class="text-primary-container font-semibold">Tú lo tienes</span>
+</div>
+<!-- Interactive Checklist Action Button -->
+<div class="flex items-center gap-space-xs pt-1">
+<button class="toggle-owned-btn flex-1 py-2 px-space-md rounded-full font-headline-sm text-body-sm font-semibold transition-all flex items-center justify-center gap-1.5 bg-primary-container text-on-primary-container hover:bg-error hover:text-on-error group/btn" data-owned="true">
+<span class="material-symbols-outlined text-[18px] group-hover/btn:hidden">check</span>
+<span class="group-hover/btn:hidden">Conseguido</span>
+<span class="material-symbols-outlined text-[18px] hidden group-hover/btn:inline">close</span>
+<span class="hidden group-hover/btn:inline">Desmarcar</span>
+</button>
+<button class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" title="Detalles de la pieza">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</button>
+</div>
+</div>
+</div>
+</article>
+<!-- Item 2: DataStore IMAGE_11 Mecha Dragon Golden Volt (Legendary, Missing) -->
+<article class="collectible-card group relative rounded-lg bg-surface-container-low hover:bg-surface-container transition-all duration-300 shadow-md hover:shadow-xl flex flex-col overflow-hidden" data-id="CSP-01" data-rarity="legendary" data-status="missing" data-title="mecha dragon golden volt">
+<div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary-container via-primary-fixed to-transparent"></div>
+<div class="relative w-full aspect-square bg-surface-container-lowest overflow-hidden flex items-center justify-center p-space-md">
+<img alt="Mecha Dragon Golden Volt en oro pulido con alas desplegadas y cristales púrpuras reactivos" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida/AEtjO1UJvDE9X93_aVdX2N1Td6jZNNzb8GxqCXlMnrd_UYwrCn8PMShu9vpWHwKtvROUqenwTkZz7xbu0qeGYxmbRXF1iclJiGxcSMYka_NRXW-C4PRolrvLNIZZaOCIMPpdsH6q4zwjeSHyzQIJHddx9fRcVsNhAetGhyD5f3hryupUSsSd18gwIEPzJ1dJiHQKtX7tPrFJotItvNcYBRxSizSYuCpuWNeKHl9bi1z-beLgY_5javw3McguhkM"/>
+<div class="absolute top-space-md left-space-md flex flex-col gap-1 items-start">
+<span class="px-space-md py-0.5 rounded-full bg-surface-container-lowest/80 backdrop-blur-md text-primary-container font-label-caps text-label-caps flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container animate-pulse"></span>
+                LEGENDARIA
+              </span>
+<span class="px-space-sm py-0.5 rounded-full bg-surface-container-high/90 text-on-surface-variant font-label-caps text-[10px]">#01 DE 24</span>
+</div>
+<button class="wishlist-toggle active absolute top-space-md right-space-md w-8 h-8 rounded-full bg-surface-container-lowest/80 backdrop-blur-md flex items-center justify-center text-tertiary-fixed-dim transition-colors" title="En tu lista de deseos">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+<div class="status-badge-container absolute bottom-space-md left-space-md">
+<span class="inline-flex items-center gap-1 px-space-md py-0.5 rounded-full bg-surface-container-lowest/90 text-error font-label-caps text-label-caps">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                POR CONSEGUIR
+              </span>
+</div>
+</div>
+<div class="p-space-md flex flex-col gap-space-sm flex-1 justify-between">
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between text-on-surface-variant font-label-caps text-[11px]">
+<span>CORONA DE TEMPORADA</span>
+<span class="text-error font-medium">Últimas 3 unidades</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary leading-tight">Mecha Dragon Golden Volt</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">
+                Estatua premium articulada en oro pulido de 24k electroplateado con alas cristalinas iluminadas.
+              </p>
+</div>
+<div class="pt-space-xs flex flex-col gap-space-sm">
+<div class="flex items-center justify-between text-on-surface-variant font-metric-counter text-[12px] bg-surface-container-lowest/60 px-space-md py-1 rounded-DEFAULT">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">group</span> 32 coleccionistas
+                </span>
+<span class="text-secondary font-semibold">En deseos</span>
+</div>
+<div class="flex items-center gap-space-xs pt-1">
+<button class="toggle-owned-btn flex-1 py-2 px-space-md rounded-full font-headline-sm text-body-sm font-semibold transition-all flex items-center justify-center gap-1.5 bg-surface-container hover:bg-primary-container text-on-surface hover:text-on-primary-container" data-owned="false">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+<span>Marcar conseguido</span>
+</button>
+<button class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" title="Detalles de la pieza">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</button>
+</div>
+</div>
+</div>
+</article>
+<!-- Item 3: DataStore IMAGE_10 Neo-Pilot Chibi Striker (Rare, Owned) -->
+<article class="collectible-card group relative rounded-lg bg-surface-container-low hover:bg-surface-container transition-all duration-300 shadow-md hover:shadow-xl flex flex-col overflow-hidden" data-id="CSP-09" data-rarity="rare" data-status="owned" data-title="neo-pilot chibi striker seraphim">
+<div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-secondary-container via-secondary to-transparent"></div>
+<div class="relative w-full aspect-square bg-surface-container-lowest overflow-hidden flex items-center justify-center p-space-md">
+<img alt="Neo-Pilot Chibi Striker con alas prismáticas de cristal y peana hexagonal con grid neón ciberpunk" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida/AEtjO1VcNQNxd8liGsYPIlWnyL-2y7AxyEqn2HAiWPyHNmAAnbtt1UoFMnePbEVcniyPCzuS586Lkh5Kaq7dQKlaX8zn4iW75kW43dotXTzJ7fCUUaEEns-43p4xsADUs8PRge-FbpkF3ktEeahRd0DUlt6dHnddHisrG4_8oE1JQCo8tIMyl3KR7Dtc1z8uNLlmraHq7CVqZOPpsyZtwP1s-PYjiZG-ax7i5t8kXmVC4jMfwHyhS14J_j6iS6py"/>
+<div class="absolute top-space-md left-space-md flex flex-col gap-1 items-start">
+<span class="px-space-md py-0.5 rounded-full bg-surface-container-lowest/80 backdrop-blur-md text-secondary font-label-caps text-label-caps flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                RARA
+              </span>
+<span class="px-space-sm py-0.5 rounded-full bg-surface-container-high/90 text-on-surface-variant font-label-caps text-[10px]">#09 DE 24</span>
+</div>
+<button class="wishlist-toggle absolute top-space-md right-space-md w-8 h-8 rounded-full bg-surface-container-lowest/80 backdrop-blur-md flex items-center justify-center text-on-surface-variant hover:text-tertiary-container transition-colors" title="Añadir a lista de deseos">
+<span class="material-symbols-outlined text-[18px]">favorite</span>
+</button>
+<div class="status-badge-container absolute bottom-space-md left-space-md">
+<span class="inline-flex items-center gap-1 px-space-md py-0.5 rounded-full bg-surface-container-high text-primary-container font-label-caps text-label-caps shadow-sm">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                CONSEGUIDO
+              </span>
+</div>
+</div>
+<div class="p-space-md flex flex-col gap-space-sm flex-1 justify-between">
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between text-on-surface-variant font-label-caps text-[11px]">
+<span>SERAPHIM SQUADRON</span>
+<span class="text-secondary font-medium">En tu bóveda</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary leading-tight">Neo-Pilot Chibi Striker</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">
+                Piloto táctico con alas de refracción prismática estilo aurora y peana hexagonal iluminada.
+              </p>
+</div>
+<div class="pt-space-xs flex flex-col gap-space-sm">
+<div class="flex items-center justify-between text-on-surface-variant font-metric-counter text-[12px] bg-surface-container-lowest/60 px-space-md py-1 rounded-DEFAULT">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">group</span> 210 coleccionistas
+                </span>
+<span class="text-primary-container font-semibold">Tú lo tienes</span>
+</div>
+<div class="flex items-center gap-space-xs pt-1">
+<button class="toggle-owned-btn flex-1 py-2 px-space-md rounded-full font-headline-sm text-body-sm font-semibold transition-all flex items-center justify-center gap-1.5 bg-primary-container text-on-primary-container hover:bg-error hover:text-on-error group/btn" data-owned="true">
+<span class="material-symbols-outlined text-[18px] group-hover/btn:hidden">check</span>
+<span class="group-hover/btn:hidden">Conseguido</span>
+<span class="material-symbols-outlined text-[18px] hidden group-hover/btn:inline">close</span>
+<span class="hidden group-hover/btn:inline">Desmarcar</span>
+</button>
+<button class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" title="Detalles de la pieza">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</button>
+</div>
+</div>
+</div>
+</article>
+<!-- Item 4: Valkyrie Prime Unit 02 (Common, Owned) -->
+<article class="collectible-card group relative rounded-lg bg-surface-container-low hover:bg-surface-container transition-all duration-300 shadow-md hover:shadow-xl flex flex-col overflow-hidden" data-id="CSP-14" data-rarity="common" data-status="owned" data-title="valkyrie prime unit 02">
+<div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-surface-variant via-secondary-fixed to-transparent"></div>
+<div class="relative w-full aspect-square bg-surface-container-lowest overflow-hidden flex items-center justify-center p-space-md">
+<img class="w-full h-full object-cover rounded-DEFAULT group-hover:scale-105 transition-transform duration-500" data-alt="A stylized sleek dark navy tactical mech figurine with white accent panel lines, metallic silver joints, and a matte shield resting on a clean pedestal. The collectible figurine is illuminated with subtle overhead studio spotlight against an oceanic navy background matching the dark arcade vault aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKBf3j31iGpgIUpepKYIBnNSF1qvPEASM50heaXMFVFBrx8U01BIeoRg7iwY-T1YywRLFnTEA1kc9VuMzkBHGIBAOhWXOiZv84Re1jPIFzFMKwZr_yG6nW2NkJumRkHgC7f1AYa1qtmFmKjKw9P7RZyxJF-E1nb58LKd_4pf6iWt5_ZoFZqild_IEVKzoDgnl2rF6oAhZ2SwOCyF4shJMvBEWgKWI4Nnqiuba3se5TtxisQNIxmRMB0A"/>
+<div class="absolute top-space-md left-space-md flex flex-col gap-1 items-start">
+<span class="px-space-md py-0.5 rounded-full bg-surface-container-lowest/80 backdrop-blur-md text-on-surface font-label-caps text-label-caps flex items-center gap-1">
+                COMÚN
+              </span>
+<span class="px-space-sm py-0.5 rounded-full bg-surface-container-high/90 text-on-surface-variant font-label-caps text-[10px]">#14 DE 24</span>
+</div>
+<button class="wishlist-toggle absolute top-space-md right-space-md w-8 h-8 rounded-full bg-surface-container-lowest/80 backdrop-blur-md flex items-center justify-center text-on-surface-variant hover:text-tertiary-container transition-colors" title="Añadir a lista de deseos">
+<span class="material-symbols-outlined text-[18px]">favorite</span>
+</button>
+<div class="status-badge-container absolute bottom-space-md left-space-md">
+<span class="inline-flex items-center gap-1 px-space-md py-0.5 rounded-full bg-surface-container-high text-primary-container font-label-caps text-label-caps shadow-sm">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                CONSEGUIDO
+              </span>
+</div>
+</div>
+<div class="p-space-md flex flex-col gap-space-sm flex-1 justify-between">
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between text-on-surface-variant font-label-caps text-[11px]">
+<span>INFANTRY DIVISION</span>
+<span class="text-secondary font-medium">Disponible (48)</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary leading-tight">Valkyrie Prime Unit 02</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">
+                Chasis de asalto táctico aerodinámico con escudo de plasma desmontable y blindaje modular.
+              </p>
+</div>
+<div class="pt-space-xs flex flex-col gap-space-sm">
+<div class="flex items-center justify-between text-on-surface-variant font-metric-counter text-[12px] bg-surface-container-lowest/60 px-space-md py-1 rounded-DEFAULT">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">group</span> 489 coleccionistas
+                </span>
+<span class="text-primary-container font-semibold">Tú lo tienes</span>
+</div>
+<div class="flex items-center gap-space-xs pt-1">
+<button class="toggle-owned-btn flex-1 py-2 px-space-md rounded-full font-headline-sm text-body-sm font-semibold transition-all flex items-center justify-center gap-1.5 bg-primary-container text-on-primary-container hover:bg-error hover:text-on-error group/btn" data-owned="true">
+<span class="material-symbols-outlined text-[18px] group-hover/btn:hidden">check</span>
+<span class="group-hover/btn:hidden">Conseguido</span>
+<span class="material-symbols-outlined text-[18px] hidden group-hover/btn:inline">close</span>
+<span class="hidden group-hover/btn:inline">Desmarcar</span>
+</button>
+<button class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" title="Detalles de la pieza">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</button>
+</div>
+</div>
+</div>
+</article>
+<!-- Item 5: Obsidian Dreadnought (Epic, Missing) -->
+<article class="collectible-card group relative rounded-lg bg-surface-container-low hover:bg-surface-container transition-all duration-300 shadow-md hover:shadow-xl flex flex-col overflow-hidden" data-id="CSP-06" data-rarity="epic" data-status="missing" data-title="obsidian dreadnought heavy mech">
+<div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-tertiary-container via-tertiary-fixed-dim to-transparent"></div>
+<div class="relative w-full aspect-square bg-surface-container-lowest overflow-hidden flex items-center justify-center p-space-md">
+<img class="w-full h-full object-cover rounded-DEFAULT group-hover:scale-105 transition-transform duration-500" data-alt="A heavy armored obsidian dreadnought combat robot collectible toy with glowing violet core reactors, twin heavy shoulder cannons, and weathered matte gunmetal plates. Studio shot inside a premium glass display case with violet reflections and dark navy ambient background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgDj2Z4gXea0L0yxNGdYWSCjMMG88LUVvf0BbuuEYxGbn5XaO-R6xiRlqXuaooCShnvg21YKtspkxFDEGbCOdVW0dXYDnCa35XlxWiPRv2lIg2xFHRRcMGLkamDIBnqoxORwoqGH72Ex7jEh0oZrrs2tfQul2GsQ2c2yvTcanDXMo7bpUrKikKgfmUfXlxFnSdEDjBhq92CL7CTZ5tXVLzpb0QR6kKlLva-UUQL8NEJORN-jEho3QB7g"/>
+<div class="absolute top-space-md left-space-md flex flex-col gap-1 items-start">
+<span class="px-space-md py-0.5 rounded-full bg-surface-container-lowest/80 backdrop-blur-md text-tertiary-fixed-dim font-label-caps text-label-caps flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
+                ÉPICA
+              </span>
+<span class="px-space-sm py-0.5 rounded-full bg-surface-container-high/90 text-on-surface-variant font-label-caps text-[10px]">#06 DE 24</span>
+</div>
+<button class="wishlist-toggle active absolute top-space-md right-space-md w-8 h-8 rounded-full bg-surface-container-lowest/80 backdrop-blur-md flex items-center justify-center text-tertiary-fixed-dim transition-colors" title="En tu lista de deseos">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+<div class="status-badge-container absolute bottom-space-md left-space-md">
+<span class="inline-flex items-center gap-1 px-space-md py-0.5 rounded-full bg-surface-container-lowest/90 text-error font-label-caps text-label-caps">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                POR CONSEGUIR
+              </span>
+</div>
+</div>
+<div class="p-space-md flex flex-col gap-space-sm flex-1 justify-between">
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between text-on-surface-variant font-label-caps text-[11px]">
+<span>HEAVY WEAPONS</span>
+<span class="text-error font-medium">Últimas 5 unidades</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary leading-tight">Obsidian Dreadnought</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">
+                Coloso de asedio blindado en obsidiana militar con reactores nucleares de pulso violeta.
+              </p>
+</div>
+<div class="pt-space-xs flex flex-col gap-space-sm">
+<div class="flex items-center justify-between text-on-surface-variant font-metric-counter text-[12px] bg-surface-container-lowest/60 px-space-md py-1 rounded-DEFAULT">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">group</span> 88 coleccionistas
+                </span>
+<span class="text-tertiary-fixed-dim font-semibold">En deseos</span>
+</div>
+<div class="flex items-center gap-space-xs pt-1">
+<button class="toggle-owned-btn flex-1 py-2 px-space-md rounded-full font-headline-sm text-body-sm font-semibold transition-all flex items-center justify-center gap-1.5 bg-surface-container hover:bg-primary-container text-on-surface hover:text-on-primary-container" data-owned="false">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+<span>Marcar conseguido</span>
+</button>
+<button class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" title="Detalles de la pieza">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</button>
+</div>
+</div>
+</div>
+</article>
+<!-- Item 6: Hyperion Plasma Scout (Rare, Owned) -->
+<article class="collectible-card group relative rounded-lg bg-surface-container-low hover:bg-surface-container transition-all duration-300 shadow-md hover:shadow-xl flex flex-col overflow-hidden" data-id="CSP-11" data-rarity="rare" data-status="owned" data-title="hyperion plasma scout reconnaissance">
+<div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-secondary-container via-secondary to-transparent"></div>
+<div class="relative w-full aspect-square bg-surface-container-lowest overflow-hidden flex items-center justify-center p-space-md">
+<img class="w-full h-full object-cover rounded-DEFAULT group-hover:scale-105 transition-transform duration-500" data-alt="A stylized miniature recon pilot android with twin blue energy blades and sleek carbon fiber helmet with illuminated visor. Photographed in high precision collector display lighting with sharp reflections, deep oceanic dark navy room accents, and crisp details." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsSUkN7BbNMxdbOtzmGgrwEceG-4_GpTvYZHWz5zcCjYBSNB3_yj-R3gtI2tOGXEImweEyt6TH_k_1Cbp3G09TSQpBsZtkUbkGukVb_zqob31EHximxg0Hu2cJ8AeX0XnfsODS4Uf7SwSPzLHPiBYfwplZoavje8YQrVw6tn0-d-K72AJH6F_kR9iSVX9dm59mTiYKOp4IoKhbw97IloBo5bh8wP-ECs-loj4IWQn-6j_PPauYgqUXRA"/>
+<div class="absolute top-space-md left-space-md flex flex-col gap-1 items-start">
+<span class="px-space-md py-0.5 rounded-full bg-surface-container-lowest/80 backdrop-blur-md text-secondary font-label-caps text-label-caps flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                RARA
+              </span>
+<span class="px-space-sm py-0.5 rounded-full bg-surface-container-high/90 text-on-surface-variant font-label-caps text-[10px]">#11 DE 24</span>
+</div>
+<button class="wishlist-toggle absolute top-space-md right-space-md w-8 h-8 rounded-full bg-surface-container-lowest/80 backdrop-blur-md flex items-center justify-center text-on-surface-variant hover:text-tertiary-container transition-colors" title="Añadir a lista de deseos">
+<span class="material-symbols-outlined text-[18px]">favorite</span>
+</button>
+<div class="status-badge-container absolute bottom-space-md left-space-md">
+<span class="inline-flex items-center gap-1 px-space-md py-0.5 rounded-full bg-surface-container-high text-primary-container font-label-caps text-label-caps shadow-sm">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                CONSEGUIDO
+              </span>
+</div>
+</div>
+<div class="p-space-md flex flex-col gap-space-sm flex-1 justify-between">
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between text-on-surface-variant font-label-caps text-[11px]">
+<span>RECON FLIGHT</span>
+<span class="text-secondary font-medium">Bóveda asegurada</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary leading-tight">Hyperion Plasma Scout</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">
+                Unidad de exploración de largo alcance equipada con propulsores iónicos y sintonizador espectral.
+              </p>
+</div>
+<div class="pt-space-xs flex flex-col gap-space-sm">
+<div class="flex items-center justify-between text-on-surface-variant font-metric-counter text-[12px] bg-surface-container-lowest/60 px-space-md py-1 rounded-DEFAULT">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">group</span> 194 coleccionistas
+                </span>
+<span class="text-primary-container font-semibold">Tú lo tienes</span>
+</div>
+<div class="flex items-center gap-space-xs pt-1">
+<button class="toggle-owned-btn flex-1 py-2 px-space-md rounded-full font-headline-sm text-body-sm font-semibold transition-all flex items-center justify-center gap-1.5 bg-primary-container text-on-primary-container hover:bg-error hover:text-on-error group/btn" data-owned="true">
+<span class="material-symbols-outlined text-[18px] group-hover/btn:hidden">check</span>
+<span class="group-hover/btn:hidden">Conseguido</span>
+<span class="material-symbols-outlined text-[18px] hidden group-hover/btn:inline">close</span>
+<span class="hidden group-hover/btn:inline">Desmarcar</span>
+</button>
+<button class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" title="Detalles de la pieza">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</button>
+</div>
+</div>
+</div>
+</article>
+<!-- Item 7: Titan Forge Mech 08 (Legendary, Missing) -->
+<article class="collectible-card group relative rounded-lg bg-surface-container-low hover:bg-surface-container transition-all duration-300 shadow-md hover:shadow-xl flex flex-col overflow-hidden" data-id="CSP-02" data-rarity="legendary" data-status="missing" data-title="titan forge mech 08 apex edition">
+<div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary-container via-primary-fixed to-transparent"></div>
+<div class="relative w-full aspect-square bg-surface-container-lowest overflow-hidden flex items-center justify-center p-space-md">
+<img class="w-full h-full object-cover rounded-DEFAULT group-hover:scale-105 transition-transform duration-500" data-alt="An ornate gilded cybernetic battle colossus toy figure with intricate electroplated gold filigree, illuminated cyan internal conduits, and a display base with numbered bronze plaque. Dramatic warm studio key light with reflections on deep glossy dark surfaces." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVuNM1uf8dqtw-oO_-K1_dutQ6bl3Ot3RW9etntTukzXlKvVWxPrWZrt3sg7N_gwnWGSDfx3Lozn5voHhMPpfGeku7qU_B_j__ajl5gaPrtcHpl3G3Gq_XJaCEqX92AWD7XkOYaasu6mTYCXK1QXJyw_LO-WiikFiJnkss6a9ET9RLI148ArOEOfu24ruKCWvKBubyETtgHFz7ip1LaHf-I2QbxgmWl4-EfsJ1SF5EB7R96LYejwKM5Q"/>
+<div class="absolute top-space-md left-space-md flex flex-col gap-1 items-start">
+<span class="px-space-md py-0.5 rounded-full bg-surface-container-lowest/80 backdrop-blur-md text-primary-container font-label-caps text-label-caps flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container animate-pulse"></span>
+                LEGENDARIA
+              </span>
+<span class="px-space-sm py-0.5 rounded-full bg-surface-container-high/90 text-on-surface-variant font-label-caps text-[10px]">#02 DE 24</span>
+</div>
+<button class="wishlist-toggle absolute top-space-md right-space-md w-8 h-8 rounded-full bg-surface-container-lowest/80 backdrop-blur-md flex items-center justify-center text-on-surface-variant hover:text-tertiary-container transition-colors" title="Añadir a lista de deseos">
+<span class="material-symbols-outlined text-[18px]">favorite</span>
+</button>
+<div class="status-badge-container absolute bottom-space-md left-space-md">
+<span class="inline-flex items-center gap-1 px-space-md py-0.5 rounded-full bg-surface-container-lowest/90 text-error font-label-caps text-label-caps">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                POR CONSEGUIR
+              </span>
+</div>
+</div>
+<div class="p-space-md flex flex-col gap-space-sm flex-1 justify-between">
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between text-on-surface-variant font-label-caps text-[11px]">
+<span>APEX VAULT</span>
+<span class="text-error font-medium">1 sola pieza restante</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary leading-tight">Titan Forge Mech 08</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">
+                Bípedo titánico de asedio forjado con aleación de oro y matriz criogénica en la coraza torácica.
+              </p>
+</div>
+<div class="pt-space-xs flex flex-col gap-space-sm">
+<div class="flex items-center justify-between text-on-surface-variant font-metric-counter text-[12px] bg-surface-container-lowest/60 px-space-md py-1 rounded-DEFAULT">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">group</span> 41 coleccionistas
+                </span>
+<span class="text-error font-semibold">Prioridad alta</span>
+</div>
+<div class="flex items-center gap-space-xs pt-1">
+<button class="toggle-owned-btn flex-1 py-2 px-space-md rounded-full font-headline-sm text-body-sm font-semibold transition-all flex items-center justify-center gap-1.5 bg-surface-container hover:bg-primary-container text-on-surface hover:text-on-primary-container" data-owned="false">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+<span>Marcar conseguido</span>
+</button>
+<button class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" title="Detalles de la pieza">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</button>
+</div>
+</div>
+</div>
+</article>
+<!-- Item 8: Aero Glider Recon (Common, Owned) -->
+<article class="collectible-card group relative rounded-lg bg-surface-container-low hover:bg-surface-container transition-all duration-300 shadow-md hover:shadow-xl flex flex-col overflow-hidden" data-id="CSP-19" data-rarity="common" data-status="owned" data-title="aero glider recon stealth drone">
+<div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-surface-variant via-secondary-fixed to-transparent"></div>
+<div class="relative w-full aspect-square bg-surface-container-lowest overflow-hidden flex items-center justify-center p-space-md">
+<img class="w-full h-full object-cover rounded-DEFAULT group-hover:scale-105 transition-transform duration-500" data-alt="A compact aerodynamic cyber drone glider collectible model with folding wings, dark cobalt panels, and luminous volt blue intake lines, resting on an elevated museum acrylic stand. Crisp lighting with reflections." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9KzJ6isj5S27LGTrYoXxPPo5Wvn6eJNeTVSH5kzp9csx6hsb35YAJLB8gLqaEQUox-OpdOE2fL3asBOKNHD9oIKQbMbsEpnhJsvEKzx8NpFiGtZauLGYRwb3jmPG1IRNLFKPD5MQPeDdZjO-HCanAAXdNllOEHJzL1LIgNSc3dhutYRL8zVQ3pyVJJfjSnGbwzYgkfo-IcPnxYpfj1YqcryvSlGkurfH5ziQnIKIhDzyhwknrrgpXYw"/>
+<div class="absolute top-space-md left-space-md flex flex-col gap-1 items-start">
+<span class="px-space-md py-0.5 rounded-full bg-surface-container-lowest/80 backdrop-blur-md text-on-surface font-label-caps text-label-caps flex items-center gap-1">
+                COMÚN
+              </span>
+<span class="px-space-sm py-0.5 rounded-full bg-surface-container-high/90 text-on-surface-variant font-label-caps text-[10px]">#19 DE 24</span>
+</div>
+<button class="wishlist-toggle absolute top-space-md right-space-md w-8 h-8 rounded-full bg-surface-container-lowest/80 backdrop-blur-md flex items-center justify-center text-on-surface-variant hover:text-tertiary-container transition-colors" title="Añadir a lista de deseos">
+<span class="material-symbols-outlined text-[18px]">favorite</span>
+</button>
+<div class="status-badge-container absolute bottom-space-md left-space-md">
+<span class="inline-flex items-center gap-1 px-space-md py-0.5 rounded-full bg-surface-container-high text-primary-container font-label-caps text-label-caps shadow-sm">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                CONSEGUIDO
+              </span>
+</div>
+</div>
+<div class="p-space-md flex flex-col gap-space-sm flex-1 justify-between">
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between text-on-surface-variant font-label-caps text-[11px]">
+<span>DRONE PATROL</span>
+<span class="text-secondary font-medium">Disponible (35)</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary leading-tight">Aero Glider Recon</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">
+                Planeador furtivo de reconocimiento suborbital con sensores ópticos pasivos y acabado cobalto mate.
+              </p>
+</div>
+<div class="pt-space-xs flex flex-col gap-space-sm">
+<div class="flex items-center justify-between text-on-surface-variant font-metric-counter text-[12px] bg-surface-container-lowest/60 px-space-md py-1 rounded-DEFAULT">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">group</span> 530 coleccionistas
+                </span>
+<span class="text-primary-container font-semibold">Tú lo tienes</span>
+</div>
+<div class="flex items-center gap-space-xs pt-1">
+<button class="toggle-owned-btn flex-1 py-2 px-space-md rounded-full font-headline-sm text-body-sm font-semibold transition-all flex items-center justify-center gap-1.5 bg-primary-container text-on-primary-container hover:bg-error hover:text-on-error group/btn" data-owned="true">
+<span class="material-symbols-outlined text-[18px] group-hover/btn:hidden">check</span>
+<span class="group-hover/btn:hidden">Conseguido</span>
+<span class="material-symbols-outlined text-[18px] hidden group-hover/btn:inline">close</span>
+<span class="hidden group-hover/btn:inline">Desmarcar</span>
+</button>
+<button class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" title="Detalles de la pieza">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</button>
+</div>
+</div>
+</div>
+</article>
+</div>
+<!-- Live Gamification Quest Rewards Callout -->
+<section class="rounded-lg bg-surface-container p-space-lg md:p-space-xl flex flex-col md:flex-row items-center justify-between gap-space-lg relative overflow-hidden shadow-lg">
+<div class="flex items-center gap-space-md">
+<div class="w-14 h-14 rounded-full bg-primary-container/15 flex items-center justify-center text-primary-container shrink-0">
+<span class="material-symbols-outlined text-[32px]">workspace_premium</span>
+</div>
+<div class="flex flex-col gap-1">
+<h4 class="font-headline-sm text-headline-sm text-primary">Insignia "Cyber Storm Supreme"</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-xl">
+              Al conseguir las 24 piezas de la serie recibirás la placa holográfica física conmemorativa de Volt Vault con tu número de serie acuñado y 5,000 Puntos Volt para la temporada.
+            </p>
+</div>
+</div>
+<div class="flex items-center gap-space-sm shrink-0 w-full md:w-auto">
+<button class="w-full md:w-auto px-space-lg py-2.5 rounded-full bg-primary-container text-on-primary-container font-headline-sm text-body-sm font-bold shadow-md hover:shadow-[0_0_24px_rgba(255,215,0,0.45)] transition-all" id="show-only-missing-action">
+            Ver solo faltantes (6)
+          </button>
+</div>
+</section>
+</div>
+</div>
+<!-- Persistent Sticky Bottom Telemetry Dock -->
+<aside class="fixed bottom-space-md inset-x-0 mx-auto max-w-4xl px-gutter-mobile z-40">
+<div class="rounded-full bg-surface-container-high/95 backdrop-blur-xl p-space-sm shadow-[0_12px_40px_rgba(0,0,0,0.6)] flex items-center justify-between gap-space-md">
+<!-- Left info pill -->
+<div class="flex items-center gap-space-sm pl-space-sm">
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container shrink-0">
+<span class="material-symbols-outlined text-[20px]">bolt</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-body-sm text-primary font-bold"><span id="dock-owned-count">18</span>/24 Conseguidos</span>
+<span class="text-on-surface-variant text-label-caps">·</span>
+<span class="font-label-caps text-label-caps text-primary-container" id="dock-percentage-text">75% COMPLETADO</span>
+</div>
+<span class="font-body-sm text-[12px] text-on-surface-variant hidden sm:inline" id="dock-missing-hint">¡Faltan solo 6 para la insignia dorada!</span>
+</div>
+</div>
+<!-- Right Action CTA -->
+<div class="flex items-center gap-space-xs">
+<button class="px-space-lg py-2 rounded-full bg-surface-container text-primary hover:bg-primary-container hover:text-on-primary-container font-headline-sm text-body-sm transition-all flex items-center gap-1.5" id="dock-filter-missing-btn">
+<span class="material-symbols-outlined text-[16px]">filter_alt</span>
+<span>Filtrar Faltantes</span>
+</button>
+<button class="w-9 h-9 rounded-full bg-surface-container text-on-surface-variant hover:text-primary flex items-center justify-center transition-colors" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Subir">
+<span class="material-symbols-outlined text-[20px]">arrow_upward</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- Interactive Logic for Instant Checklist Toggling & Filtering -->
+<script>
+    (function initVaultChecklist() {
+      const TOTAL_ITEMS = 24;
+      let ownedCount = 18;
+      let currentStatusFilter = 'all';
+      let currentRarityFilter = 'all';
+      let searchQuery = '';
+
+      const ownedCounterHero = document.getElementById('hero-owned-counter');
+      const missingTextHero = document.getElementById('hero-missing-text');
+      const percentageTextHero = document.getElementById('hero-percentage-text');
+      const barCounterHero = document.getElementById('hero-bar-counter');
+      const masterLinearProgress = document.getElementById('master-linear-progress');
+      const radialProgressFill = document.getElementById('radial-progress-fill');
+      const dockOwnedCount = document.getElementById('dock-owned-count');
+      const dockPercentageText = document.getElementById('dock-percentage-text');
+      const dockMissingHint = document.getElementById('dock-missing-hint');
+      const statusToast = document.getElementById('status-toast');
+      const filterCountOwned = document.getElementById('filter-count-owned');
+      const filterCountMissing = document.getElementById('filter-count-missing');
+
+      function updateTelemetryUI() {
+        const percentage = Math.round((ownedCount / TOTAL_ITEMS) * 100);
+        const missingCount = TOTAL_ITEMS - ownedCount;
+
+        if (ownedCounterHero) ownedCounterHero.innerHTML = `${ownedCount} <span class="font-body-sm text-body-sm text-on-surface-variant">items</span>`;
+        if (barCounterHero) barCounterHero.textContent = ownedCount;
+        if (percentageTextHero) percentageTextHero.textContent = `${percentage}%`;
+        if (missingTextHero) {
+          missingTextHero.textContent = missingCount === 0 
+            ? '¡Colección completa! Eres una leyenda de la bóveda.' 
+            : `¡Solo te faltan ${missingCount} piezas!`;
+        }
+
+        if (dockOwnedCount) dockOwnedCount.textContent = ownedCount;
+        if (dockPercentageText) dockPercentageText.textContent = `${percentage}% COMPLETADO`;
+        if (dockMissingHint) dockMissingHint.textContent = missingCount === 0 
+          ? '¡Serie 100% completada!' 
+          : `¡Faltan solo ${missingCount} para la insignia dorada!`;
+
+        if (filterCountOwned) filterCountOwned.textContent = ownedCount;
+        if (filterCountMissing) filterCountMissing.textContent = missingCount;
+
+        if (masterLinearProgress) {
+          masterLinearProgress.style.width = `${percentage}%`;
+        }
+
+        if (radialProgressFill) {
+          // Circumference 2 * pi * 42 ~= 263.89
+          const circumference = 264;
+          const offset = circumference - (circumference * (percentage / 100));
+          radialProgressFill.style.strokeDashoffset = offset;
+        }
+
+        if (statusToast) {
+          statusToast.classList.add('bg-primary-container/20');
+          setTimeout(() => statusToast.classList.remove('bg-primary-container/20'), 800);
+        }
+      }
+
+      // Card Checklist Toggle Direct Click
+      document.querySelectorAll('.toggle-owned-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const card = button.closest('.collectible-card');
+          const isCurrentlyOwned = button.getAttribute('data-owned') === 'true';
+          const newOwnedState = !isCurrentlyOwned;
+
+          button.setAttribute('data-owned', newOwnedState ? 'true' : 'false');
+          card.setAttribute('data-status', newOwnedState ? 'owned' : 'missing');
+
+          const badgeContainer = card.querySelector('.status-badge-container');
+          
+          if (newOwnedState) {
+            ownedCount++;
+            button.className = 'toggle-owned-btn flex-1 py-2 px-space-md rounded-full font-headline-sm text-body-sm font-semibold transition-all flex items-center justify-center gap-1.5 bg-primary-container text-on-primary-container hover:bg-error hover:text-on-error group/btn';
+            button.innerHTML = `
+              <span class="material-symbols-outlined text-[18px] group-hover/btn:hidden">check</span>
+              <span class="group-hover/btn:hidden">Conseguido</span>
+              <span class="material-symbols-outlined text-[18px] hidden group-hover/btn:inline">close</span>
+              <span class="hidden group-hover/btn:inline">Desmarcar</span>
+            `;
+            if (badgeContainer) {
+              badgeContainer.innerHTML = `
+                <span class="inline-flex items-center gap-1 px-space-md py-0.5 rounded-full bg-surface-container-high text-primary-container font-label-caps text-label-caps shadow-sm">
+                  <span class="material-symbols-outlined text-[14px]">check_circle</span>
+                  CONSEGUIDO
+                </span>
+              `;
+            }
+          } else {
+            ownedCount--;
+            button.className = 'toggle-owned-btn flex-1 py-2 px-space-md rounded-full font-headline-sm text-body-sm font-semibold transition-all flex items-center justify-center gap-1.5 bg-surface-container hover:bg-primary-container text-on-surface hover:text-on-primary-container';
+            button.innerHTML = `
+              <span class="material-symbols-outlined text-[18px]">add_circle</span>
+              <span>Marcar conseguido</span>
+            `;
+            if (badgeContainer) {
+              badgeContainer.innerHTML = `
+                <span class="inline-flex items-center gap-1 px-space-md py-0.5 rounded-full bg-surface-container-lowest/90 text-error font-label-caps text-label-caps">
+                  <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                  POR CONSEGUIR
+                </span>
+              `;
+            }
+          }
+
+          updateTelemetryUI();
+          applyActiveFilters();
+        });
+      });
+
+      // Quick Wishlist toggle
+      document.querySelectorAll('.wishlist-toggle').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const icon = btn.querySelector('.material-symbols-outlined');
+          const isFavorited = btn.classList.contains('active');
+          if (isFavorited) {
+            btn.classList.remove('active', 'text-tertiary-fixed-dim');
+            btn.classList.add('text-on-surface-variant');
+            icon.style.fontVariationSettings = "'FILL' 0";
+          } else {
+            btn.classList.add('active', 'text-tertiary-fixed-dim');
+            btn.classList.remove('text-on-surface-variant');
+            icon.style.fontVariationSettings = "'FILL' 1";
+          }
+        });
+      });
+
+      // Status Segmented Filter Click
+      const statusButtons = document.querySelectorAll('.filter-status-btn');
+      statusButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          statusButtons.forEach(b => {
+            b.classList.remove('bg-surface-container-high', 'text-primary', 'shadow-sm');
+            b.classList.add('text-on-surface-variant');
+          });
+          btn.classList.add('bg-surface-container-high', 'text-primary', 'shadow-sm');
+          btn.classList.remove('text-on-surface-variant');
+
+          currentStatusFilter = btn.getAttribute('data-status-filter');
+          applyActiveFilters();
+        });
+      });
+
+      // Rarity Filter Select
+      const raritySelect = document.getElementById('rarity-select');
+      if (raritySelect) {
+        raritySelect.addEventListener('change', (e) => {
+          currentRarityFilter = e.target.value;
+          applyActiveFilters();
+        });
+      }
+
+      // Search Filter
+      const searchInput = document.getElementById('item-search-input');
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          searchQuery = e.target.value.toLowerCase().trim();
+          applyActiveFilters();
+        });
+      }
+
+      // External CTA to filter missing
+      function filterMissingOnly() {
+        const missingBtn = document.querySelector('[data-status-filter="missing"]');
+        if (missingBtn) missingBtn.click();
+        const grid = document.getElementById('items-grid-container');
+        if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      const showOnlyMissingAction = document.getElementById('show-only-missing-action');
+      if (showOnlyMissingAction) showOnlyMissingAction.addEventListener('click', filterMissingOnly);
+
+      const dockFilterMissingBtn = document.getElementById('dock-filter-missing-btn');
+      if (dockFilterMissingBtn) dockFilterMissingBtn.addEventListener('click', filterMissingOnly);
+
+      function applyActiveFilters() {
+        const cards = document.querySelectorAll('.collectible-card');
+        cards.forEach(card => {
+          const cardStatus = card.getAttribute('data-status');
+          const cardRarity = card.getAttribute('data-rarity');
+          const cardTitle = card.getAttribute('data-title') || '';
+          const cardId = card.getAttribute('data-id') || '';
+          const isWishlist = card.querySelector('.wishlist-toggle.active') !== null;
+
+          let matchesStatus = true;
+          if (currentStatusFilter === 'owned') matchesStatus = (cardStatus === 'owned');
+          else if (currentStatusFilter === 'missing') matchesStatus = (cardStatus === 'missing');
+          else if (currentStatusFilter === 'wishlist') matchesStatus = isWishlist;
+
+          let matchesRarity = true;
+          if (currentRarityFilter !== 'all') {
+            matchesRarity = (cardRarity === currentRarityFilter);
+          }
+
+          let matchesSearch = true;
+          if (searchQuery) {
+            matchesSearch = cardTitle.includes(searchQuery) || cardId.toLowerCase().includes(searchQuery);
+          }
+
+          if (matchesStatus && matchesRarity && matchesSearch) {
+            card.style.display = '';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      }
+
+      // View Mode Toggle (Grid vs Compact Checklist)
+      const gridBtn = document.getElementById('view-mode-grid');
+      const listBtn = document.getElementById('view-mode-list');
+      const gridContainer = document.getElementById('items-grid-container');
+
+      if (gridBtn && listBtn && gridContainer) {
+        listBtn.addEventListener('click', () => {
+          listBtn.classList.add('bg-surface-container', 'text-primary');
+          listBtn.classList.remove('text-on-surface-variant');
+          gridBtn.classList.remove('bg-surface-container', 'text-primary');
+          gridBtn.classList.add('text-on-surface-variant');
+
+          gridContainer.classList.remove('grid-cols-1', 'sm:grid-cols-2', 'lg:grid-cols-3', 'xl:grid-cols-4');
+          gridContainer.classList.add('grid-cols-1');
+        });
+
+        gridBtn.addEventListener('click', () => {
+          gridBtn.classList.add('bg-surface-container', 'text-primary');
+          gridBtn.classList.remove('text-on-surface-variant');
+          listBtn.classList.remove('bg-surface-container', 'text-primary');
+          listBtn.classList.add('text-on-surface-variant');
+
+          gridContainer.classList.add('grid-cols-1', 'sm:grid-cols-2', 'lg:grid-cols-3', 'xl:grid-cols-4');
+          gridContainer.classList.remove('grid-cols-1');
+        });
+      }
+
+      // Initial Sync
+      updateTelemetryUI();
+    })();
+  </script>
+</div></main><footer class="w-full bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] mt-space-xl"><div class="w-full px-gutter-mobile md:px-margin-tablet lg:px-margin max-w-[1440px] mx-auto py-space-xl"><div class="flex flex-col md:flex-row items-center justify-between gap-space-lg"><div class="flex flex-col gap-space-xs text-center md:text-left"><div class="flex items-center justify-center md:justify-start gap-space-sm"><span class="font-headline-sm text-headline-sm font-bold text-primary">Volt Vault</span></div><p class="font-body-sm text-body-sm text-on-surface-variant max-w-xl">© 2025 Volt Vault. La bóveda definitiva para descubrir, catalogar y completar tus colecciones de figuras y piezas exclusivas.</p></div><nav class="flex flex-wrap items-center justify-center gap-space-lg"><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" data-path="colecciones" href="#">Colecciones</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" data-path="privacidad" href="#">Privacidad</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" data-path="terminos" href="#">Términos</a></nav></div></div></footer></body></html>

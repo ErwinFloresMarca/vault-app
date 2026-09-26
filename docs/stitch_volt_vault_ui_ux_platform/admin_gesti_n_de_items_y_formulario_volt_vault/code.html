@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,300..900;1,300..900&amp;family=Plus+Jakarta+Sans:ital,wght@0,400..800;1,400..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"surface-container":"#112035","on-tertiary-fixed-variant":"#6900b3","tertiary":"#fdf3ff","on-secondary":"#00315f","on-background":"#d5e3ff","on-tertiary-fixed":"#2c0051","primary-container":"#ffd700","surface-container-lowest":"#000e23","primary":"#fff6df","tertiary-fixed-dim":"#ddb7ff","secondary-fixed":"#d4e3ff","tertiary-container":"#ead0ff","on-primary":"#3a3000","error":"#ffb4ab","on-secondary-container":"#002a53","surface-container-highest":"#27354c","on-surface-variant":"#d0c6ab","primary-fixed-dim":"#e9c400","primary-fixed":"#ffe16d","surface":"#041428","secondary":"#a5c8ff","on-secondary-fixed":"#001c3a","tertiary-fixed":"#f0dbff","on-primary-fixed-variant":"#544600","on-tertiary":"#490080","background":"#041428","on-surface":"#d5e3ff","on-primary-fixed":"#221b00","error-container":"#93000a","surface-bright":"#2b3a50","secondary-container":"#2792ff","secondary-fixed-dim":"#a5c8ff","surface-variant":"#27354c","inverse-surface":"#d5e3ff","surface-dim":"#041428","on-tertiary-container":"#842cd3","on-primary-container":"#705e00","inverse-primary":"#705d00","on-secondary-fixed-variant":"#004786","surface-container-low":"#0c1c31","inverse-on-surface":"#223147","on-error-container":"#ffdad6","outline":"#999077","on-error":"#690005","surface-tint":"#e9c400","surface-container-high":"#1c2a40","outline-variant":"#4d4732"},"borderRadius":{"DEFAULT":"1rem","lg":"2rem","xl":"3rem","full":"9999px"},"spacing":{"margin-tablet":"2rem","space-xs":"0.25rem","space-lg":"1.5rem","margin":"3rem","space-md":"1rem","space-xl":"2.5rem","margin-mobile":"1rem","space-sm":"0.5rem","gutter-mobile":"1rem","gutter":"1.5rem"},"fontFamily":{"body-sm":["Hanken Grotesk"],"headline-sm":["Plus Jakarta Sans"],"label-caps":["Plus Jakarta Sans"],"display":["Plus Jakarta Sans"],"body-md":["Hanken Grotesk"],"headline-lg":["Plus Jakarta Sans"],"metric-display":["Plus Jakarta Sans"],"display-mobile":["Plus Jakarta Sans"],"body-lg":["Hanken Grotesk"],"metric-counter":["Hanken Grotesk"],"headline-lg-mobile":["Plus Jakarta Sans"],"headline-md":["Plus Jakarta Sans"]},"fontSize":{"body-sm":["0.875rem",{"lineHeight":"1.25rem","fontWeight":"400"}],"headline-sm":["1.25rem",{"lineHeight":"1.75rem","fontWeight":"600"}],"label-caps":["0.75rem",{"lineHeight":"1rem","letterSpacing":"0.12em","fontWeight":"700"}],"display":["3.5rem",{"lineHeight":"4rem","letterSpacing":"-0.03em","fontWeight":"800"}],"body-md":["1rem",{"lineHeight":"1.5rem","fontWeight":"400"}],"headline-lg":["2.25rem",{"lineHeight":"2.75rem","letterSpacing":"-0.02em","fontWeight":"700"}],"metric-display":["1.75rem",{"lineHeight":"2rem","letterSpacing":"-0.02em","fontWeight":"800"}],"display-mobile":["2.25rem",{"lineHeight":"2.75rem","letterSpacing":"-0.02em","fontWeight":"800"}],"body-lg":["1.125rem",{"lineHeight":"1.75rem","fontWeight":"400"}],"metric-counter":["1rem",{"lineHeight":"1.25rem","fontWeight":"600"}],"headline-lg-mobile":["1.75rem",{"lineHeight":"2.25rem","letterSpacing":"-0.01em","fontWeight":"700"}],"headline-md":["1.5rem",{"lineHeight":"2rem","letterSpacing":"-0.01em","fontWeight":"600"}]}}}}</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container"><aside class="fixed left-0 top-0 h-full w-72 bg-surface-container-low z-50 flex flex-col p-space-md shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex items-center gap-space-sm px-space-sm py-space-md mb-space-lg"><img alt="Volt Vault Insignia Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UpcaP6JedGeF5UTr6Rtx8ZMKI1CmFNh6WvihcdsRyZWLuIQ3lJr8HjemGrBRQU6RYOdMmPna-fbWcPwdQiKZZ_-rPxk8iET3oCC_1KPQUGs1gqd_7sl9QFJ_wlAW1oR4RQBdTqm18gQmYt0XmkY3cGaovQ9hKhl9hSjv5Xy2Js-xCwuHA-iXxoKHwXWkjHKbcWX9UzJsadfrAWpYhfoCARtK9cDQJx1KCEztXIidDRQJ0-KmfovxStVnAo"/><span class="font-headline-sm text-headline-sm font-bold tracking-tight text-primary">Volt <span class="text-primary-container">Vault</span></span></div><nav class="flex-1 flex flex-col gap-space-xs" data-active-classes="bg-surface-container-high text-on-surface font-semibold"><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-full text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all" data-path="panel-admin" href="#"><span class="material-symbols-outlined text-[20px]">admin_panel_settings</span><span class="font-body-sm text-body-sm">Gestión Bóveda</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-full text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all" data-path="mi-coleccion" href="#"><span class="material-symbols-outlined text-[20px]">inventory_2</span><span class="font-body-sm text-body-sm">Mi Colección</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-full text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all" data-path="colecciones" href="#"><span class="material-symbols-outlined text-[20px]">dashboard</span><span class="font-body-sm text-body-sm">Catálogo</span></a></nav><div class="pt-space-md"><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-full text-on-surface-variant hover:bg-error-container hover:text-on-error-container transition-colors" data-path="login" href="#"><span class="material-symbols-outlined text-[20px]">logout</span><span class="font-body-sm text-body-sm">Cerrar sesión</span></a></div></aside><div class="pl-72"><header class="fixed top-0 left-72 right-0 h-20 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-space-xl"><div class="flex items-center gap-space-sm text-on-surface-variant font-label-caps text-label-caps uppercase"><span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>Panel Telemetría</div><div class="flex items-center gap-space-md"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="relative pt-20 bg-surface min-h-screen px-space-xl py-space-lg"><div class="flex flex-col w-full gap-space-lg pb-space-xl">
+<!-- Top Command Telemetry Bar -->
+<div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-space-md">
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs text-secondary font-label-caps text-label-caps uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container shadow-[0_0_8px_currentColor]"></span>
+<span>Módulo Maestro // Bóveda de Activos</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg font-bold text-primary tracking-tight">Inventario &amp; Coleccionables</h1>
+</div>
+<div class="flex items-center gap-space-sm flex-wrap">
+<button class="group flex items-center gap-space-xs px-space-lg py-space-sm rounded-full bg-surface-container text-secondary hover:bg-surface-container-high transition-all shadow-sm" type="button">
+<span class="material-symbols-outlined text-[20px] transition-transform group-hover:rotate-90">category</span>
+<span class="font-headline-sm text-body-sm font-semibold tracking-wide">Nueva Colección</span>
+</button>
+<button class="flex items-center gap-space-xs px-space-lg py-space-sm rounded-full bg-primary-container text-on-primary font-headline-sm text-body-sm font-bold shadow-[0_0_24px_rgba(255,215,0,0.35)] hover:shadow-[0_0_32px_rgba(255,215,0,0.55)] transition-all transform hover:-translate-y-0.5 active:translate-y-0" id="btn-open-modal" type="button">
+<span class="material-symbols-outlined text-[20px]">add_circle</span>
+<span class="uppercase tracking-wider">Nuevo Item</span>
+</button>
+</div>
+</div>
+<!-- Telemetry Metric Row -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md">
+<div class="relative overflow-hidden bg-surface-container-low p-space-md rounded-DEFAULT shadow-md flex flex-col justify-between">
+<div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-secondary-container/10 blur-xl pointer-events-none"></div>
+<div class="flex items-center justify-between">
+<span class="text-on-surface-variant font-label-caps text-label-caps uppercase">Total Items Activos</span>
+<span class="material-symbols-outlined text-secondary-container text-[20px]">deployed_code</span>
+</div>
+<div class="mt-space-md flex items-baseline gap-space-xs">
+<span class="font-metric-display text-metric-display font-extrabold text-primary">1,428</span>
+<span class="font-body-sm text-body-sm text-secondary-container font-semibold">+14.2%</span>
+</div>
+<div class="w-full h-1 bg-surface-container-highest rounded-full mt-space-sm overflow-hidden">
+<div class="h-full bg-secondary-container rounded-full" style="width: 78%"></div>
+</div>
+</div>
+<div class="relative overflow-hidden bg-surface-container-low p-space-md rounded-DEFAULT shadow-md flex flex-col justify-between">
+<div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-primary-container/10 blur-xl pointer-events-none"></div>
+<div class="flex items-center justify-between">
+<span class="text-on-surface-variant font-label-caps text-label-caps uppercase">Nivel Legendary Stock</span>
+<span class="material-symbols-outlined text-primary-container text-[20px]" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+</div>
+<div class="mt-space-md flex items-baseline gap-space-xs">
+<span class="font-metric-display text-metric-display font-extrabold text-primary-container">42</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-normal">/ 120 Cap</span>
+</div>
+<div class="w-full h-1 bg-surface-container-highest rounded-full mt-space-sm overflow-hidden">
+<div class="h-full bg-primary-container rounded-full shadow-[0_0_8px_rgba(255,215,0,0.5)]" style="width: 35%"></div>
+</div>
+</div>
+<div class="relative overflow-hidden bg-surface-container-low p-space-md rounded-DEFAULT shadow-md flex flex-col justify-between">
+<div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-tertiary-fixed-dim/10 blur-xl pointer-events-none"></div>
+<div class="flex items-center justify-between">
+<span class="text-on-surface-variant font-label-caps text-label-caps uppercase">Activos Vendidos</span>
+<span class="material-symbols-outlined text-tertiary-fixed-dim text-[20px]">shopping_cart_checkout</span>
+</div>
+<div class="mt-space-md flex items-baseline gap-space-xs">
+<span class="font-metric-display text-metric-display font-extrabold text-primary">8,912</span>
+<span class="font-body-sm text-body-sm text-tertiary-fixed-dim font-semibold">94.8% ratio</span>
+</div>
+<div class="w-full h-1 bg-surface-container-highest rounded-full mt-space-sm overflow-hidden">
+<div class="h-full bg-tertiary-fixed-dim rounded-full" style="width: 95%"></div>
+</div>
+</div>
+<div class="relative overflow-hidden bg-surface-container-low p-space-md rounded-DEFAULT shadow-md flex flex-col justify-between">
+<div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-secondary/10 blur-xl pointer-events-none"></div>
+<div class="flex items-center justify-between">
+<span class="text-on-surface-variant font-label-caps text-label-caps uppercase">Colecciones Vivas</span>
+<span class="material-symbols-outlined text-secondary text-[20px]">token</span>
+</div>
+<div class="mt-space-md flex items-baseline gap-space-xs">
+<span class="font-metric-display text-metric-display font-extrabold text-primary">16</span>
+<span class="font-body-sm text-body-sm text-secondary font-semibold">3 en borrador</span>
+</div>
+<div class="w-full h-1 bg-surface-container-highest rounded-full mt-space-sm overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 62%"></div>
+</div>
+</div>
+</div>
+<!-- Filtration Matrix & Search Sub-Hub -->
+<div class="bg-surface-container-low p-space-md rounded-DEFAULT shadow-sm flex flex-col lg:flex-row gap-space-md items-stretch lg:items-center justify-between">
+<div class="flex flex-1 flex-col sm:flex-row gap-space-sm items-stretch sm:items-center">
+<div class="relative flex-1">
+<span class="material-symbols-outlined absolute left-space-md top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+<input class="w-full pl-11 pr-space-md py-space-sm bg-surface-container-lowest text-on-surface placeholder:text-on-surface-variant font-body-sm text-body-sm rounded-full outline-none focus:bg-surface-container transition-all" placeholder="Buscar por clave, título de artefacto o hash..." type="text"/>
+</div>
+<div class="relative">
+<select class="appearance-none w-full sm:w-auto px-space-lg py-space-sm pr-10 bg-surface-container-lowest text-on-surface font-body-sm text-body-sm rounded-full outline-none focus:bg-surface-container cursor-pointer transition-all">
+<option value="all">Todas las Colecciones</option>
+<option value="cyber-relics">Cyber Relics S01</option>
+<option value="hyper-grid">HyperGrid Alpha</option>
+<option value="neon-valkyrie">Neon Valkyrie Core</option>
+<option value="void-sigils">Void Sigils Series</option>
+</select>
+<span class="material-symbols-outlined absolute right-space-md top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[18px]">expand_more</span>
+</div>
+<div class="relative">
+<select class="appearance-none w-full sm:w-auto px-space-lg py-space-sm pr-10 bg-surface-container-lowest text-on-surface font-body-sm text-body-sm rounded-full outline-none focus:bg-surface-container cursor-pointer transition-all">
+<option value="all">Cualquier Rareza</option>
+<option value="legendary">Legendaria</option>
+<option value="epic">Épica</option>
+<option value="rare">Rara</option>
+<option value="common">Común</option>
+</select>
+<span class="material-symbols-outlined absolute right-space-md top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[18px]">tune</span>
+</div>
+</div>
+<div class="flex items-center gap-space-xs self-end lg:self-auto text-on-surface-variant font-label-caps text-label-caps">
+<span class="uppercase">Mostrando:</span>
+<span class="px-space-sm py-0.5 rounded-full bg-surface-container-high text-primary font-bold">24 de 1,428</span>
+</div>
+</div>
+<!-- CRUD Ledger Table -->
+<div class="bg-surface-container-low rounded-DEFAULT overflow-hidden shadow-md">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-lowest text-on-surface-variant font-label-caps text-label-caps uppercase">
+<th class="py-space-md px-space-lg">Nombre del Item</th>
+<th class="py-space-md px-space-md">Colección</th>
+<th class="py-space-md px-space-md">Rareza</th>
+<th class="py-space-md px-space-md">Estado</th>
+<th class="py-space-md px-space-md text-right">Stock</th>
+<th class="py-space-md px-space-md text-right">Vendidos</th>
+<th class="py-space-md px-space-lg text-right">Acciones</th>
+</tr>
+</thead>
+<tbody class="divide-y-0 font-body-sm text-body-sm">
+<!-- Row 1 (Legendary) -->
+<tr class="hover:bg-surface-container/60 transition-colors group">
+<td class="py-space-md px-space-lg">
+<div class="flex items-center gap-space-md">
+<div class="relative w-12 h-12 rounded-DEFAULT bg-surface-container-highest overflow-hidden flex-shrink-0 shadow-[0_0_12px_rgba(255,215,0,0.2)]">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" data-alt="A futuristic golden holographic power core rotating in an obsidian chamber, surrounded by tiny glowing ember particles, cinematic raytracing, dark navy background with radiant gold highlights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAC2L0rHGhPO0tEaHJ_OeVTNdt6RK-pYvxEULXcAm2HGomznXaDjNPWFGOe9iK7KP1IBx95iXT3up3azAc7GqNmz1NnjBjraVFyn60yvTClOnPCMGJ5i2eIy3YgujRnqHOZxxkuRPY3so-zevYyXpYf-b2mi4hN6HXjSSVPM2kQ9qiGXDXYI2eBXc8UarsQHimFnL_5CUkTju_6eURJvYr1293hui-l9KI2l0PxMr4BOaCtqbqZedWQSA"/>
+<span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-primary-container shadow-[0_0_6px_#ffd700]"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-body-md font-bold text-primary truncate">Aegis Volt Prism #001</span>
+<span class="font-label-caps text-[11px] text-on-surface-variant uppercase tracking-wider">SKU: VV-EXP-9901</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-md text-on-surface">Cyber Relics S01</td>
+<td class="py-space-md px-space-md">
+<span class="inline-flex items-center gap-1.5 px-space-md py-1 rounded-full bg-primary-container/15 text-primary-container font-label-caps text-label-caps uppercase shadow-[0_0_10px_rgba(255,215,0,0.2)]">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container animate-pulse"></span>
+                Legendaria
+              </span>
+</td>
+<td class="py-space-md px-space-md">
+<span class="inline-flex items-center px-space-md py-1 rounded-full bg-secondary-container/15 text-secondary-container font-label-caps text-label-caps uppercase">
+                Disponible
+              </span>
+</td>
+<td class="py-space-md px-space-md text-right">
+<span class="font-headline-sm text-body-md font-bold text-primary">12</span>
+<span class="text-on-surface-variant text-[11px] block">de 25</span>
+</td>
+<td class="py-space-md px-space-md text-right font-metric-counter text-metric-counter font-bold text-on-surface">13</td>
+<td class="py-space-md px-space-lg text-right">
+<div class="flex items-center justify-end gap-space-xs">
+<button class="p-2 rounded-full bg-surface-container hover:bg-surface-container-highest text-secondary transition-colors" title="Inventario Serializado" type="button">
+<span class="material-symbols-outlined text-[18px]">pin</span>
+</button>
+<button class="p-2 rounded-full bg-surface-container hover:bg-surface-container-highest text-on-surface transition-colors" title="Editar Artefacto" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-2 rounded-full bg-surface-container hover:bg-error-container hover:text-on-error-container text-on-surface-variant transition-colors" title="Archivar" type="button">
+<span class="material-symbols-outlined text-[18px]">archive</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 (Epic) -->
+<tr class="hover:bg-surface-container/60 transition-colors group">
+<td class="py-space-md px-space-lg">
+<div class="flex items-center gap-space-md">
+<div class="relative w-12 h-12 rounded-DEFAULT bg-surface-container-highest overflow-hidden flex-shrink-0 shadow-[0_0_12px_rgba(234,208,255,0.2)]">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" data-alt="A violet plasma infused blade hilt projecting a neon purple energy field in a cybernetic vault, high contrast sharp specular lighting, atmospheric mist" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEHqxyj11g7aJxnNCd4OnY7ZcxTT-pjN0R0snLTMnGSboYx6KoIGAq6FRQINiA3yIIU_axFz-9tf49dlypLZvajmEklinzygXYRyWJUogdiofDnzAIu-A9Hc2u0bxcIcI02BjMhpIZoLE3whsAZIrMIv367ThGgwkAX07f_3QemXjmadZCGoY8QzE9x6MylN3RPEbqE80KgRuinQOrkc4eqeQqFunRWB3kSvRUSFt9OqIKWqxNeSEwYA"/>
+<span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-tertiary-fixed-dim shadow-[0_0_6px_#ddb7ff]"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-body-md font-bold text-primary truncate">Void Reaver Katana</span>
+<span class="font-label-caps text-[11px] text-on-surface-variant uppercase tracking-wider">SKU: VV-WPN-4033</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-md text-on-surface">Neon Valkyrie Core</td>
+<td class="py-space-md px-space-md">
+<span class="inline-flex items-center gap-1.5 px-space-md py-1 rounded-full bg-tertiary-fixed-dim/15 text-tertiary-fixed-dim font-label-caps text-label-caps uppercase shadow-[0_0_10px_rgba(221,183,255,0.2)]">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
+                Épica
+              </span>
+</td>
+<td class="py-space-md px-space-md">
+<span class="inline-flex items-center px-space-md py-1 rounded-full bg-secondary-container/15 text-secondary-container font-label-caps text-label-caps uppercase">
+                Disponible
+              </span>
+</td>
+<td class="py-space-md px-space-md text-right">
+<span class="font-headline-sm text-body-md font-bold text-primary">88</span>
+<span class="text-on-surface-variant text-[11px] block">de 200</span>
+</td>
+<td class="py-space-md px-space-md text-right font-metric-counter text-metric-counter font-bold text-on-surface">112</td>
+<td class="py-space-md px-space-lg text-right">
+<div class="flex items-center justify-end gap-space-xs">
+<button class="p-2 rounded-full bg-surface-container hover:bg-surface-container-highest text-secondary transition-colors" title="Inventario Serializado" type="button">
+<span class="material-symbols-outlined text-[18px]">pin</span>
+</button>
+<button class="p-2 rounded-full bg-surface-container hover:bg-surface-container-highest text-on-surface transition-colors" title="Editar Artefacto" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-2 rounded-full bg-surface-container hover:bg-error-container hover:text-on-error-container text-on-surface-variant transition-colors" title="Archivar" type="button">
+<span class="material-symbols-outlined text-[18px]">archive</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 (Rare) -->
+<tr class="hover:bg-surface-container/60 transition-colors group">
+<td class="py-space-md px-space-lg">
+<div class="flex items-center gap-space-md">
+<div class="relative w-12 h-12 rounded-DEFAULT bg-surface-container-highest overflow-hidden flex-shrink-0 shadow-[0_0_12px_rgba(39,146,255,0.2)]">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" data-alt="An electric cobalt blue crystalline circuit board glyph glowing intensely, macro camera lens, glossy ceramic dark surface, volumetric lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCst03kb2yFJAQFPZC8Gif7x4csNSMwge_zBZByl-AzRgspTWqtC5FjsGaxOIMGA3QXqSgSvR-noGnutl5nrLSOvbQYmoYy3s_V1lD1B61eJbjpnVSHsWDBa8n2OO6fmh5Q1k9nQ9v4uA24O3f2xNcXuKUa9Zo9-hKb2taXR7K_Ug_57s9XDI1Ff5Om8ouO_p_hakSAQktPdQ6WWnOm6WJCeozwKJFbCQlr261q5G5n1s7cI2mkJFuTQ"/>
+<span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-secondary-container shadow-[0_0_6px_#2792ff]"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-body-md font-bold text-primary truncate">Quantum Hyperlink Key</span>
+<span class="font-label-caps text-[11px] text-on-surface-variant uppercase tracking-wider">SKU: VV-KEY-7721</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-md text-on-surface">HyperGrid Alpha</td>
+<td class="py-space-md px-space-md">
+<span class="inline-flex items-center gap-1.5 px-space-md py-1 rounded-full bg-secondary-container/15 text-secondary-container font-label-caps text-label-caps uppercase shadow-[0_0_10px_rgba(39,146,255,0.2)]">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-container"></span>
+                Rara
+              </span>
+</td>
+<td class="py-space-md px-space-md">
+<span class="inline-flex items-center px-space-md py-1 rounded-full bg-surface-container-highest text-on-surface-variant font-label-caps text-label-caps uppercase">
+                Borrador
+              </span>
+</td>
+<td class="py-space-md px-space-md text-right">
+<span class="font-headline-sm text-body-md font-bold text-on-surface-variant">500</span>
+<span class="text-on-surface-variant text-[11px] block">Inicial</span>
+</td>
+<td class="py-space-md px-space-md text-right font-metric-counter text-metric-counter font-bold text-on-surface">0</td>
+<td class="py-space-md px-space-lg text-right">
+<div class="flex items-center justify-end gap-space-xs">
+<button class="p-2 rounded-full bg-surface-container hover:bg-surface-container-highest text-secondary transition-colors" title="Inventario Serializado" type="button">
+<span class="material-symbols-outlined text-[18px]">pin</span>
+</button>
+<button class="p-2 rounded-full bg-surface-container hover:bg-surface-container-highest text-on-surface transition-colors" title="Editar Artefacto" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-2 rounded-full bg-surface-container hover:bg-error-container hover:text-on-error-container text-on-surface-variant transition-colors" title="Archivar" type="button">
+<span class="material-symbols-outlined text-[18px]">archive</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4 (Sold Out) -->
+<tr class="hover:bg-surface-container/60 transition-colors group opacity-80">
+<td class="py-space-md px-space-lg">
+<div class="flex items-center gap-space-md">
+<div class="relative w-12 h-12 rounded-DEFAULT bg-surface-container-highest overflow-hidden flex-shrink-0 grayscale">
+<img class="w-full h-full object-cover" data-alt="A dark carbon-fiber tactical badge with faint cyan LED pulse running down its central spine, studio arcade hardware lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANZtEexofNeJXxsTOMsv2wcuCKrBiB6HE1r7j5tEu7DJQOr6xILl4-ZRJFbVkzakKP1laXfjL3ZAbHjCsRxS-7jCPH8IS6yIJwO44JTh8WFsywZGeHTPi8AS5LZ6mKRuU9mvjXgNdXIA26C-yeVEZIl-FqJ0BxOoedk4sHSMchy4GJWQteLMdGt9BCm7UXwntf6E_2qVN8h1dP_DfChis4aEjGYeG-O1e-h-cnYKsFOK8G1-n7ysD5CA"/>
+<span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-error shadow-[0_0_6px_#ffb4ab]"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-body-md font-bold text-on-surface-variant truncate line-through">Vanguard Crest Mark IV</span>
+<span class="font-label-caps text-[11px] text-on-surface-variant uppercase tracking-wider">SKU: VV-CR-1102</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-md text-on-surface-variant">Cyber Relics S01</td>
+<td class="py-space-md px-space-md">
+<span class="inline-flex items-center gap-1.5 px-space-md py-1 rounded-full bg-surface-container-highest text-on-surface font-label-caps text-label-caps uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-on-surface-variant"></span>
+                Común
+              </span>
+</td>
+<td class="py-space-md px-space-md">
+<span class="inline-flex items-center px-space-md py-1 rounded-full bg-error-container/40 text-error font-label-caps text-label-caps uppercase">
+                Agotado
+              </span>
+</td>
+<td class="py-space-md px-space-md text-right">
+<span class="font-headline-sm text-body-md font-bold text-error">0</span>
+<span class="text-on-surface-variant text-[11px] block">de 1,000</span>
+</td>
+<td class="py-space-md px-space-md text-right font-metric-counter text-metric-counter font-bold text-on-surface">1,000</td>
+<td class="py-space-md px-space-lg text-right">
+<div class="flex items-center justify-end gap-space-xs">
+<button class="p-2 rounded-full bg-surface-container hover:bg-surface-container-highest text-secondary transition-colors" title="Inventario Serializado" type="button">
+<span class="material-symbols-outlined text-[18px]">pin</span>
+</button>
+<button class="p-2 rounded-full bg-surface-container hover:bg-surface-container-highest text-on-surface transition-colors" title="Editar Artefacto" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-2 rounded-full bg-surface-container hover:bg-error-container hover:text-on-error-container text-on-surface-variant transition-colors" title="Archivar" type="button">
+<span class="material-symbols-outlined text-[18px]">archive</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Pagination -->
+<div class="bg-surface-container-lowest px-space-lg py-space-md flex flex-col sm:flex-row items-center justify-between gap-space-sm">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Página 1 de 60 (Índice de Bóveda sincronizado)</span>
+<div class="flex items-center gap-space-xs">
+<button class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors disabled:opacity-40" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="w-8 h-8 rounded-full bg-primary-container text-on-primary font-bold text-body-sm flex items-center justify-center" type="button">1</button>
+<button class="w-8 h-8 rounded-full bg-surface-container text-on-surface font-body-sm flex items-center justify-center hover:bg-surface-container-high transition-colors" type="button">2</button>
+<button class="w-8 h-8 rounded-full bg-surface-container text-on-surface font-body-sm flex items-center justify-center hover:bg-surface-container-high transition-colors" type="button">3</button>
+<span class="text-on-surface-variant px-1 font-body-sm">...</span>
+<button class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- ACTIVE MODAL: Nuevo Item (Always visible as specified in prompt) -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-space-md bg-surface-container-lowest/80 backdrop-blur-md" id="modal-backdrop">
+<div class="relative w-full max-w-4xl max-h-[942px] flex flex-col bg-surface-container-low rounded-lg shadow-[0_24px_50px_-12px_rgba(0,14,35,0.9)] overflow-hidden">
+<!-- Modal Accent Glow Bar -->
+<div class="h-1.5 w-full bg-gradient-to-r from-secondary-container via-primary-container to-tertiary-fixed-dim"></div>
+<!-- Modal Header -->
+<div class="px-space-xl py-space-lg flex items-center justify-between bg-surface-container">
+<div class="flex items-center gap-space-md">
+<div class="w-10 h-10 rounded-full bg-primary-container/20 flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[24px]">token</span>
+</div>
+<div>
+<div class="flex items-center gap-space-xs text-primary-container font-label-caps text-label-caps uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+<span>Forja de Activos Vault</span>
+</div>
+<h2 class="font-headline-md text-headline-md font-bold text-primary tracking-tight">Crear Nuevo Item</h2>
+</div>
+</div>
+<button class="w-9 h-9 rounded-full bg-surface-container-high text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest flex items-center justify-center transition-colors" id="btn-close-modal" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Modal Form Body (Scrollable) -->
+<div class="px-space-xl py-space-lg overflow-y-auto flex-1 space-y-space-lg">
+<!-- Primary Grid: Name & Collection -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-lg">
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-caps text-label-caps uppercase text-on-surface-variant flex items-center justify-between">
+<span>Nombre del Artefacto</span>
+<span class="text-primary-container">*Requerido</span>
+</label>
+<div class="relative">
+<input class="w-full px-space-md py-space-sm bg-surface-container-lowest text-primary font-body-md text-body-md rounded-lg outline-none focus:bg-surface-container focus:shadow-[0_0_16px_rgba(39,146,255,0.25)] transition-all" placeholder="p.ej. Quantum Hyper-Core Alpha" type="text" value="Aegis Lumina Catalyst"/>
+</div>
+</div>
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-caps text-label-caps uppercase text-on-surface-variant flex items-center justify-between">
+<span>Colección Asignada</span>
+<span class="text-secondary text-[11px]">Bóveda Vinculada</span>
+</label>
+<div class="relative">
+<select class="appearance-none w-full px-space-md py-space-sm pr-10 bg-surface-container-lowest text-primary font-body-md text-body-md rounded-lg outline-none focus:bg-surface-container cursor-pointer transition-all">
+<option selected="" value="cyber-relics">Cyber Relics S01 (0x8F9B)</option>
+<option value="hyper-grid">HyperGrid Alpha (0x12A9)</option>
+<option value="neon-valkyrie">Neon Valkyrie Core (0x44D1)</option>
+<option value="void-sigils">Void Sigils Series (0x098B)</option>
+</select>
+<span class="material-symbols-outlined absolute right-space-md top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[20px]">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Markdown Description with Arcade Toolbar -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<label class="font-label-caps text-label-caps uppercase text-on-surface-variant">Descripción Telemetría (Markdown)</label>
+<span class="font-label-caps text-[11px] text-secondary uppercase">Preview Activo</span>
+</div>
+<div class="bg-surface-container-lowest rounded-lg overflow-hidden flex flex-col">
+<!-- Markdown Toolbar -->
+<div class="px-space-md py-space-xs bg-surface-container flex items-center gap-space-xs flex-wrap">
+<button class="p-1.5 rounded-full hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface transition-colors" title="Negrita" type="button">
+<span class="material-symbols-outlined text-[18px]">format_bold</span>
+</button>
+<button class="p-1.5 rounded-full hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface transition-colors" title="Cursiva" type="button">
+<span class="material-symbols-outlined text-[18px]">format_italic</span>
+</button>
+<button class="p-1.5 rounded-full hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface transition-colors" title="Título" type="button">
+<span class="material-symbols-outlined text-[18px]">title</span>
+</button>
+<div class="w-px h-4 bg-surface-container-highest mx-1"></div>
+<button class="p-1.5 rounded-full hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface transition-colors" title="Lista" type="button">
+<span class="material-symbols-outlined text-[18px]">format_list_bulleted</span>
+</button>
+<button class="p-1.5 rounded-full hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface transition-colors" title="Código HUD" type="button">
+<span class="material-symbols-outlined text-[18px]">code</span>
+</button>
+<button class="p-1.5 rounded-full hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface transition-colors" title="Enlace" type="button">
+<span class="material-symbols-outlined text-[18px]">link</span>
+</button>
+<div class="flex-1"></div>
+<span class="font-label-caps text-[11px] text-on-surface-variant uppercase pr-2">MD UTF-8</span>
+</div>
+<!-- Markdown Editor Area -->
+<textarea class="w-full p-space-md bg-transparent text-on-surface font-body-sm text-body-sm outline-none resize-none focus:ring-0 placeholder:text-on-surface-variant" placeholder="Escribe lore técnico, propiedades de overclocking o especificaciones del item..." rows="4">### Propiedades de Vanguardia
+El **Aegis Lumina Catalyst** amplifica la recarga de telemetría de red un `+42%` cuando se empareja con la armadura de la serie Cyber Relics. 
+
+- Frecuencia Resonante: 8.4 GHz
+- Protocolo de Encriptación: VoltVault-Zero</textarea>
+</div>
+</div>
+<!-- Visual Asset Dropzone & Media Slot -->
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-caps text-label-caps uppercase text-on-surface-variant">Asset Visual Principal (Render Holográfico)</label>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md items-center">
+<!-- Thumbnail preview card -->
+<div class="relative h-32 rounded-lg bg-surface-container overflow-hidden group">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Close up render of a floating golden power sphere surrounded by glowing laser rings on dark metallic floor, cinematic lighting, gold and neon blue reflections" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDx9hcU8gJsVMonmOHjdDoT_T6Chlr8dB_-OsHoIDjgHVu0Eoz71xL2eYVpbnXt3L8ciPQ48imdGGHpIO5jwcKjcmjOwhJNuntc80-2MpMBteHWEPRooOp_thjIRpdlcEAWfdgR_65gYUM29P8XmaKnSgDk65cXeXdUnx1E6MeIeOa5jVfBWC5gLfvDfWpjyaZxz_g8u5a_rRb-UIzlXfFhQk4cFHVcUKgYDEnMMonUbvygKaOxt4Lt6w"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/80 via-transparent to-transparent flex items-end p-space-sm">
+<span class="font-label-caps text-[10px] text-primary uppercase bg-surface-container-lowest/90 px-space-xs py-0.5 rounded-full">3840x2160 • PNG</span>
+</div>
+</div>
+<!-- Drag & Drop Zone -->
+<div class="md:col-span-2 h-32 rounded-lg bg-surface-container-lowest flex flex-col items-center justify-center p-space-md text-center hover:bg-surface-container/40 transition-colors cursor-pointer group">
+<span class="material-symbols-outlined text-secondary text-[28px] group-hover:scale-110 transition-transform">cloud_upload</span>
+<p class="font-body-sm text-body-sm text-on-surface mt-1">Arrastra aquí el archivo o <span class="text-secondary font-semibold underline">explora la estación</span></p>
+<p class="font-label-caps text-[11px] text-on-surface-variant uppercase mt-1">PNG, WEBP, GLTF hasta 25MB (Canal Alfa soportado)</p>
+</div>
+</div>
+</div>
+<!-- Tier Selection (Rarity Matrix) -->
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-caps text-label-caps uppercase text-on-surface-variant">Nivel de Rareza (Tier Strata)</label>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-space-sm" id="rarity-selector">
+<!-- Común -->
+<label class="flex items-center gap-space-sm p-space-sm bg-surface-container rounded-full cursor-pointer hover:bg-surface-container-high transition-all">
+<input class="hidden peer" name="rarity" type="radio" value="common"/>
+<span class="w-3 h-3 rounded-full bg-on-surface-variant/40 peer-checked:bg-on-surface-variant peer-checked:shadow-[0_0_8px_#d0c6ab]"></span>
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant peer-checked:text-primary">Común</span>
+</label>
+<!-- Rara (Volt Blue) -->
+<label class="flex items-center gap-space-sm p-space-sm bg-surface-container rounded-full cursor-pointer hover:bg-surface-container-high transition-all">
+<input class="hidden peer" name="rarity" type="radio" value="rare"/>
+<span class="w-3 h-3 rounded-full bg-secondary-container/40 peer-checked:bg-secondary-container peer-checked:shadow-[0_0_10px_#2792ff]"></span>
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant peer-checked:text-secondary-container">Rara</span>
+</label>
+<!-- Épica (Tertiary Violet) -->
+<label class="flex items-center gap-space-sm p-space-sm bg-surface-container rounded-full cursor-pointer hover:bg-surface-container-high transition-all">
+<input class="hidden peer" name="rarity" type="radio" value="epic"/>
+<span class="w-3 h-3 rounded-full bg-tertiary-fixed-dim/40 peer-checked:bg-tertiary-fixed-dim peer-checked:shadow-[0_0_10px_#ddb7ff]"></span>
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant peer-checked:text-tertiary-fixed-dim">Épica</span>
+</label>
+<!-- Legendaria (Gold Volt) - Selected by Default -->
+<label class="flex items-center gap-space-sm p-space-sm bg-surface-container rounded-full cursor-pointer hover:bg-surface-container-high transition-all ring-1 ring-primary-container/40 shadow-[0_0_16px_rgba(255,215,0,0.25)]">
+<input checked="" class="hidden peer" name="rarity" type="radio" value="legendary"/>
+<span class="w-3 h-3 rounded-full bg-primary-container peer-checked:bg-primary-container peer-checked:shadow-[0_0_12px_#ffd700]"></span>
+<span class="font-label-caps text-label-caps uppercase text-primary-container font-bold">Legendaria</span>
+</label>
+</div>
+</div>
+<!-- Status & Initial Stock Dual Input -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-lg">
+<!-- State Segmented Radio Capsule -->
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-caps text-label-caps uppercase text-on-surface-variant">Estado de Despliegue</label>
+<div class="grid grid-cols-2 gap-space-xs p-1 bg-surface-container-lowest rounded-lg">
+<label class="flex items-center justify-center py-2 px-space-sm rounded-full cursor-pointer transition-all bg-secondary-container/20 text-secondary font-label-caps text-label-caps uppercase text-center font-bold">
+<input checked="" class="hidden" name="status" type="radio" value="available"/>
+                Disponible
+              </label>
+<label class="flex items-center justify-center py-2 px-space-sm rounded-full cursor-pointer transition-all hover:bg-surface-container text-on-surface-variant font-label-caps text-label-caps uppercase text-center">
+<input class="hidden" name="status" type="radio" value="draft"/>
+                Borrador
+              </label>
+<label class="flex items-center justify-center py-2 px-space-sm rounded-full cursor-pointer transition-all hover:bg-surface-container text-on-surface-variant font-label-caps text-label-caps uppercase text-center">
+<input class="hidden" name="status" type="radio" value="soldout"/>
+                Agotado
+              </label>
+<label class="flex items-center justify-center py-2 px-space-sm rounded-full cursor-pointer transition-all hover:bg-surface-container text-on-surface-variant font-label-caps text-label-caps uppercase text-center">
+<input class="hidden" name="status" type="radio" value="archived"/>
+                Archivado
+              </label>
+</div>
+</div>
+<!-- Initial Stock Counter Pill -->
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-caps text-label-caps uppercase text-on-surface-variant flex items-center justify-between">
+<span>Stock Inicial Emitido</span>
+<span class="text-on-surface-variant text-[11px]">Unidades Finitas</span>
+</label>
+<div class="flex items-center bg-surface-container-lowest rounded-lg p-space-xs">
+<button class="w-10 h-10 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface flex items-center justify-center font-bold text-headline-sm transition-colors" id="btn-dec-stock" type="button">−</button>
+<input class="flex-1 bg-transparent text-center font-metric-display text-metric-display font-extrabold text-primary outline-none" id="input-stock" max="10000" min="1" type="number" value="50"/>
+<button class="w-10 h-10 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface flex items-center justify-center font-bold text-headline-sm transition-colors" id="btn-inc-stock" type="button">+</button>
+</div>
+<p class="font-body-sm text-[12px] text-on-surface-variant">El stock no podrá decrementarse si existen órdenes pendientes.</p>
+</div>
+</div>
+</div>
+<!-- Modal Action Terminal Footer -->
+<div class="px-space-xl py-space-md bg-surface-container flex flex-col sm:flex-row items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-xs text-on-surface-variant font-label-caps text-[11px] uppercase">
+<span class="material-symbols-outlined text-[16px] text-primary-container">verified_user</span>
+<span>Firma Criptográfica: SHA-256 Validado</span>
+</div>
+<div class="flex items-center gap-space-sm w-full sm:w-auto justify-end">
+<button class="px-space-lg py-space-sm rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors font-body-sm text-body-sm" id="btn-cancel-modal" type="button">
+            Cancelar
+          </button>
+<button class="flex items-center gap-space-xs px-space-xl py-space-sm rounded-full bg-primary-container text-on-primary font-headline-sm text-body-sm font-bold shadow-[0_0_24px_rgba(255,215,0,0.4)] hover:shadow-[0_0_32px_rgba(255,215,0,0.6)] transition-all transform hover:-translate-y-0.5 active:translate-y-0" type="button">
+<span class="material-symbols-outlined text-[18px]">bolt</span>
+<span class="uppercase tracking-wider">Registrar en Bóveda</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Simple micro-interactions for modal dismissal and stock stepper
+  (function() {
+    const modal = document.getElementById('modal-backdrop');
+    const openBtn = document.getElementById('btn-open-modal');
+    const closeBtn = document.getElementById('btn-close-modal');
+    const cancelBtn = document.getElementById('btn-cancel-modal');
+    const decStock = document.getElementById('btn-dec-stock');
+    const incStock = document.getElementById('btn-inc-stock');
+    const stockInput = document.getElementById('input-stock');
+
+    function closeModal() {
+      if (modal) modal.style.display = 'none';
+    }
+
+    function openModal() {
+      if (modal) modal.style.display = 'flex';
+    }
+
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+    if (openBtn) openBtn.addEventListener('click', openModal);
+
+    if (decStock && stockInput) {
+      decStock.addEventListener('click', () => {
+        let val = parseInt(stockInput.value, 10) || 0;
+        if (val > 1) stockInput.value = val - 1;
+      });
+    }
+
+    if (incStock && stockInput) {
+      incStock.addEventListener('click', () => {
+        let val = parseInt(stockInput.value, 10) || 0;
+        stockInput.value = val + 1;
+      });
+    }
+  })();
+</script></main></div></body></html>
