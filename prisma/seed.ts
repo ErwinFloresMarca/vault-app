@@ -33,14 +33,15 @@ async function main() {
 
   // ===== COLECCIÓN 1: Animalitos Flexibles =====
   const coll1Slug = 'animalitos-flexibles'
+  const coll1Description =
+    '# Animalitos Flexibles\n\nUna colección de pequeños animales articulados y flexibles.\n\n## Características\n\n- Diseño flexible\n- Piezas articuladas\n- Diferentes colores\n- Colección limitada\n\n> ¡Colecciónalos todos!'
   const coll1 = await prisma.collection.upsert({
     where: { slug: coll1Slug },
-    update: {},
+    update: { name: 'Animalitos Flexibles', description: coll1Description },
     create: {
       name: 'Animalitos Flexibles',
       slug: coll1Slug,
-      description:
-        '# Animalitos Flexibles\n\nUna colección de pequeños animales articulados impresos en 3D.\n\n## Características\n\n- Diseño flexible\n- Impresión 3D\n- Diferentes colores\n- Colección limitada\n\n> ¡Colecciónalos todos!',
+      description: coll1Description,
       status: 'PUBLISHED',
       orderIndex: 0,
       tags: {
@@ -113,37 +114,45 @@ async function main() {
     { item: fox, type: 'IN', qty: 60 },
     { item: fox, type: 'SALE', qty: 10 },
   ]
-  for (const m of movements) {
-    await prisma.$transaction(async (tx) => {
-      await tx.inventoryMovement.create({
-        data: { itemId: m.item.id, type: m.type, quantity: m.qty, reason: 'seed' },
+  // Idempotente: sólo aplica si aún no hay movimientos de seed (evita inflar el stock).
+  const seedMovements = await prisma.inventoryMovement.count({ where: { reason: 'seed' } })
+  if (seedMovements === 0) {
+    for (const m of movements) {
+      await prisma.$transaction(async (tx) => {
+        await tx.inventoryMovement.create({
+          data: { itemId: m.item.id, type: m.type, quantity: m.qty, reason: 'seed' },
+        })
+        const moveItem = await tx.collectionItem.findUnique({ where: { id: m.item.id } })
+        if (!moveItem) return
+        if (m.type === 'IN') {
+          await tx.collectionItem.update({
+            where: { id: m.item.id },
+            data: { stock: moveItem.stock + m.qty },
+          })
+        } else if (m.type === 'SALE') {
+          await tx.collectionItem.update({
+            where: { id: m.item.id },
+            data: { stock: moveItem.stock - m.qty, soldQuantity: moveItem.soldQuantity + m.qty },
+          })
+        }
       })
-      const moveItem = await tx.collectionItem.findUnique({ where: { id: m.item.id } })
-      if (!moveItem) return
-      if (m.type === 'IN') {
-        await tx.collectionItem.update({
-          where: { id: m.item.id },
-          data: { stock: moveItem.stock + m.qty },
-        })
-      } else if (m.type === 'SALE') {
-        await tx.collectionItem.update({
-          where: { id: m.item.id },
-          data: { stock: moveItem.stock - m.qty, soldQuantity: moveItem.soldQuantity + m.qty },
-        })
-      }
-    })
+    }
+    console.log('✓ Movimientos de inventario de ejemplo')
+  } else {
+    console.log('· Movimientos de inventario ya existen (seed idempotente)')
   }
-  console.log('✓ Movimientos de inventario de ejemplo')
 
   // ===== COLECCIÓN 2: Criaturas Fantásticas =====
   const coll2Slug = 'edicion-especial-dragones'
+  const coll2Description =
+    '# Criaturas Fantásticas\n\nColección de criaturas míticas de fantasía.\n\n- Dragones\n- Criaturas\n\nPróximamente más.'
   const coll2 = await prisma.collection.upsert({
     where: { slug: coll2Slug },
-    update: {},
+    update: { name: 'Criaturas Fantásticas', description: coll2Description },
     create: {
       name: 'Criaturas Fantásticas',
       slug: coll2Slug,
-      description: '# Criaturas Fantásticas\n\nColección de criaturas míticas impresas en 3D.\n\n- Dragones\n- Criaturas\n\nPróximamente más.',
+      description: coll2Description,
       status: 'PUBLISHED',
       orderIndex: 1,
       tags: {
@@ -171,14 +180,15 @@ async function main() {
     rarity: 'COMMON' | 'RARE' | 'EPIC' | 'LEGENDARY',
   ) {
     const file = await ensureFile(coverUrl)
+    const description = `${name}, pieza de colección de Volt Vault.`
     await prisma.collectionItem.upsert({
       where: { slug },
-      update: { rarity },
+      update: { rarity, description },
       create: {
         collectionId,
         name,
         slug,
-        description: `${name}, figura impresa en 3D por Volt-3D.`,
+        description,
         rarity,
         status: 'AVAILABLE',
         files: { create: [{ fileId: file.id, position: 0, alt: name }] },
@@ -191,11 +201,11 @@ async function main() {
 
   const coll3 = await prisma.collection.upsert({
     where: { slug: 'macetas-geometricas' },
-    update: {},
+    update: { name: 'Macetas Geométricas', description: '# Macetas Geométricas\n\nMacetas y maceteros de diseño geométrico.' },
     create: {
       name: 'Macetas Geométricas',
       slug: 'macetas-geometricas',
-      description: '# Macetas Geométricas\n\nMacetas y maceteros de diseño geométrico impresos en 3D.',
+      description: '# Macetas Geométricas\n\nMacetas y maceteros de diseño geométrico.',
       status: 'PUBLISHED',
       orderIndex: 2,
       tags: { create: [{ tag: { connect: { id: tags.get('Macetas')! } } }] },
@@ -207,11 +217,11 @@ async function main() {
 
   const coll4 = await prisma.collection.upsert({
     where: { slug: 'llaveros-gamer' },
-    update: {},
+    update: { name: 'Llaveros Gamer', description: '# Llaveros Gamer\n\nLlaveros con iconos gamer y pixel art.' },
     create: {
       name: 'Llaveros Gamer',
       slug: 'llaveros-gamer',
-      description: '# Llaveros Gamer\n\nLlaveros con iconos gamer y pixel art impresos en 3D.',
+      description: '# Llaveros Gamer\n\nLlaveros con iconos gamer y pixel art.',
       status: 'PUBLISHED',
       orderIndex: 3,
       tags: { create: [{ tag: { connect: { id: tags.get('Personalizado')! } } }] },
