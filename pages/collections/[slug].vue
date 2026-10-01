@@ -160,7 +160,7 @@ const completed = computed(() => !!collection.value?.progress && percent.value =
               class="flex size-14 shrink-0 items-center justify-center rounded-full"
               :class="completed ? 'bg-gold text-ink' : 'bg-elevated text-gold'"
             >
-              <UIcon :name="completed ? 'i-lucide-trophy' : 'i-lucide-lock-clock'" class="size-7" />
+              <UIcon :name="completed ? 'i-lucide-trophy' : 'i-lucide-lock'" class="size-7" />
             </div>
             <div>
               <span class="label-caps text-gold">Recompensa de colección</span>

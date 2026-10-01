@@ -201,7 +201,7 @@ async function onToggle() {
                   block
                   size="lg"
                   color="secondary"
-                  icon="i-lucide-inventory"
+                  icon="i-lucide-package"
                   :loading="busy"
                   :disabled="busy"
                   @click="onToggle"
@@ -326,7 +326,7 @@ async function onToggle() {
           <UButton
             class="flex-1"
             :color="collected ? 'success' : 'secondary'"
-            :icon="collected ? 'i-lucide-check-check' : 'i-lucide-inventory'"
+            :icon="collected ? 'i-lucide-check-check' : 'i-lucide-package'"
             :loading="busy"
             :disabled="busy"
             @click="onToggle"

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { TableColumn } from '@nuxt/ui'
+import type { ItemStatus, Rarity } from '~/types'
 
 useSeoMeta({ title: 'Items — Volt Vault Admin' })
 
@@ -9,8 +10,8 @@ interface ItemRow {
   id: string
   name: string
   slug: string
-  status: string
-  rarity: string
+  status: ItemStatus
+  rarity: Rarity
   stock: number
   soldQuantity: number
   collection?: { id: string; name: string }
@@ -24,12 +25,13 @@ interface CollectionOption {
 }
 
 const columns: TableColumn<ItemRow>[] = [
-  { accessorKey: 'name', header: 'Nombre' },
+  { accessorKey: 'name', header: 'Item' },
   { accessorKey: 'collection.name', header: 'Colección' },
+  { accessorKey: 'rarity', header: 'Rareza', id: 'rarity' },
   { accessorKey: 'status', header: 'Estado' },
   { accessorKey: 'stock', header: 'Stock' },
   { accessorKey: 'soldQuantity', header: 'Vendidos' },
-  { id: 'actions', header: '' },
+  { id: 'actions', header: ' ' },
 ]
 
 const { data, pending, error, refresh } = await useFetch<{ success: boolean; data: ItemRow[] }>('/api/admin/items')
@@ -150,8 +152,38 @@ async function remove(row: ItemRow) {
           :columns="columns"
           :empty="'Sin items'"
         >
+          <template #name-cell="{ row }">
+            <div class="flex items-center gap-3">
+              <div class="size-10 shrink-0 overflow-hidden rounded-xl border border-default bg-elevated">
+                <AppImage
+                  v-if="mainImageOf(row.original)?.url"
+                  :src="mainImageOf(row.original)!.url"
+                  :alt="row.original.name"
+                  class="h-full w-full"
+                  :width="80"
+                  :height="80"
+                />
+                <div v-else class="flex h-full w-full items-center justify-center">
+                  <UIcon name="i-lucide-image" class="size-4 text-muted" />
+                </div>
+              </div>
+              <div class="flex flex-col">
+                <span class="font-display font-semibold">{{ row.original.name }}</span>
+                <span class="label-caps text-muted">{{ row.original.slug }}</span>
+              </div>
+            </div>
+          </template>
+          <template #rarity-cell="{ row }">
+            <RarityBadge :rarity="row.original.rarity" />
+          </template>
           <template #status-cell="{ row }">
-            <UBadge :label="row.original.status" :color="row.original.status === 'AVAILABLE' ? 'success' : (row.original.status === 'ARCHIVED' ? 'neutral' : 'warning')" />
+            <StatusBadge :status="row.original.status" />
+          </template>
+          <template #stock-cell="{ row }">
+            <span class="font-display font-bold tabular-nums">{{ row.original.stock }}</span>
+          </template>
+          <template #soldQuantity-cell="{ row }">
+            <span class="font-display font-bold tabular-nums">{{ row.original.soldQuantity }}</span>
           </template>
           <template #actions-cell="{ row }">
             <div class="flex items-center gap-1">

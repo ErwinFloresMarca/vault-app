@@ -164,5 +164,7 @@ claro con el botón de color mode. La semántica de `@nuxt/ui` (`--ui-*`) se map
 - **Fase 2 (componentes base): ☑** — `VaultCard`, `ProgressRing`, `RarityBadge`, `StatusBadge`,
   `StockIndicator`, `TagBadge`, tarjetas de colección/item.
 - **Fase 3 (páginas públicas): ☑** — Inicio, Colecciones, detalle de colección (checklist) y
-  detalle de producto; `StatTile`, `SectionHeading`, `CollectionChecklist`. Fases 4-5 en
-  `docs/specs/m13-redesign-ui.md` (admin y datos nuevos).
+  detalle de producto; `StatTile`, `SectionHeading`, `CollectionChecklist`.
+- **Fase 4 (admin): ☑** — sidebar, dashboard (KPIs, top 5, actividad), CRUD de colecciones/items
+  e inventario re-tematizados; `MovementBadge`. Fase 5 en `docs/specs/m13-redesign-ui.md`
+  (ficha técnica, XP/insignias).

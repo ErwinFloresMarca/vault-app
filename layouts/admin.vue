@@ -2,11 +2,9 @@
   <UDashboardGroup>
     <UDashboardSidebar collapsible>
       <template #header="{ collapsed }">
-        <NuxtLink to="/" class="flex items-center gap-2 px-2">
-          <div class="flex items-center justify-center rounded-lg bg-primary text-primary-foreground h-7 w-7">
-            <Icon name="i-lucide-box" class="h-4 w-4" />
-          </div>
-          <span v-if="!collapsed" class="font-semibold tracking-tight">Volt Vault · Admin</span>
+        <NuxtLink to="/admin/dashboard" class="flex items-center gap-2 px-2">
+          <img src="/icon-192.png" alt="" class="h-7 w-7 rounded-lg">
+          <span v-if="!collapsed" class="font-display font-bold tracking-tight">Volt Vault · Admin</span>
         </NuxtLink>
       </template>
 
@@ -19,14 +17,24 @@
       </template>
 
       <template #footer="{ collapsed }">
-        <UButton
-          :icon="collapsed ? 'i-lucide-arrow-left' : undefined"
-          :label="collapsed ? undefined : 'Volver al sitio'"
-          color="neutral"
-          variant="ghost"
-          block
-          to="/"
-        />
+        <div class="flex flex-col gap-1">
+          <UButton
+            :icon="collapsed ? 'i-lucide-arrow-left' : undefined"
+            :label="collapsed ? undefined : 'Volver al sitio'"
+            color="neutral"
+            variant="ghost"
+            block
+            to="/"
+          />
+          <UButton
+            :icon="collapsed ? 'i-lucide-log-out' : undefined"
+            :label="collapsed ? undefined : 'Cerrar sesión'"
+            color="error"
+            variant="ghost"
+            block
+            @click="logout"
+          />
+        </div>
       </template>
     </UDashboardSidebar>
 
@@ -36,6 +44,9 @@
 
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@nuxt/ui'
+import { useAuthUser } from '~/composables/useAuth'
+
+const { logout } = useAuthUser()
 
 const navItems = computed<NavigationMenuItem[]>(() => [{
   label: 'Dashboard',

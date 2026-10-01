@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { TableColumn } from '@nuxt/ui'
+import type { CollectionStatus } from '~/types'
 
 useSeoMeta({ title: 'Colecciones — Volt Vault Admin' })
 
@@ -10,7 +11,7 @@ interface CollectionRow {
   name: string
   slug: string
   description?: string | null
-  status: string
+  status: CollectionStatus
   _count?: { items: number }
   files?: Array<{ file: { id: string; url: string } }>
 }
@@ -20,7 +21,7 @@ const columns: TableColumn<CollectionRow>[] = [
   { accessorKey: 'slug', header: 'Slug' },
   { accessorKey: 'status', header: 'Estado' },
   { accessorKey: '_count.items', header: 'Items' },
-  { id: 'actions', header: '' },
+  { id: 'actions', header: ' ' },
 ]
 
 const { data, pending, error, refresh } = await useFetch<{ success: boolean; data: CollectionRow[] }>('/api/admin/collections')
@@ -108,7 +109,7 @@ function openBatch(row: CollectionRow) {
     <UContainer class="p-6">
       <UAlert v-if="error" color="error" title="No se pudieron cargar las colecciones" />
       <div v-else-if="pending" class="flex justify-center py-16">
-        <USkeleton class="h-64 w-full rounded-lg" />
+        <USkeleton class="h-64 w-full rounded-2xl" />
       </div>
       <UPageCard v-else>
         <UTable
@@ -116,11 +117,32 @@ function openBatch(row: CollectionRow) {
           :columns="columns"
           :empty="'Sin colecciones'"
         >
+          <template #name-cell="{ row }">
+            <div class="flex items-center gap-3">
+              <div class="size-10 shrink-0 overflow-hidden rounded-xl border border-default bg-elevated">
+                <AppImage
+                  v-if="coverOf(row.original)?.url"
+                  :src="coverOf(row.original)!.url"
+                  :alt="row.original.name"
+                  class="h-full w-full"
+                  :width="80"
+                  :height="80"
+                />
+                <div v-else class="flex h-full w-full items-center justify-center">
+                  <UIcon name="i-lucide-image" class="size-4 text-muted" />
+                </div>
+              </div>
+              <div class="flex flex-col">
+                <span class="font-display font-semibold">{{ row.original.name }}</span>
+                <span class="label-caps text-muted">{{ row.original.slug }}</span>
+              </div>
+            </div>
+          </template>
           <template #status-cell="{ row }">
-            <UBadge :label="row.original.status" :color="row.original.status === 'PUBLISHED' ? 'success' : (row.original.status === 'ARCHIVED' ? 'neutral' : 'warning')" />
+            <StatusBadge :status="row.original.status" />
           </template>
           <template #actions-cell="{ row }">
-            <div class="flex items-center gap-1">
+            <div class="flex items-center justify-end gap-1">
               <UButton icon="i-lucide-boxes" variant="ghost" color="neutral" :aria-label="`Inventario de ${row.original.name}`" title="Registrar movimiento por grupo" @click="openBatch(row.original)" />
               <UButton icon="i-lucide-pencil" variant="ghost" color="neutral" :aria-label="`Editar ${row.original.name}`" @click="openEdit(row.original)" />
               <UModal :title="`Eliminar ${row.original.name}?`" description="Se archivará la colección.">
@@ -151,8 +173,8 @@ function openBatch(row: CollectionRow) {
         <UFormField label="Estado">
           <USelect v-model="form.status" :items="['PUBLISHED', 'DRAFT', 'ARCHIVED']" />
         </UFormField>
-        <div v-if="formError" class="text-sm text-(--ui-error)">{{ formError }}</div>
-        <UButton type="submit" block :loading="saving" :label="editing ? 'Guardar cambios' : 'Crear' " />
+        <div v-if="formError" class="text-sm text-error">{{ formError }}</div>
+        <UButton type="submit" block :loading="saving" :label="editing ? 'Guardar cambios' : 'Crear'" />
       </UForm>
       </template>
     </UModal>

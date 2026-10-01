@@ -43,6 +43,7 @@ export const statsService = {
         soldQuantity: t.soldQuantity,
         stock: t.stock,
         status: t.status,
+        rarity: t.rarity,
         collection: t.collection,
       })),
       recent: recent.map((r) => ({

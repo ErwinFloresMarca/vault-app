@@ -126,5 +126,8 @@ visuales de los diseños (anillos, tarjetas de bóveda, checklist, telemetría).
   recompensa) y detalle de producto (galería + disponibilidad + prueba social + CTAs + ficha
   técnica + relacionados + CTA sticky móvil). Copy sin referencias a fabricación; login
   re-tematizado. Nuevos: `StatTile`, `SectionHeading`, `CollectionChecklist`.
-- Fase 4 (admin): `SEL-110` pendiente.
+- **Fase 4 (admin): ☑** `SEL-110`. Sidebar con marca y "Cerrar sesión"; Dashboard general con KPIs
+  (conteos y ventas reales), top 5 con rareza/stock y feed de actividad; Colecciones/Items con
+  miniaturas, `StatusBadge`/`RarityBadge` y acciones ghost; Inventario con movimientos tokenizados
+  (`MovementBadge`) y batch re-tematizados.
 - Fase 5 (datos nuevos: ficha técnica, XP/insignias): `SEL-111` pendiente.

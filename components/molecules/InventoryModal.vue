@@ -57,7 +57,7 @@
             class="flex items-center justify-between rounded-md border border-(--ui-border) px-3 py-2"
           >
             <div class="flex items-center gap-2 text-sm">
-              <span :class="typeBadge(m.type).class">{{ typeBadge(m.type).label }}</span>
+              <MovementBadge :type="m.type" />
               <span class="font-medium">{{ m.quantity }}</span>
               <span v-if="m.reason" class="text-muted">· {{ m.reason }}</span>
               <span v-if="m.customerName" class="text-muted">→ {{ m.customerName }}</span>
@@ -196,19 +196,6 @@ async function submitMovement() {
     formError.value = (e as { data?: { statusMessage?: string } })?.data?.statusMessage ?? 'Error al registrar el movimiento'
   } finally {
     saving.value = false
-  }
-}
-
-function typeBadge(type: Movement['type']) {
-  switch (type) {
-    case 'IN':
-      return { label: 'IN', class: 'rounded bg-emerald-500/15 px-1.5 py-0.5 text-xs font-medium text-emerald-600 dark:text-emerald-400' }
-    case 'OUT':
-      return { label: 'OUT', class: 'rounded bg-orange-500/15 px-1.5 py-0.5 text-xs font-medium text-orange-600 dark:text-orange-400' }
-    case 'SALE':
-      return { label: 'VENTA', class: 'rounded bg-blue-500/15 px-1.5 py-0.5 text-xs font-medium text-blue-600 dark:text-blue-400' }
-    case 'ADJUSTMENT':
-      return { label: 'AJUSTE', class: 'rounded bg-neutral-500/15 px-1.5 py-0.5 text-xs font-medium text-neutral-600 dark:text-neutral-400' }
   }
 }
 

@@ -88,7 +88,7 @@
                 >
                   <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2">
-                      <span :class="typeBadge(batch.type).class">{{ typeBadge(batch.type).label }}</span>
+                      <MovementBadge :type="batch.type" />
                       <span v-if="batch.reason" class="text-sm text-muted">{{ batch.reason }}</span>
                     </div>
                     <span class="text-xs text-muted">{{ formatDate(batch.createdAt) }}</span>
@@ -273,15 +273,6 @@ async function submit() {
     formError.value = (e as { data?: { statusMessage?: string } })?.data?.statusMessage ?? 'Error al registrar el movimiento'
   } finally {
     saving.value = false
-  }
-}
-
-function typeBadge(type: Batch['type']) {
-  switch (type) {
-    case 'IN': return { label: 'IN', class: 'rounded bg-emerald-500/15 px-1.5 py-0.5 text-xs font-medium text-emerald-600 dark:text-emerald-400' }
-    case 'OUT': return { label: 'OUT', class: 'rounded bg-orange-500/15 px-1.5 py-0.5 text-xs font-medium text-orange-600 dark:text-orange-400' }
-    case 'SALE': return { label: 'VENTA', class: 'rounded bg-blue-500/15 px-1.5 py-0.5 text-xs font-medium text-blue-600 dark:text-blue-400' }
-    case 'ADJUSTMENT': return { label: 'AJUSTE', class: 'rounded bg-neutral-500/15 px-1.5 py-0.5 text-xs font-medium text-neutral-600 dark:text-neutral-400' }
   }
 }
 

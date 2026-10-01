@@ -124,7 +124,7 @@ useHead({ link: [{ rel: 'canonical', href: canonical }] })
     <section class="border-y border-default bg-elevated/40">
       <UContainer class="py-8">
         <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          <StatTile :value="stats.items" label="Figuras catalogadas" icon="i-lucide-category" color="volt" />
+          <StatTile :value="stats.items" label="Figuras catalogadas" icon="i-lucide-shapes" color="volt" />
           <StatTile :value="stats.collections" label="Colecciones activas" icon="i-lucide-database" color="gold" />
           <StatTile :value="stats.legendary" label="Piezas legendarias" icon="i-lucide-gem" color="neon" />
           <StatTile :value="stats.collectors" label="Coleccionistas" icon="i-lucide-shield-user" color="success" />
@@ -206,14 +206,14 @@ useHead({ link: [{ rel: 'canonical', href: canonical }] })
         <div class="pointer-events-none absolute -top-24 right-1/4 size-64 rounded-full bg-volt/20 blur-3xl" />
         <div class="relative mx-auto flex max-w-2xl flex-col items-center gap-4">
           <span class="label-caps inline-flex items-center gap-2 rounded-full bg-elevated px-3 py-1 text-volt">
-            <UIcon name="i-lucide-lock-clock" class="size-4" />
+            <UIcon name="i-lucide-lock" class="size-4" />
             Tu bóveda personal está lista
           </span>
           <h2 class="font-display text-headline font-extrabold">Organiza, certifica y exhibe tu pasión coleccionista</h2>
           <p class="text-muted">Inicia sesión para llevar el seguimiento de tus piezas y completar tus colecciones.</p>
           <div class="flex flex-wrap items-center justify-center gap-3 pt-1">
             <UButton to="/collections" size="lg" icon="i-lucide-rocket" trailing>Explorar catálogo</UButton>
-            <UButton to="/me" size="lg" color="neutral" variant="subtle" icon="i-lucide-inventory">Ver mi inventario</UButton>
+            <UButton to="/me" size="lg" color="neutral" variant="subtle" icon="i-lucide-package">Ver mi inventario</UButton>
           </div>
         </div>
       </div>
