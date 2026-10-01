@@ -59,9 +59,10 @@
 - **Grid**: 12 columnas desktop (máx **1440px**, margin 3rem), 8 tablet (2rem),
   4 móvil (1rem). Gutter 1.5rem / 1rem móvil.
 - **Space**: `xs .25` · `sm .5` · `md 1` · `lg 1.5` · `xl 2.5` rem.
-- **Radios**: `sm .5rem` · `DEFAULT 1rem` · `md 1.5rem` · `lg 2rem` · `xl 3rem` · `full 9999px`.
-  Pills = CTA, badges, chips, filtros, avatares. `xl (3rem)` = tarjetas showcase,
-  hubs, modales. `lg (2rem)` = inputs, segmented, raíles de progreso.
+- **Radios** (utilidades `rounded-*`, escala moderada): `md .5rem` · `lg .75rem`
+  (imágenes) · `xl 1rem` (inputs, miniaturas, segmented) · `2xl 1.25rem` (tarjetas,
+  paneles, modales) · `full 9999px` (pills: CTA, badges, chips, filtros, avatares y
+  raíles de progreso). Evitar radios grandes en elementos pequeños (miniaturas, iconos).
 - **Elevación/Glow** (en vez de sombras difusas):
   - Tier 1: `#0E2340` @90% + `backdrop-blur 12px` + borde 1px `#1E3A5F`.
   - Tier 2 (modales): `#132D50` + borde `#254B78` + `0 20px 40px -15px rgba(2,6,18,.7)`.
