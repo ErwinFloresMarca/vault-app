@@ -14,21 +14,20 @@
         <span class="font-display text-4xl font-extrabold uppercase text-white/80">{{ initials }}</span>
       </div>
 
-      <div
-        v-if="collection.progress"
-        class="absolute bottom-2 right-2 rounded-full border border-default bg-default/80 p-1 backdrop-blur"
+      <span class="label-caps absolute right-2 top-2 rounded-full bg-default/80 px-2.5 py-1 text-default backdrop-blur">
+        {{ collection.itemCount }} {{ collection.itemCount === 1 ? 'item' : 'items' }}
+      </span>
+
+      <span
+        v-if="collection.progress?.percent === 100"
+        class="label-caps absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-gold px-2.5 py-1 text-ink"
       >
-        <ProgressRing :percent="collection.progress.percent" :size="48" :stroke-width="5" />
-      </div>
+        <UIcon name="i-lucide-stars" class="size-3.5" /> Completada
+      </span>
     </div>
 
     <div class="p-4">
-      <div class="flex items-start justify-between gap-2">
-        <h3 class="font-display text-lg font-bold">{{ collection.name }}</h3>
-        <span class="label-caps shrink-0 text-muted">
-          {{ collection.itemCount }} {{ collection.itemCount === 1 ? 'item' : 'items' }}
-        </span>
-      </div>
+      <h3 class="font-display text-lg font-bold transition-colors group-hover:text-gold">{{ collection.name }}</h3>
       <p v-if="collection.description" class="mt-1 line-clamp-2 text-sm text-muted">
         {{ stripMarkdown(collection.description) }}
       </p>
@@ -36,10 +35,22 @@
     </div>
 
     <div class="flex items-center justify-between border-t border-default px-4 py-3">
-      <span class="label-caps text-muted">Progreso</span>
-      <span class="font-display font-bold tabular-nums">
-        {{ collection.progress ? `${collection.progress.collected}/${collection.progress.total}` : '—' }}
-      </span>
+      <template v-if="collection.progress">
+        <div class="flex items-center gap-2.5">
+          <ProgressRing :percent="collection.progress.percent" :size="40" :stroke-width="4" :color="collection.progress.percent === 100 ? 'gold' : 'volt'" />
+          <div class="flex flex-col leading-tight">
+            <span class="font-display text-sm font-bold tabular-nums">
+              {{ collection.progress.collected }} / {{ collection.progress.total }}
+            </span>
+            <span class="label-caps text-muted">conseguidos</span>
+          </div>
+        </div>
+        <UIcon name="i-lucide-arrow-right" class="size-4 text-muted transition-transform group-hover:translate-x-0.5" />
+      </template>
+      <template v-else>
+        <span class="label-caps text-muted">Vitrina pública</span>
+        <UIcon name="i-lucide-arrow-right" class="size-4 text-muted transition-transform group-hover:translate-x-0.5" />
+      </template>
     </div>
   </VaultCard>
 </template>

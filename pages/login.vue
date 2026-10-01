@@ -1,65 +1,57 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center px-4">
-    <div class="w-full max-w-md">
-      <!-- Logo y título -->
-      <div class="text-center mb-8">
-        <div class="mb-4">
-          <img
-            src="/logos/volt3d-icon.svg"
-            alt="Volt3D"
-            class="h-16 w-16 mx-auto"
-          >
+  <div class="relative flex min-h-screen items-center justify-center overflow-hidden px-4">
+    <div class="pointer-events-none absolute -top-32 left-1/2 size-[520px] -translate-x-1/2 rounded-full bg-volt/15 blur-[150px]" />
+    <div class="pointer-events-none absolute bottom-0 right-1/4 size-80 rounded-full bg-gold/10 blur-[140px]" />
+
+    <div class="relative w-full max-w-md">
+      <div class="mb-8 text-center">
+        <div class="mb-4 flex justify-center">
+          <img src="/icon-192.png" alt="Volt Vault" class="h-16 w-16 rounded-2xl">
         </div>
-        <h1 class="text-3xl font-bold text-white mb-2">Volt3D</h1>
-        <p class="text-gray-400">Impresión 3D con Voltaje</p>
+        <h1 class="font-display text-3xl font-extrabold tracking-tight">Volt Vault</h1>
+        <p class="label-caps mt-2 text-volt">La bóveda de coleccionables</p>
       </div>
 
-      <!-- Card de login -->
-      <UCard class="mb-6">
+      <UCard>
         <template #header>
           <div class="text-center">
-            <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
-              Inicia sesión
-            </h2>
-            <p class="text-sm text-gray-500 mt-1">
-              O crea una cuenta nueva
-            </p>
+            <h2 class="font-display text-xl font-bold">Inicia sesión</h2>
+            <p class="mt-1 text-sm text-muted">O crea una cuenta nueva</p>
           </div>
         </template>
 
         <div class="space-y-3">
-          <!-- Google -->
-          <a
-            href="/auth/google"
-            class="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition flex items-center justify-center gap-2"
+          <UButton
+            to="/auth/google"
+            external
+            block
+            size="lg"
+            color="neutral"
+            variant="subtle"
+            icon="i-lucide-chrome"
           >
-            <Icon name="logos:google-icon" class="h-5 w-5" />
             Continuar con Google
-          </a>
+          </UButton>
 
-          <!-- Facebook -->
-          <a
-            href="/auth/facebook"
-            class="w-full px-4 py-2.5 bg-blue-600 rounded-lg font-medium text-white hover:bg-blue-700 transition flex items-center justify-center gap-2"
+          <UButton
+            to="/auth/facebook"
+            external
+            block
+            size="lg"
+            color="secondary"
+            icon="i-lucide-facebook"
           >
-            <Icon name="logos:facebook" class="h-5 w-5" />
             Continuar con Facebook
-          </a>
+          </UButton>
         </div>
 
         <template #footer>
-          <div class="text-center text-xs text-gray-500">
-            <p>
-              Al continuar, aceptas nuestros
-              <NuxtLink to="/terms" class="text-blue-600 hover:underline">
-                Términos de Servicio
-              </NuxtLink>
-              y
-              <NuxtLink to="/privacy" class="text-blue-600 hover:underline">
-                Política de Privacidad
-              </NuxtLink>
-            </p>
-          </div>
+          <p class="text-center text-xs text-muted">
+            Al continuar, aceptas nuestros
+            <NuxtLink to="/terms" class="text-volt hover:underline">Términos de Servicio</NuxtLink>
+            y la
+            <NuxtLink to="/privacy" class="text-volt hover:underline">Política de Privacidad</NuxtLink>
+          </p>
         </template>
       </UCard>
     </div>
@@ -73,18 +65,14 @@ definePageMeta({
 
 const { isAuthenticated } = useAuthUser()
 
-// Si ya está autenticado, redirigir a home
 watch(isAuthenticated, (newVal) => {
   if (newVal) {
     navigateTo('/')
   }
 })
 
-// Verificar si hay error de OAuth
 const route = useRoute()
 if (route.query.provider && route.query.error) {
-  const message = `Error al autenticarse con ${route.query.provider}`
-  console.error(message, route.query.error)
-  // Mostrar notificación de error
+  console.error(`Error al autenticarse con ${route.query.provider}`, route.query.error)
 }
 </script>

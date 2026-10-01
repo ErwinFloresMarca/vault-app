@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ItemDetail } from '~/types'
+import type { ItemDetail, CollectionWithItems } from '~/types'
 import { metaDescription, absoluteUrl } from '~/utils/seo'
 
 const route = useRoute()
@@ -9,11 +9,34 @@ const collectionSlug = computed(() => String(route.params.collectionSlug))
 const { data, pending, error } = await useFetch<{ success: boolean; data: ItemDetail }>(`/api/items/${itemSlug.value}`)
 const item = computed<ItemDetail | null>(() => data.value?.data ?? null)
 
+const { data: collectionData } = await useFetch<{ success: boolean; data: CollectionWithItems }>(
+  `/api/collections/${collectionSlug.value}`,
+)
+const collection = computed<CollectionWithItems | null>(() => collectionData.value?.data ?? null)
+
+const seriesTotal = computed(() => collection.value?.items.length ?? 0)
+const seriesIndex = computed(() => (collection.value?.items.findIndex((i) => i.slug === itemSlug.value) ?? -1) + 1)
+const related = computed(() =>
+  (collection.value?.items ?? []).filter((i) => i.slug !== itemSlug.value).slice(0, 3),
+)
+const seriesProgress = computed(() => collection.value?.progress ?? null)
+
+const RARITY_LABEL: Record<string, string> = {
+  COMMON: 'Común',
+  RARE: 'Rara',
+  EPIC: 'Épica',
+  LEGENDARY: 'Legendaria',
+}
+const STATUS_LABEL: Record<string, string> = {
+  DRAFT: 'Borrador',
+  AVAILABLE: 'Disponible',
+  SOLD_OUT: 'Agotado',
+  ARCHIVED: 'Archivado',
+}
+
 const config = useRuntimeConfig()
 const canonical = computed(() => `${config.public.siteUrl}/collections/${collectionSlug.value}/${itemSlug.value}`)
-const metaDesc = computed(() =>
-  metaDescription(item.value?.description, 'Item de coleccionable impreso en 3D de Volt-3D.'),
-)
+const metaDesc = computed(() => metaDescription(item.value?.description, 'Pieza de colección de Volt Vault.'))
 const ogImage = computed(() => absoluteUrl(item.value?.files?.[0]?.url, config.public.siteUrl))
 
 useSeoMeta({
@@ -38,6 +61,13 @@ const collected = ref(item.value?.collected ?? false)
 const celebrate = ref(false)
 const wishlisted = ref(item.value?.wishlisted ?? false)
 const wishlistCount = ref(item.value?.wishlistCount ?? 0)
+
+const stockMeter = computed(() => {
+  const stock = item.value?.stock ?? 0
+  if (stock <= 0) return 0
+  if (stock >= 10) return 100
+  return Math.round((stock / 10) * 100)
+})
 
 async function onWishlist() {
   if (!item.value) return
@@ -88,87 +118,215 @@ async function onToggle() {
 </script>
 
 <template>
-  <UPage v-if="item">
-    <UContainer class="py-8 pb-28 lg:pb-8">
-      <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
-        <ItemGallery :files="item.files" />
+  <div v-if="item">
+    <UContainer class="py-8 pb-28 lg:pb-10">
+      <!-- Breadcrumb -->
+      <NuxtLink
+        :to="`/collections/${collectionSlug}`"
+        class="group inline-flex items-center gap-1.5 text-sm text-muted transition-colors hover:text-default"
+      >
+        <UIcon name="i-lucide-arrow-left" class="size-4 transition-transform group-hover:-translate-x-0.5" />
+        {{ item.collection.name }}
+      </NuxtLink>
 
-        <div class="space-y-4">
-          <NuxtLink :to="`/collections/${collectionSlug}`" class="text-sm text-muted hover:text-default">
-            ← {{ item.collection.name }}
-          </NuxtLink>
+      <div class="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10">
+        <!-- Gallery -->
+        <div class="lg:col-span-7">
+          <ItemGallery :files="item.files" />
+        </div>
 
-          <h1 class="text-3xl">{{ item.name }}</h1>
-
-          <div class="flex items-center gap-2">
+        <!-- Details -->
+        <div class="flex flex-col gap-5 lg:col-span-5">
+          <div class="flex flex-wrap items-center gap-2">
             <StatusBadge :status="item.status" />
-            <StockIndicator :stock="item.stock" />
             <RarityBadge :rarity="item.rarity" />
-          </div>
-
-          <MarkdownContent v-if="item.description" :source="item.description" />
-
-          <div v-if="isAuthenticated" class="relative inline-block pt-2">
-            <CollectedBurst v-if="celebrate" />
-            <UButton
-              v-if="!collected"
-              icon="i-lucide-check"
-              :loading="busy"
-              :disabled="busy"
-              @click="onToggle"
-            >
-              Conseguir
-            </UButton>
-            <UButton
-              v-else
-              :class="{ 'animate-pop': celebrate }"
-              color="success"
-              icon="i-lucide-check-check"
-              :loading="busy"
-              :disabled="busy"
-              @click="onToggle"
-            >
-              Conseguido
-            </UButton>
-          </div>
-          <div v-else class="pt-2">
-            <UButton to="/login" variant="subtle" icon="i-lucide-log-in">
-              Inicia sesión para marcar este elemento como conseguido
-            </UButton>
-          </div>
-
-          <div v-if="isAuthenticated" class="pt-2">
-            <UButton
-              :color="wishlisted ? 'error' : 'neutral'"
-              :variant="wishlisted ? 'solid' : 'outline'"
-              icon="i-lucide-heart"
-              :loading="wishlistBusy"
-              :disabled="wishlistBusy"
-              @click="onWishlist"
-            >
-              {{ wishlisted ? 'En mi lista' : 'Lo quiero' }}
-            </UButton>
-          </div>
-
-          <div class="flex items-center gap-4 pt-2 text-xs text-muted">
-            <span class="inline-flex items-center gap-1">
-              <UIcon name="i-lucide-users" /> {{ item.collectedCount ?? 0 }} lo tienen
+            <span v-if="seriesIndex > 0" class="label-caps rounded-full bg-muted px-3 py-1 text-muted">
+              Item {{ String(seriesIndex).padStart(2, '0') }} de {{ seriesTotal }}
             </span>
-            <span class="inline-flex items-center gap-1">
-              <UIcon name="i-lucide-heart" /> {{ wishlistCount }} lo quieren
-            </span>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <h1 class="font-display text-headline font-bold tracking-tight">{{ item.name }}</h1>
+            <NuxtLink :to="`/collections/${collectionSlug}`" class="text-sm text-volt hover:underline">
+              {{ item.collection.name }}
+            </NuxtLink>
+          </div>
+
+          <!-- Availability -->
+          <div class="flex flex-col gap-2 rounded-2xl border border-default bg-muted p-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <UIcon name="i-lucide-bolt" class="size-4 text-volt" />
+                <span class="font-display text-sm font-semibold">Disponibilidad en almacén</span>
+              </div>
+              <StockIndicator :stock="item.stock" />
+            </div>
+            <div class="h-2 w-full overflow-hidden rounded-full bg-default p-0.5">
+              <div
+                class="h-full rounded-full bg-gradient-to-r from-volt to-gold transition-[width] duration-700"
+                :style="{ width: `${stockMeter}%` }"
+              />
+            </div>
+          </div>
+
+          <!-- Social proof -->
+          <div class="grid grid-cols-2 gap-3 rounded-2xl border border-default bg-muted p-4">
+            <div class="flex items-center gap-3">
+              <div class="flex size-9 items-center justify-center rounded-full bg-volt/15 text-volt">
+                <UIcon name="i-lucide-users" class="size-5" />
+              </div>
+              <div class="flex flex-col">
+                <span class="font-display text-lg font-bold tabular-nums">{{ item.collectedCount ?? 0 }}</span>
+                <span class="text-xs text-muted">lo tienen</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="flex size-9 items-center justify-center rounded-full bg-gold/15 text-gold">
+                <UIcon name="i-lucide-heart" class="size-5" />
+              </div>
+              <div class="flex flex-col">
+                <span class="font-display text-lg font-bold tabular-nums">{{ wishlistCount }}</span>
+                <span class="text-xs text-muted">lo quieren</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div v-if="isAuthenticated" class="flex flex-col gap-3">
+            <div class="relative flex flex-col gap-3 sm:flex-row">
+              <div class="relative flex-1">
+                <CollectedBurst v-if="celebrate" />
+                <UButton
+                  v-if="!collected"
+                  block
+                  size="lg"
+                  color="secondary"
+                  icon="i-lucide-inventory"
+                  :loading="busy"
+                  :disabled="busy"
+                  @click="onToggle"
+                >
+                  Conseguir
+                </UButton>
+                <UButton
+                  v-else
+                  block
+                  size="lg"
+                  color="success"
+                  icon="i-lucide-check-check"
+                  :class="{ 'animate-pop': celebrate }"
+                  :loading="busy"
+                  :disabled="busy"
+                  @click="onToggle"
+                >
+                  Conseguido
+                </UButton>
+              </div>
+              <UButton
+                size="lg"
+                :color="wishlisted ? 'error' : 'neutral'"
+                :variant="wishlisted ? 'solid' : 'subtle'"
+                :icon="wishlisted ? 'i-lucide-bookmark-check' : 'i-lucide-bookmark'"
+                :loading="wishlistBusy"
+                :disabled="wishlistBusy"
+                @click="onWishlist"
+              >
+                {{ wishlisted ? 'En mi lista' : 'Lo quiero' }}
+              </UButton>
+            </div>
+
+            <!-- Series progress -->
+            <div v-if="seriesProgress" class="flex flex-col gap-1.5 rounded-2xl border border-default bg-muted p-4">
+              <div class="flex items-center justify-between">
+                <span class="label-caps text-muted">Progreso de la colección</span>
+                <span class="font-display text-sm font-bold tabular-nums text-gold">
+                  {{ seriesProgress.collected }} / {{ seriesProgress.total }} ({{ seriesProgress.percent }}%)
+                </span>
+              </div>
+              <div class="h-2 w-full overflow-hidden rounded-full bg-default">
+                <div
+                  class="h-full rounded-full bg-gradient-to-r from-volt via-gold to-volt transition-[width] duration-700"
+                  :style="{ width: `${seriesProgress.percent}%` }"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div v-else class="flex flex-col gap-3">
+            <UButton to="/login" block size="lg" color="secondary" icon="i-lucide-log-in">
+              Inicia sesión para conseguir esta pieza
+            </UButton>
+            <UButton to="/login" block size="lg" color="neutral" variant="subtle" icon="i-lucide-bookmark">
+              Lo quiero
+            </UButton>
+          </div>
+
+          <!-- Ficha técnica -->
+          <div class="flex flex-col gap-4 rounded-2xl border border-default bg-muted p-5">
+            <div class="flex items-center gap-2">
+              <UIcon name="i-lucide-clipboard-list" class="size-5 text-gold" />
+              <span class="font-display font-bold uppercase tracking-wide">Ficha técnica</span>
+            </div>
+            <dl class="grid grid-cols-2 gap-3">
+              <div class="flex flex-col rounded-xl border border-default bg-elevated p-3">
+                <dt class="label-caps text-muted">Colección</dt>
+                <dd class="mt-1 font-display text-sm font-semibold">{{ item.collection.name }}</dd>
+              </div>
+              <div class="flex flex-col rounded-xl border border-default bg-elevated p-3">
+                <dt class="label-caps text-muted">Rareza</dt>
+                <dd class="mt-1 font-display text-sm font-semibold">{{ RARITY_LABEL[item.rarity] ?? item.rarity }}</dd>
+              </div>
+              <div class="flex flex-col rounded-xl border border-default bg-elevated p-3">
+                <dt class="label-caps text-muted">Estado</dt>
+                <dd class="mt-1 font-display text-sm font-semibold">{{ STATUS_LABEL[item.status] ?? item.status }}</dd>
+              </div>
+              <div class="flex flex-col rounded-xl border border-default bg-elevated p-3">
+                <dt class="label-caps text-muted">Unidades</dt>
+                <dd class="mt-1 font-display text-sm font-semibold tabular-nums">{{ item.stock }}</dd>
+              </div>
+            </dl>
+            <div v-if="item.description">
+              <span class="label-caps text-muted">Manifiesto</span>
+              <MarkdownContent :source="item.description" class="mt-1" />
+            </div>
           </div>
         </div>
       </div>
+
+      <!-- Related items -->
+      <section v-if="related.length" class="mt-14">
+        <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <SectionHeading
+            eyebrow="Ecosistema completo"
+            title="Otros coleccionables de esta serie"
+          />
+          <NuxtLink
+            :to="`/collections/${collectionSlug}`"
+            class="group inline-flex items-center gap-1.5 text-sm text-volt transition-colors hover:text-gold"
+          >
+            Explorar la colección
+            <UIcon name="i-lucide-arrow-right" class="size-4 transition-transform group-hover:translate-x-0.5" />
+          </NuxtLink>
+        </div>
+        <div class="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <ItemCard
+            v-for="rel in related"
+            :key="rel.id"
+            :item="rel"
+            :collection-slug="collectionSlug"
+          />
+        </div>
+      </section>
     </UContainer>
 
+    <!-- Sticky mobile CTA -->
     <div class="fixed inset-x-0 bottom-0 z-20 border-t border-default bg-default/95 p-3 backdrop-blur lg:hidden">
       <div class="flex items-center gap-2">
         <template v-if="isAuthenticated">
           <UButton
             class="flex-1"
-            :color="collected ? 'success' : 'primary'"
-            :icon="collected ? 'i-lucide-check-check' : 'i-lucide-check'"
+            :color="collected ? 'success' : 'secondary'"
+            :icon="collected ? 'i-lucide-check-check' : 'i-lucide-inventory'"
             :loading="busy"
             :disabled="busy"
             @click="onToggle"
@@ -177,8 +335,8 @@ async function onToggle() {
           </UButton>
           <UButton
             :color="wishlisted ? 'error' : 'neutral'"
-            :variant="wishlisted ? 'solid' : 'outline'"
-            icon="i-lucide-heart"
+            :variant="wishlisted ? 'solid' : 'subtle'"
+            icon="i-lucide-bookmark"
             :loading="wishlistBusy"
             :disabled="wishlistBusy"
             @click="onWishlist"
@@ -191,11 +349,11 @@ async function onToggle() {
         </UButton>
       </div>
     </div>
-  </UPage>
+  </div>
 
   <div v-else class="py-10">
     <UContainer>
-      <USkeleton v-if="pending" class="h-64 rounded-lg" />
+      <USkeleton v-if="pending" class="h-64 rounded-2xl" />
       <UAlert v-else-if="error" color="error" title="No se pudo cargar el item" />
       <UEmpty v-else title="Item no encontrado" />
     </UContainer>

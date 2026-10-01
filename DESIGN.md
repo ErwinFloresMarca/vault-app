@@ -161,4 +161,8 @@ claro con el botón de color mode. La semántica de `@nuxt/ui` (`--ui-*`) se map
 - **Fase 1 (tokens, tema y fuentes): ☑** — cableado en `assets/css/main.css` (`@theme static`
   + semántica claro/oscuro), `app.config.ts` (primary gold, secondary volt, neutral slate,
   formas) y `@nuxt/fonts` (Plus Jakarta Sans + Hanken Grotesk). Oscuro por defecto.
-- Fases 2-5 en `docs/specs/m13-redesign-ui.md` (componentes, públicas, admin, datos nuevos).
+- **Fase 2 (componentes base): ☑** — `VaultCard`, `ProgressRing`, `RarityBadge`, `StatusBadge`,
+  `StockIndicator`, `TagBadge`, tarjetas de colección/item.
+- **Fase 3 (páginas públicas): ☑** — Inicio, Colecciones, detalle de colección (checklist) y
+  detalle de producto; `StatTile`, `SectionHeading`, `CollectionChecklist`. Fases 4-5 en
+  `docs/specs/m13-redesign-ui.md` (admin y datos nuevos).

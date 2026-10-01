@@ -1,7 +1,18 @@
 import { prisma } from '~/server/utils/db'
 
-/** Métricas del dashboard admin (reutilizado por la API REST y por el MCP). */
+/** Métricas de vitrina pública (conteos reales, sin datos decorativos). */
 export const statsService = {
+  async getPublicStats() {
+    const [collections, items, legendary, collectors, collected] = await Promise.all([
+      prisma.collection.count({ where: { status: 'PUBLISHED' } }),
+      prisma.collectionItem.count({ where: { status: { not: 'ARCHIVED' } } }),
+      prisma.collectionItem.count({ where: { rarity: 'LEGENDARY', status: { not: 'ARCHIVED' } } }),
+      prisma.user.count({ where: { role: 'USER' } }),
+      prisma.userCollectedItem.count(),
+    ])
+    return { collections, items, legendary, collectors, collected }
+  },
+
   async getAdminStats() {
     const [collections, items, users, collected, soldAgg, top, recent] = await Promise.all([
       prisma.collection.count(),

@@ -69,7 +69,7 @@ base de datos relacional PostgreSQL dedicada (`vault-volt3d`) en el Postgres Doc
 | SEO | m10-seo.md | ☑ |
 | Volt Arcade | m11-volt-arcade.md | ☑ (fases 1-4) |
 | MCP Server | m12-mcp-server.md | ☑ (fases 1-4) |
-| Rediseño UI | m13-redesign-ui.md | ◐ (fases 1-2 ☑) |
+| Rediseño UI | m13-redesign-ui.md | ◐ (fases 1-3 ☑) |
 
 ## Desviaciones respecto al plan original
 

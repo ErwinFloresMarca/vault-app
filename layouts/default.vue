@@ -37,7 +37,7 @@
         <div class="flex items-center gap-2">
           <img src="/icon-192.png" alt="" class="h-5 w-5">
           <p class="text-muted text-sm">
-            © {{ new Date().getFullYear() }} Volt Vault · Volt-3D. Coleccionables impresos en 3D.
+            © {{ new Date().getFullYear() }} Volt Vault. La bóveda definitiva para descubrir, catalogar y completar tus colecciones.
           </p>
         </div>
       </template>

@@ -119,6 +119,12 @@ visuales de los diseños (anillos, tarjetas de bóveda, checklist, telemetría).
 - **Fase 2 (componentes base): ☑** `SEL-108`. `VaultCard` (borde/glow de rareza), `ProgressRing`
   (dorado/azul), `RarityBadge` (chip con LED), `StatusBadge` (chip), `StockIndicator`; tarjetas
   `CollectionCard`/`ItemCard` refactorizadas a Vault Cards.
-- Fase 3 (páginas públicas): `SEL-109` pendiente.
+- **Fase 3 (páginas públicas): ☑** `SEL-109`. Inicio (hero + fila de métricas reales vía
+  `GET /api/stats` + colecciones destacadas + sistema de rarezas + CTA de bóveda), Colecciones
+  (cabecera + consola de filtros con buscador/pills/orden + grid + paginación + banner de bóveda),
+  detalle de colección (cabecera de bóveda + stats + rarezas + **modo checklist** + tarjeta de
+  recompensa) y detalle de producto (galería + disponibilidad + prueba social + CTAs + ficha
+  técnica + relacionados + CTA sticky móvil). Copy sin referencias a fabricación; login
+  re-tematizado. Nuevos: `StatTile`, `SectionHeading`, `CollectionChecklist`.
 - Fase 4 (admin): `SEL-110` pendiente.
 - Fase 5 (datos nuevos: ficha técnica, XP/insignias): `SEL-111` pendiente.
