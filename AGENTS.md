@@ -26,7 +26,7 @@ OAuth, `NUXT_SESSION_PASSWORD`) → `pnpm db:generate` → `pnpm db:migrate` (o
 ## Dominio (el schema real MANDA)
 
 Modelos en `prisma/schema.prisma`: `User`, `OAuthAccount`, `File`, `Collection`,
-`CollectionItem`, `Tag`, `CollectionTag`, `CollectionFile`, `ItemFile`,
+`CollectionItem`, `ItemSpec`, `Tag`, `CollectionTag`, `CollectionFile`, `ItemFile`,
 `UserCollectedItem`, `InventoryBatch`, `InventoryMovement`.
 
 - Enum `UserRole`: `USER | ADMIN` (uppercase, default `USER`). NO existen `CLIENT`/`client`/`admin`.

@@ -14,6 +14,7 @@ export default defineEventHandler(async (event) => {
         include: {
           collection: { select: { id: true, name: true, slug: true } },
           files: { include: { file: true }, orderBy: { position: 'asc' } },
+          spec: true,
           movements: { orderBy: { createdAt: 'desc' } },
           collectedBy: { select: { userId: true } },
         },

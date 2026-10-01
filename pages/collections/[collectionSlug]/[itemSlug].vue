@@ -34,6 +34,18 @@ const STATUS_LABEL: Record<string, string> = {
   ARCHIVED: 'Archivado',
 }
 
+const specFields = computed<Array<{ label: string; value: string }>>(() => {
+  const s = item.value?.spec
+  if (!s) return []
+  const fields = [
+    { label: 'Escala / Altura', value: s.scale },
+    { label: 'Material / Acabado', value: s.material },
+    { label: 'Iluminación', value: s.lighting },
+    { label: 'Base / Soporte', value: s.base },
+  ]
+  return fields.filter((f): f is { label: string; value: string } => !!f.value)
+})
+
 const config = useRuntimeConfig()
 const canonical = computed(() => `${config.public.siteUrl}/collections/${collectionSlug.value}/${itemSlug.value}`)
 const metaDesc = computed(() => metaDescription(item.value?.description, 'Pieza de colección de Volt Vault.'))
@@ -267,7 +279,13 @@ async function onToggle() {
               <UIcon name="i-lucide-clipboard-list" class="size-5 text-gold" />
               <span class="font-display font-bold uppercase tracking-wide">Ficha técnica</span>
             </div>
-            <dl class="grid grid-cols-2 gap-3">
+            <dl v-if="specFields.length" class="grid grid-cols-2 gap-3">
+              <div v-for="field in specFields" :key="field.label" class="flex flex-col rounded-xl border border-default bg-elevated p-3">
+                <dt class="label-caps text-muted">{{ field.label }}</dt>
+                <dd class="mt-1 font-display text-sm font-semibold">{{ field.value }}</dd>
+              </div>
+            </dl>
+            <dl v-else class="grid grid-cols-2 gap-3">
               <div class="flex flex-col rounded-xl border border-default bg-elevated p-3">
                 <dt class="label-caps text-muted">Colección</dt>
                 <dd class="mt-1 font-display text-sm font-semibold">{{ item.collection.name }}</dd>

@@ -129,9 +129,22 @@ model CollectionItem {
   movements   InventoryMovement[]
   collectedBy UserCollectedItem[]
   wishlist    UserWishlistItem[]
+  spec        ItemSpec?
 
   @@index([collectionId])
   @@index([status])
+}
+
+// Ficha técnica opcional del coleccionable (1:1 con el item).
+model ItemSpec {
+  id       String @id @default(cuid())
+  itemId   String @unique
+  scale    String? // Escala / Altura (p. ej. "18 cm")
+  material String? // Material / Acabado (p. ej. "Vinilo mate")
+  lighting String? // Iluminación integrada
+  base     String? // Base / Soporte
+
+  item CollectionItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
 }
 
 // ===== TAGS =====

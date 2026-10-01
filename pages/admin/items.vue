@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { TableColumn } from '@nuxt/ui'
-import type { ItemStatus, Rarity } from '~/types'
+import type { ItemStatus, Rarity, ItemSpecDto } from '~/types'
 
 useSeoMeta({ title: 'Items — Volt Vault Admin' })
 
@@ -16,6 +16,7 @@ interface ItemRow {
   soldQuantity: number
   collection?: { id: string; name: string }
   files?: Array<{ file: { id: string; url: string } }>
+  spec?: ItemSpecDto | null
 }
 
 interface CollectionOption {
@@ -43,7 +44,16 @@ const collections = computed<CollectionOption[]>(() => collectionsData.value?.da
 const modalOpen = ref(false)
 const editing = ref<ItemRow | null>(null)
 const saving = ref(false)
-const form = reactive({ name: '', description: '', status: 'AVAILABLE', rarity: 'COMMON', collectionId: '', stockInicial: 0, fileId: null as string | null })
+const form = reactive({
+  name: '',
+  description: '',
+  status: 'AVAILABLE',
+  rarity: 'COMMON',
+  collectionId: '',
+  stockInicial: 0,
+  fileId: null as string | null,
+  spec: { scale: '', material: '', lighting: '', base: '' },
+})
 const formError = ref('')
 
 const inventoryOpen = ref(false)
@@ -67,6 +77,7 @@ function openCreate() {
   form.collectionId = collections.value[0]?.id ?? ''
   form.stockInicial = 0
   form.fileId = null
+  form.spec = { scale: '', material: '', lighting: '', base: '' }
   formError.value = ''
   modalOpen.value = true
 }
@@ -80,6 +91,12 @@ function openEdit(row: ItemRow) {
   form.collectionId = row.collection?.id ?? ''
   form.stockInicial = 0
   form.fileId = mainImageOf(row)?.id ?? null
+  form.spec = {
+    scale: row.spec?.scale ?? '',
+    material: row.spec?.material ?? '',
+    lighting: row.spec?.lighting ?? '',
+    base: row.spec?.base ?? '',
+  }
   formError.value = ''
   modalOpen.value = true
 }
@@ -103,6 +120,7 @@ async function save() {
         status: form.status,
         rarity: form.rarity,
         fileIds: form.fileId ? [form.fileId] : undefined,
+        spec: form.spec,
       }
       await $fetch(`/api/admin/items/${editing.value.id}`, { method: 'PUT', body: payload })
     } else {
@@ -116,6 +134,7 @@ async function save() {
           collectionId: form.collectionId,
           stockInicial: Number(form.stockInicial) || 0,
           fileIds: form.fileId ? [form.fileId] : undefined,
+          spec: form.spec,
         },
       })
     }
@@ -223,6 +242,21 @@ async function remove(row: ItemRow) {
         <UFormField label="Rareza">
           <USelect v-model="form.rarity" :items="['COMMON', 'RARE', 'EPIC', 'LEGENDARY']" />
         </UFormField>
+        <USeparator label="Ficha técnica (opcional)" />
+        <div class="grid grid-cols-2 gap-3">
+          <UFormField label="Escala / Altura">
+            <UInput v-model="form.spec.scale" placeholder="Ej.: 18 cm" />
+          </UFormField>
+          <UFormField label="Material / Acabado">
+            <UInput v-model="form.spec.material" placeholder="Ej.: Vinilo mate" />
+          </UFormField>
+          <UFormField label="Iluminación">
+            <UInput v-model="form.spec.lighting" placeholder="Ej.: LED electroluminiscente" />
+          </UFormField>
+          <UFormField label="Base / Soporte">
+            <UInput v-model="form.spec.base" placeholder="Ej.: Base acrílica" />
+          </UFormField>
+        </div>
         <UFormField v-if="!editing" label="Stock inicial">
           <UInput v-model.number="form.stockInicial" type="number" min="0" />
         </UFormField>

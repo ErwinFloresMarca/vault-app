@@ -57,9 +57,17 @@ export interface ItemDetail extends ItemSummary {
   }
   files: FileDto[]
   tags: TagDto[]
+  spec?: ItemSpecDto | null
   wishlisted?: boolean
   collectedCount?: number
   wishlistCount?: number
+}
+
+export interface ItemSpecDto {
+  scale?: string | null
+  material?: string | null
+  lighting?: string | null
+  base?: string | null
 }
 
 export interface CollectionProgress {

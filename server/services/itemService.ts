@@ -1,12 +1,24 @@
 import { prisma } from '~/server/utils/db'
 import type { Prisma } from '@gen-prisma/client'
-import type { ItemDetail, ItemSummary, ItemStatus, Rarity, FileDto } from '~/types'
+import type { ItemDetail, ItemSummary, ItemStatus, Rarity, FileDto, ItemSpecDto } from '~/types'
 
 type ItemFilesPayload = Prisma.CollectionItemGetPayload<{
   include: { files: { include: { file: true } } }
 }>
 
 type ItemFileRow = Prisma.ItemFileGetPayload<{ include: { file: true } }>
+
+/** Normaliza la ficha técnica: descarta vacíos; null si no hay ningún campo. */
+function normalizeSpec(spec?: ItemSpecDto | null): ItemSpecDto | null {
+  if (!spec) return null
+  const clean: ItemSpecDto = {
+    scale: spec.scale?.trim() || null,
+    material: spec.material?.trim() || null,
+    lighting: spec.lighting?.trim() || null,
+    base: spec.base?.trim() || null,
+  }
+  return Object.values(clean).some((v) => v) ? clean : null
+}
 
 function slugify(text: string): string {
   return text
@@ -62,12 +74,14 @@ export const itemService = {
     stockInicial?: number
     status?: ItemStatus
     rarity?: Rarity
+    spec?: ItemSpecDto
   }) {
     const collection = await prisma.collection.findUnique({ where: { id: input.collectionId } })
     if (!collection) throw createError({ statusCode: 422, statusMessage: 'La colección no existe' })
 
     const slug = await ensureUniqueItemSlug(slugify(input.name))
     const stockInicial = Math.max(0, input.stockInicial ?? 0)
+    const specData = normalizeSpec(input.spec)
 
     return prisma.$transaction(async (tx) => {
       const item = await tx.collectionItem.create({
@@ -81,6 +95,7 @@ export const itemService = {
           files: input.fileIds?.length
             ? { create: input.fileIds.map((fileId, idx) => ({ fileId, position: idx })) }
             : undefined,
+          spec: specData ? { create: specData } : undefined,
         },
       })
 
@@ -103,6 +118,7 @@ export const itemService = {
     fileIds?: string[]
     status?: ItemStatus
     rarity?: Rarity
+    spec?: ItemSpecDto
   }) {
     const existing = await prisma.collectionItem.findUnique({ where: { id } })
     if (!existing) throw createError({ statusCode: 404, statusMessage: 'Item no encontrado' })
@@ -124,6 +140,18 @@ export const itemService = {
           await tx.itemFile.createMany({ data: input.fileIds.map((fileId, idx) => ({ itemId: id, fileId, position: idx })) })
         }
       }
+      if (input.spec !== undefined) {
+        const specData = normalizeSpec(input.spec)
+        if (specData) {
+          await tx.itemSpec.upsert({
+            where: { itemId: id },
+            create: { itemId: id, ...specData },
+            update: specData,
+          })
+        } else {
+          await tx.itemSpec.deleteMany({ where: { itemId: id } })
+        }
+      }
       return tx.collectionItem.update({ where: { id }, data })
     })
   },
@@ -138,6 +166,7 @@ export const itemService = {
       include: {
         collection: { select: { id: true, name: true, slug: true } },
         files: { include: { file: true }, orderBy: { position: 'asc' } },
+        spec: true,
         collectedBy: { select: { userId: true } },
         _count: { select: { collectedBy: true, wishlist: true } },
       },
@@ -157,6 +186,9 @@ export const itemService = {
       collection: item.collection,
       files: toFiles(item.files),
       tags: [],
+      spec: item.spec
+        ? { scale: item.spec.scale, material: item.spec.material, lighting: item.spec.lighting, base: item.spec.base }
+        : null,
       collected: !!userId && item.collectedBy.some((cb) => cb.userId === userId),
       wishlisted,
       collectedCount: item._count.collectedBy,
