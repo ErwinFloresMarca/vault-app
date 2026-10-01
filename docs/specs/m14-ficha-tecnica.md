@@ -47,7 +47,7 @@ el detalle de producto, con el estilo Cyber-Luxe.
 
 ## Estado
 
-- **☑ Implementado** `SEL-112`. Migración `20261001030527_add_item_spec`; modelo `ItemSpec`
+- **☑ Implementado** `SEL-121`. Migración `20261001030527_add_item_spec`; modelo `ItemSpec`
   (1:1, cascade); `itemService` normaliza y hace upsert/delete de la ficha; admin con sección
   "Ficha técnica (opcional)"; detalle de producto muestra la ficha (con fallback a datos reales).
   Verificado con API + Playwright; eslint/typecheck en verde.

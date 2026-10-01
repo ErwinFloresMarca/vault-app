@@ -55,4 +55,4 @@ desbloquee **insignias** (logros) que se muestran en su bóveda personal (`/me`)
 
 ## Estado
 
-- ☐ Pendiente (spec creado). Implementación en curso.
+- ◐ En curso `SEL-122`. Spec aprobado; pendiente migración + servicio + APIs + UI.
