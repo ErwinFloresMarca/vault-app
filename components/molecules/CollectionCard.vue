@@ -1,9 +1,5 @@
 <template>
-  <UPageCard
-    v-if="collection"
-    :to="`/collections/${collection.slug}`"
-    class="group overflow-hidden hover:shadow-pill"
-  >
+  <VaultCard :to="`/collections/${collection.slug}`">
     <div class="relative aspect-[4/3] w-full overflow-hidden">
       <AppImage
         v-if="collection.coverImage?.url"
@@ -15,30 +11,37 @@
         v-else
         class="flex h-full w-full items-center justify-center bg-gradient-to-br from-navy-900 to-navy-800"
       >
-        <span class="text-4xl uppercase tracking-wide text-white/80">{{ initials }}</span>
+        <span class="font-display text-4xl font-extrabold uppercase text-white/80">{{ initials }}</span>
       </div>
 
       <div
         v-if="collection.progress"
-        class="absolute bottom-2 right-2 rounded-full bg-default/90 p-1 backdrop-blur"
+        class="absolute bottom-2 right-2 rounded-full border border-default bg-default/80 p-1 backdrop-blur"
       >
-        <ProgressRing :percent="collection.progress.percent" :size="44" :stroke-width="5" />
+        <ProgressRing :percent="collection.progress.percent" :size="48" :stroke-width="5" />
       </div>
     </div>
 
     <div class="p-4">
       <div class="flex items-start justify-between gap-2">
-        <h3>{{ collection.name }}</h3>
-        <span v-if="collection.itemCount !== undefined" class="shrink-0 text-xs text-muted">
+        <h3 class="font-display text-lg font-bold">{{ collection.name }}</h3>
+        <span class="label-caps shrink-0 text-muted">
           {{ collection.itemCount }} {{ collection.itemCount === 1 ? 'item' : 'items' }}
         </span>
       </div>
-      <p v-if="collection.description" class="line-clamp-2 text-sm text-muted">
+      <p v-if="collection.description" class="mt-1 line-clamp-2 text-sm text-muted">
         {{ stripMarkdown(collection.description) }}
       </p>
-      <TagList v-if="collection.tags?.length" :tags="collection.tags" class="mt-2" />
+      <TagList v-if="collection.tags?.length" :tags="collection.tags" class="mt-3" />
     </div>
-  </UPageCard>
+
+    <div class="flex items-center justify-between border-t border-default px-4 py-3">
+      <span class="label-caps text-muted">Progreso</span>
+      <span class="font-display font-bold tabular-nums">
+        {{ collection.progress ? `${collection.progress.collected}/${collection.progress.total}` : '—' }}
+      </span>
+    </div>
+  </VaultCard>
 </template>
 
 <script setup lang="ts">

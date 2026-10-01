@@ -9,7 +9,7 @@
         :cy="center"
         :r="radius"
         fill="none"
-        stroke="var(--ui-border)"
+        stroke="var(--ui-border-accented)"
         :stroke-width="strokeWidth"
       />
       <circle
@@ -17,7 +17,7 @@
         :cy="center"
         :r="radius"
         fill="none"
-        stroke="var(--color-volt-blue)"
+        :stroke="strokeColor"
         :stroke-width="strokeWidth"
         stroke-linecap="round"
         :stroke-dasharray="circumference"
@@ -26,8 +26,8 @@
       />
     </svg>
     <div class="absolute text-center leading-none">
-      <span class="block text-lg">{{ percent }}%</span>
-      <span v-if="label" class="mt-0.5 block text-[8px] uppercase tracking-wide text-muted">{{ label }}</span>
+      <span class="block font-display text-lg font-extrabold tabular-nums">{{ percent }}%</span>
+      <span v-if="label" class="label-caps mt-0.5 block text-muted">{{ label }}</span>
     </div>
   </div>
 </template>
@@ -38,12 +38,21 @@ const props = withDefaults(defineProps<{
   size?: number
   strokeWidth?: number
   label?: string
+  color?: 'gold' | 'volt' | 'neon'
 }>(), {
   size: 96,
   strokeWidth: 8,
   label: '',
+  color: 'gold',
 })
 
+const STROKE = {
+  gold: 'var(--color-gold)',
+  volt: 'var(--color-volt)',
+  neon: 'var(--color-neon)',
+}
+
+const strokeColor = computed(() => STROKE[props.color] ?? STROKE.gold)
 const center = computed(() => props.size / 2)
 const radius = computed(() => (props.size - props.strokeWidth) / 2)
 const circumference = computed(() => 2 * Math.PI * radius.value)

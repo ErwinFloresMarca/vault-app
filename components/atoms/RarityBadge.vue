@@ -1,9 +1,12 @@
 <template>
   <span
-    class="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[8px] uppercase tracking-wide"
+    class="label-caps inline-flex items-center gap-1.5 rounded-full border px-2 py-1"
     :style="style"
   >
-    <span class="size-1.5 rounded-full" :style="{ backgroundColor: info.color }" />
+    <span
+      class="size-1.5 rounded-full"
+      :style="{ backgroundColor: info.color, boxShadow: `0 0 6px ${info.color}` }"
+    />
     {{ info.label }}
   </span>
 </template>
@@ -24,6 +27,6 @@ const info = computed(() => MAP[props.rarity] ?? MAP.COMMON)
 const style = computed(() => ({
   color: info.value.color,
   borderColor: info.value.color,
-  backgroundColor: `color-mix(in srgb, ${info.value.color} 14%, transparent)`,
+  backgroundColor: `color-mix(in srgb, ${info.value.color} 15%, transparent)`,
 }))
 </script>

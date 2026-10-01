@@ -1,23 +1,29 @@
 <template>
-  <UPageCard v-if="item" :to="`/collections/${collectionSlug}/${item.slug}`" class="overflow-hidden">
-    <AppImage
-      :src="item.mainImage?.url"
-      :alt="item.name"
-      class="aspect-square w-full"
-    />
-    <div class="p-4">
-      <div class="flex items-start justify-between gap-2">
-        <h3 class="font-semibold">{{ item.name }}</h3>
-        <StockIndicator :stock="item.stock" class="shrink-0" />
-      </div>
-      <div class="mt-2 flex items-center gap-2">
+  <VaultCard :to="`/collections/${collectionSlug}/${item.slug}`" :tier="item.rarity">
+    <div class="relative aspect-square w-full overflow-hidden">
+      <AppImage
+        :src="item.mainImage?.url"
+        :alt="item.name"
+        class="h-full w-full transition-transform duration-500 group-hover:scale-105 motion-reduce:transform-none motion-reduce:transition-none"
+      />
+      <div class="absolute left-2 top-2">
         <RarityBadge :rarity="item.rarity" />
-        <UBadge v-if="item.collected" color="success" variant="subtle" icon="i-lucide-check">
-          Conseguido
-        </UBadge>
+      </div>
+      <span
+        v-if="item.collected"
+        class="label-caps absolute right-2 top-2 rounded-full border border-success/40 bg-success/15 px-2 py-1 text-success"
+      >
+        Conseguido
+      </span>
+    </div>
+
+    <div class="p-4">
+      <h3 class="line-clamp-1 font-display text-base font-bold">{{ item.name }}</h3>
+      <div class="mt-2">
+        <StockIndicator :stock="item.stock" />
       </div>
     </div>
-  </UPageCard>
+  </VaultCard>
 </template>
 
 <script setup lang="ts">

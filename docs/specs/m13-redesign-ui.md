@@ -116,7 +116,9 @@ visuales de los diseños (anillos, tarjetas de bóveda, checklist, telemetría).
 - **Fase 1 (tokens, tema y fuentes): ☑** `SEL-107`. `assets/css/main.css` (`@theme static` +
   semántica claro/oscuro), `app.config.ts` (primary gold, secondary volt, neutral slate,
   formas), `@nuxt/fonts` (Plus Jakarta Sans + Hanken Grotesk), oscuro por defecto.
-- Fase 2 (componentes base): `SEL-108` pendiente.
+- **Fase 2 (componentes base): ☑** `SEL-108`. `VaultCard` (borde/glow de rareza), `ProgressRing`
+  (dorado/azul), `RarityBadge` (chip con LED), `StatusBadge` (chip), `StockIndicator`; tarjetas
+  `CollectionCard`/`ItemCard` refactorizadas a Vault Cards.
 - Fase 3 (páginas públicas): `SEL-109` pendiente.
 - Fase 4 (admin): `SEL-110` pendiente.
 - Fase 5 (datos nuevos: ficha técnica, XP/insignias): `SEL-111` pendiente.
