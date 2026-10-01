@@ -83,4 +83,18 @@ export interface UserStats {
   percent: number
   collections: number
   completedCollections: number
+  xp: number
+  level: number
+  xpIntoLevel: number
+  xpForNextLevel: number
+}
+
+export interface Achievement {
+  key: string
+  name: string
+  description: string | null
+  icon: string | null
+  xpReward: number
+  unlocked: boolean
+  unlockedAt: string | null
 }

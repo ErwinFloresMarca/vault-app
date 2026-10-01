@@ -1,4 +1,5 @@
 import { prisma } from '~/server/utils/db'
+import { gamificationService } from '~/server/services/gamificationService'
 import type { Prisma, UserRole } from '@gen-prisma/client'
 
 export const userService = {
@@ -38,12 +39,14 @@ export const userService = {
       update: {},
       create: { userId, itemId, obtainedAt: new Date() },
     })
-    return { collected: true }
+    const gamification = await gamificationService.recompute(userId)
+    return { collected: true, gamification }
   },
 
   async uncollect(userId: string, itemId: string) {
     await prisma.userCollectedItem.deleteMany({ where: { userId, itemId } })
-    return { collected: false }
+    const gamification = await gamificationService.recompute(userId)
+    return { collected: false, gamification }
   },
 
   /** Items conseguidos por el usuario (colección personal). */

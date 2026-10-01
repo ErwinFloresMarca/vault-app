@@ -55,4 +55,8 @@ desbloquee **insignias** (logros) que se muestran en su bóveda personal (`/me`)
 
 ## Estado
 
-- ◐ En curso `SEL-122`. Spec aprobado; pendiente migración + servicio + APIs + UI.
+- **☑ Implementado** `SEL-122`. Migración `20261001032151_add_gamification`; `User.xp`,
+  `Achievement` y `UserAchievement`; `gamificationService.recompute` (idempotente) en
+  `collect`/`uncollect`; `/api/me/stats` (xp/nivel) y `/api/me/achievements`; UI en `/me`
+  (barra de XP + insignias) y XP real en la sección de rarezas del inicio. Toast de XP al
+  conseguir. Verificado con API (Épica 350, bonus +500) y Playwright; e2e 9/9; eslint/typecheck 0.

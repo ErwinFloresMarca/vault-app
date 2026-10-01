@@ -23,6 +23,7 @@ model User {
   name        String
   avatarUrl   String?
   role        UserRole @default(USER)
+  xp          Int      @default(0)
   lastLoginAt DateTime @default(now())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -30,6 +31,7 @@ model User {
   oauthAccounts OAuthAccount[]
   collected     UserCollectedItem[]
   wishlist      UserWishlistItem[]
+  achievements  UserAchievement[]
   apiKeys       ApiKey[]
 
   registeredBatches InventoryBatch[] @relation("RegisteredBy")
@@ -337,4 +339,31 @@ model McpAuditLog {
 
   @@index([createdAt])
   @@index([apiKeyId])
+}
+
+// ===== GAMIFICACIÓN (XP, niveles e insignias) =====
+
+model Achievement {
+  id          String  @id @default(cuid())
+  key         String  @unique // slug estable (p. ej. "first-item")
+  name        String
+  description String?
+  icon        String? // i-lucide-*
+  xpReward    Int     @default(0)
+  sortOrder   Int     @default(0)
+
+  unlocks UserAchievement[]
+}
+
+model UserAchievement {
+  id            String   @id @default(cuid())
+  userId        String
+  achievementId String
+  unlockedAt    DateTime @default(now())
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, achievementId])
+  @@index([achievementId])
 }

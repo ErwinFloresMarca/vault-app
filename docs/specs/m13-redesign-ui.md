@@ -130,5 +130,5 @@ visuales de los diseños (anillos, tarjetas de bóveda, checklist, telemetría).
   (conteos y ventas reales), top 5 con rareza/stock y feed de actividad; Colecciones/Items con
   miniaturas, `StatusBadge`/`RarityBadge` y acciones ghost; Inventario con movimientos tokenizados
   (`MovementBadge`) y batch re-tematizados.
-- **Fase 5 (datos nuevos): ◐** `SEL-111`. Ficha técnica → `m14-ficha-tecnica.md` (☑ `SEL-121`);
-  gamificación (XP/niveles/insignias) → `m15-gamificacion.md` (◐ `SEL-122`).
+- **Fase 5 (datos nuevos): ☑** `SEL-111`. Ficha técnica → `m14-ficha-tecnica.md` (☑ `SEL-121`);
+  gamificación (XP/niveles/insignias) → `m15-gamificacion.md` (☑ `SEL-122`).

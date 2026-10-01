@@ -2,6 +2,7 @@
 import type { CollectionSummary } from '~/types'
 import CollectionGrid from '~/components/organisms/CollectionGrid.vue'
 import { absoluteUrl } from '~/utils/seo'
+import { XP_PER_RARITY } from '~/utils/gamification'
 
 useSeoMeta({
   title: 'Volt Vault — La bóveda de coleccionables',
@@ -23,10 +24,10 @@ const showcase = computed<CollectionSummary[]>(() =>
 const stats = computed(() => statsData.value?.data ?? { collections: 0, items: 0, legendary: 0, collectors: 0, collected: 0 })
 
 const rarities = [
-  { key: 'COMMON', name: 'Común', color: 'var(--color-rarity-common)', desc: 'Figuras base de alta distribución, ideales para consolidar el núcleo de cualquier serie.' },
-  { key: 'RARE', name: 'Rara', color: 'var(--color-rarity-rare)', desc: 'Variantes de color o acabados especiales, con tiradas más reducidas.' },
-  { key: 'EPIC', name: 'Épica', color: 'var(--color-rarity-epic)', desc: 'Piezas con detalles translúcidos, partes desmontables y presentación de coleccionista.' },
-  { key: 'LEGENDARY', name: 'Legendaria', color: 'var(--color-rarity-legendary)', desc: 'Tiradas máximas numeradas, acabados oro y cromo y certificado de autenticidad.' },
+  { key: 'COMMON', name: 'Común', color: 'var(--color-rarity-common)', xp: XP_PER_RARITY.COMMON, desc: 'Figuras base de alta distribución, ideales para consolidar el núcleo de cualquier serie.' },
+  { key: 'RARE', name: 'Rara', color: 'var(--color-rarity-rare)', xp: XP_PER_RARITY.RARE, desc: 'Variantes de color o acabados especiales, con tiradas más reducidas.' },
+  { key: 'EPIC', name: 'Épica', color: 'var(--color-rarity-epic)', xp: XP_PER_RARITY.EPIC, desc: 'Piezas con detalles translúcidos, partes desmontables y presentación de coleccionista.' },
+  { key: 'LEGENDARY', name: 'Legendaria', color: 'var(--color-rarity-legendary)', xp: XP_PER_RARITY.LEGENDARY, desc: 'Tiradas máximas numeradas, acabados oro y cromo y certificado de autenticidad.' },
 ]
 
 const config = useRuntimeConfig()
@@ -176,6 +177,7 @@ useHead({ link: [{ rel: 'canonical', href: canonical }] })
                 {{ tier.name }}
               </span>
               <p class="mt-3 text-sm text-muted">{{ tier.desc }}</p>
+              <span class="mt-3 font-display text-sm font-bold tabular-nums" :style="{ color: tier.color }">+{{ tier.xp }} XP</span>
               <div class="mt-4 h-1 w-full overflow-hidden rounded-full bg-elevated">
                 <div class="h-full w-full rounded-full" :style="{ backgroundColor: tier.color }" />
               </div>

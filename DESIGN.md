@@ -166,5 +166,6 @@ claro con el botón de color mode. La semántica de `@nuxt/ui` (`--ui-*`) se map
 - **Fase 3 (páginas públicas): ☑** — Inicio, Colecciones, detalle de colección (checklist) y
   detalle de producto; `StatTile`, `SectionHeading`, `CollectionChecklist`.
 - **Fase 4 (admin): ☑** — sidebar, dashboard (KPIs, top 5, actividad), CRUD de colecciones/items
-  e inventario re-tematizados; `MovementBadge`. Fase 5 en `docs/specs/m13-redesign-ui.md`
-  (ficha técnica, XP/insignias).
+  e inventario re-tematizados; `MovementBadge`.
+- **Fase 5 (datos nuevos): ☑** — ficha técnica (`ItemSpec`, `m14`) y gamificación (XP/niveles/
+  insignias, `m15`): barra de XP e insignias en `/me`, XP por rareza en el inicio.

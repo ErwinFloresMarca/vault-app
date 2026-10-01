@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ItemDetail, CollectionWithItems } from '~/types'
 import { metaDescription, absoluteUrl } from '~/utils/seo'
+import { xpForRarity } from '~/utils/gamification'
 
 const route = useRoute()
 const itemSlug = computed(() => String(route.params.itemSlug))
@@ -112,18 +113,27 @@ async function checkCollectionCompleted() {
 async function onToggle() {
   if (!item.value) return
   const wasCollected = collected.value
-  const ok = await toggle(item.value.id, wasCollected)
-  if (!ok) return
+  const game = await toggle(item.value.id, wasCollected)
+  if (!game) return
   collected.value = !wasCollected
   if (!wasCollected) {
     celebrate.value = true
     setTimeout(() => { celebrate.value = false }, 800)
     toast.add({
       title: '¡Conseguido!',
-      description: item.value.name,
+      description: `${item.value.name} · +${xpForRarity(item.value.rarity)} XP`,
       icon: 'i-lucide-check-check',
       color: 'success',
     })
+    if (game.unlockedKeys.length) {
+      toast.add({
+        title: '¡Insignia desbloqueada!',
+        description: 'Revisa tu bóveda personal para verla.',
+        icon: 'i-lucide-award',
+        color: 'primary',
+        duration: 6000,
+      })
+    }
     await checkCollectionCompleted()
   }
 }

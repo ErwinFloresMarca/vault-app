@@ -27,7 +27,8 @@ OAuth, `NUXT_SESSION_PASSWORD`) → `pnpm db:generate` → `pnpm db:migrate` (o
 
 Modelos en `prisma/schema.prisma`: `User`, `OAuthAccount`, `File`, `Collection`,
 `CollectionItem`, `ItemSpec`, `Tag`, `CollectionTag`, `CollectionFile`, `ItemFile`,
-`UserCollectedItem`, `InventoryBatch`, `InventoryMovement`.
+`UserCollectedItem`, `UserWishlistItem`, `InventoryBatch`, `InventoryMovement`,
+`Achievement`, `UserAchievement`.
 
 - Enum `UserRole`: `USER | ADMIN` (uppercase, default `USER`). NO existen `CLIENT`/`client`/`admin`.
 - `CollectionStatus`: `DRAFT | PUBLISHED | ARCHIVED`. `ItemStatus`: `DRAFT | AVAILABLE | SOLD_OUT | ARCHIVED`.
@@ -36,6 +37,10 @@ Modelos en `prisma/schema.prisma`: `User`, `OAuthAccount`, `File`, `Collection`,
   atómicamente en la misma transacción que crea el/los `InventoryMovement`
   (`server/services/inventoryService.ts`). Nunca los modifiques por fuera de ahí.
 - Tipos de dominio compartidos en `types/index.ts`.
+- **Gamificación** (`utils/gamification.ts` + `server/services/gamificationService.ts`):
+  XP por rareza (50/150/350/1000) y +500 por colección completada; nivel = `floor(xp/500)+1`.
+  `User.xp` y las insignias se recalculan de forma idempotente tras conseguir/des-conseguir
+  una pieza. No edites `User.xp` por fuera de `gamificationService.recompute`.
 
 ## Estructura
 

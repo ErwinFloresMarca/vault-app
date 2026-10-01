@@ -1,4 +1,5 @@
 import { prisma } from '~/server/utils/db'
+import { levelFromXp, xpIntoLevel, XP_PER_LEVEL } from '~/utils/gamification'
 import type { Prisma } from '@gen-prisma/client'
 import type { CollectionSummary, CollectionWithItems, ItemSummary, CollectionProgress, CollectionStatus, FileDto, UserStats } from '~/types'
 
@@ -195,12 +196,18 @@ export const collectionService = {
     const completedCollections = collections.filter(
       (c) => c.items.length > 0 && c.items.every((i) => collectedSet.has(i.id)),
     ).length
+    const user = await prisma.user.findUnique({ where: { id: userId }, select: { xp: true } })
+    const xp = user?.xp ?? 0
     return {
       totalItems,
       collectedItems,
       percent: totalItems === 0 ? 0 : Math.round((collectedItems / totalItems) * 100),
       collections: collections.length,
       completedCollections,
+      xp,
+      level: levelFromXp(xp),
+      xpIntoLevel: xpIntoLevel(xp),
+      xpForNextLevel: XP_PER_LEVEL,
     }
   },
 

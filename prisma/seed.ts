@@ -232,6 +232,22 @@ async function main() {
   await ensureItem(coll4.id, 'Llavero Volt', 'llavero-volt', 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600', 'EPIC')
   console.log('✓ Portadas y colecciones adicionales')
 
+  // ===== INSIGNIAS (gamificación) =====
+  const achievements = [
+    { key: 'first-item', name: 'Primera pieza', description: 'Consigue tu primera pieza.', icon: 'i-lucide-package', xpReward: 100, sortOrder: 1 },
+    { key: 'collector-10', name: 'Coleccionista', description: 'Consigue 10 piezas.', icon: 'i-lucide-trophy', xpReward: 250, sortOrder: 2 },
+    { key: 'collection-complete', name: 'Maestro de serie', description: 'Completa una colección al 100%.', icon: 'i-lucide-award', xpReward: 500, sortOrder: 3 },
+    { key: 'legendary-owner', name: 'Cazador de legendarias', description: 'Consigue una pieza legendaria.', icon: 'i-lucide-gem', xpReward: 400, sortOrder: 4 },
+  ]
+  for (const a of achievements) {
+    await prisma.achievement.upsert({
+      where: { key: a.key },
+      update: { name: a.name, description: a.description, icon: a.icon, xpReward: a.xpReward, sortOrder: a.sortOrder },
+      create: a,
+    })
+  }
+  console.log(`✓ ${achievements.length} insignias`)
+
   console.log('✨ Seeding Volt Vault completado!')
 }
 
