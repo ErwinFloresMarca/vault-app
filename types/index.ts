@@ -98,3 +98,36 @@ export interface Achievement {
   unlocked: boolean
   unlockedAt: string | null
 }
+
+// ===== API keys de MCP (configuración por usuario) =====
+
+export const MCP_SCOPES = [
+  'catalog:read',
+  'catalog:write',
+  'files:write',
+  'inventory:read',
+  'inventory:write',
+  'personal:read',
+  'personal:write',
+  'stats:read',
+  'users:read',
+  'users:write',
+  'keys:read',
+  'keys:write',
+] as const
+
+export type McpScope = (typeof MCP_SCOPES)[number]
+
+/** Scopes que exigen rol ADMIN. */
+export const ADMIN_MCP_SCOPES: McpScope[] = ['stats:read', 'users:read', 'users:write']
+
+export interface ApiKeyDto {
+  id: string
+  name: string
+  prefix: string
+  scopes: McpScope[]
+  lastUsedAt: string | null
+  expiresAt: string | null
+  revokedAt: string | null
+  createdAt: string
+}

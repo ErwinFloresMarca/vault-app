@@ -73,6 +73,10 @@ const userMenuItems = computed<DropdownMenuItem[]>(() => {
     label: 'Mi colección',
     icon: 'i-lucide-library',
     to: '/me',
+  }, {
+    label: 'Configuración',
+    icon: 'i-lucide-settings',
+    to: '/settings',
   }]
   if (user.value?.role === 'ADMIN') {
     items.push({

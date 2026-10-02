@@ -1,20 +1,11 @@
-export const MCP_SCOPES = [
-  'catalog:read',
-  'catalog:write',
-  'files:write',
-  'inventory:read',
-  'inventory:write',
-  'personal:read',
-  'personal:write',
-  'stats:read',
-  'users:read',
-  'users:write',
-] as const
+import { MCP_SCOPES, ADMIN_MCP_SCOPES, type McpScope } from '~/types'
 
-export type McpScope = (typeof MCP_SCOPES)[number]
+// Reexporta la lista compartida de scopes (fuente única en `types/index.ts`).
+export { MCP_SCOPES, ADMIN_MCP_SCOPES }
+export type { McpScope }
 
 /** Scopes que exigen rol ADMIN. */
-export const ADMIN_SCOPES: McpScope[] = ['stats:read', 'users:read', 'users:write']
+export const ADMIN_SCOPES: McpScope[] = ADMIN_MCP_SCOPES
 
 export interface McpContext {
   apiKeyId: string

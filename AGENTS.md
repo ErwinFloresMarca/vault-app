@@ -45,7 +45,7 @@ Modelos en `prisma/schema.prisma`: `User`, `OAuthAccount`, `File`, `Collection`,
 ## Estructura
 
 - `pages/` — `/` (catálogo), `/collections`, `/collections/[slug]`,
-  `/collections/[collectionSlug]/[itemSlug]`, `/me`, `/login`, `/auth/error`,
+  `/collections/[collectionSlug]/[itemSlug]`, `/me`, `/settings` (API keys de MCP), `/login`, `/auth/error`,
   `/privacy`, `/terms`, `/admin/{dashboard,collections,items,inventory}`.
 - `components/{atoms,molecules,organisms}/` — Atomic Design; registrados sin prefijo
   de carpeta en `nuxt.config.ts` (usa `<CollectionCard>`, no `<MoleculesCollectionCard>`).
