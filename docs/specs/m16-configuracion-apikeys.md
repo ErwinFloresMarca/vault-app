@@ -85,13 +85,13 @@
 
 ## Estado
 
-- **Fase 1 (config UI + REST): ☑** `SEL-129`. `apiKeyService` (`list`/`create`/`revoke`,
+- **Fase 1 (config UI + REST): ☑** `SEL-130`. `apiKeyService` (`list`/`create`/`revoke`,
   hash con pepper, nunca expone `keyHash`); `GET/POST /api/me/api-keys` +
   `DELETE /api/me/api-keys/[id]`; página `/settings` (crear con scopes según rol, mostrar
   la key una vez + copiar, listar y revocar) y entrada "Configuración" en el menú de usuario.
   Verificado con API (crear → usar en `/mcp` → revocar → 401; no-ADMIN con scope admin → 403)
   y Playwright. `types/index.ts` ahora es la fuente única de scopes (`MCP_SCOPES`).
-- Fase 2 (MCP keys + cobertura): ☑ `SEL-130`. Scopes `keys:read`/`keys:write`; tools
+- Fase 2 (MCP keys + cobertura): ☑ `SEL-129`. Scopes `keys:read`/`keys:write`; tools
   `list_api_keys`/`create_api_key`/`revoke_api_key`; `spec` en `create_item`/`update_item`;
   `get_my_achievements`/`list_achievements`/`recompute_gamification`, `get_public_stats`,
   `get_user`. Total MCP: **37 tools** (`pnpm e2e:mcp` 28/28). **Módulo completo.**

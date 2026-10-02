@@ -228,7 +228,7 @@ docs/MCP.md
 - Fase 4 (resources/prompts/docs/E2E): ☑ `SEL-105` — 5 resources (3 estáticos +
   2 plantillas), 3 prompts, `docs/MCP.md` y E2E `pnpm e2e:mcp` (28 checks).
   **MCP completo (fases 1-4).**
-- **Ampliación (m16, `SEL-130`)**: cobertura completa — scopes `keys:read`/`keys:write` y
+- **Ampliación (m16, `SEL-129`)**: cobertura completa — scopes `keys:read`/`keys:write` y
   tools `list_api_keys`/`create_api_key`/`revoke_api_key`, `get_my_achievements`/
   `list_achievements`/`recompute_gamification`, `get_public_stats`, `get_user`, y `spec`
   (ficha técnica) en `create_item`/`update_item`. **Total: 37 tools** (E2E 28/28).
