@@ -27,7 +27,6 @@ interface CollectionOption {
 
 const columns: TableColumn<ItemRow>[] = [
   { accessorKey: 'name', header: 'Item' },
-  { accessorKey: 'collection.name', header: 'Colección' },
   { accessorKey: 'rarity', header: 'Rareza', id: 'rarity' },
   { accessorKey: 'status', header: 'Estado' },
   { accessorKey: 'stock', header: 'Stock' },
@@ -186,9 +185,9 @@ async function remove(row: ItemRow) {
                   <UIcon name="i-lucide-image" class="size-4 text-muted" />
                 </div>
               </div>
-              <div class="flex flex-col">
-                <span class="font-display font-semibold">{{ row.original.name }}</span>
-                <span class="label-caps text-muted">{{ row.original.slug }}</span>
+              <div class="flex min-w-0 flex-col">
+                <span class="truncate font-display font-semibold">{{ row.original.name }}</span>
+                <span class="label-caps text-muted">{{ row.original.collection?.name ?? '—' }}</span>
               </div>
             </div>
           </template>

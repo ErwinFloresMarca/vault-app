@@ -75,8 +75,10 @@ watch(sort, () => { page.value = 1 })
 
 <template>
   <div class="relative">
-    <div class="pointer-events-none absolute -top-24 left-1/4 size-96 rounded-full bg-volt/10 blur-[120px]" />
-    <div class="pointer-events-none absolute right-10 top-48 size-80 rounded-full bg-gold/10 blur-[140px]" />
+    <div class="pointer-events-none absolute inset-0 overflow-hidden">
+      <div class="absolute -top-24 left-1/4 size-96 rounded-full bg-volt/10 blur-[120px]" />
+      <div class="absolute right-10 top-48 size-80 rounded-full bg-gold/10 blur-[140px]" />
+    </div>
 
     <UContainer class="relative py-10 lg:py-14">
       <!-- Header -->
@@ -98,14 +100,14 @@ watch(sort, () => { page.value = 1 })
       <!-- Sticky filter console -->
       <section class="sticky top-16 z-30 py-4">
         <div class="flex flex-col gap-4 rounded-2xl border border-default bg-default/90 p-3 shadow-tier2 backdrop-blur-xl lg:flex-row lg:items-center lg:justify-between">
-          <div class="flex flex-col gap-3 sm:flex-row sm:items-center lg:flex-1">
+          <div class="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center lg:flex-1">
             <UInput
               v-model="search"
               icon="i-lucide-search"
               placeholder="Buscar colección..."
               class="w-full sm:max-w-xs"
             />
-            <div class="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
+            <div class="flex min-w-0 items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
               <button
                 type="button"
                 class="label-caps shrink-0 rounded-full px-3 py-1.5 transition-colors"
@@ -127,7 +129,7 @@ watch(sort, () => { page.value = 1 })
             </div>
           </div>
 
-          <div class="flex items-center justify-between gap-4 lg:justify-end">
+          <div class="flex shrink-0 items-center justify-between gap-4 lg:justify-end">
             <div class="flex items-center gap-2">
               <span class="hidden text-sm text-muted sm:inline">Ordenar:</span>
               <USelect v-model="sort" :items="sortItems" class="w-40" />
