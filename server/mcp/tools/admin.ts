@@ -31,4 +31,17 @@ export function registerAdminTools(server: McpServer, ctx: McpContext) {
       runTool(ctx, { tool: 'set_user_role', scope: 'users:write', destructive: true }, args, () =>
         userService.setRole(args.userId, args.role)),
   )
+
+  server.registerTool(
+    'get_user',
+    {
+      title: 'Obtener usuario',
+      description: 'Devuelve un usuario por id (nombre, email, rol, XP). Requiere ADMIN.',
+      inputSchema: { userId: z.string() },
+      annotations: { readOnlyHint: true },
+    },
+    async (args) =>
+      runTool(ctx, { tool: 'get_user', scope: 'users:read' }, args, () =>
+        userService.getUser(args.userId)),
+  )
 }

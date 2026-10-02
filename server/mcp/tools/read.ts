@@ -156,4 +156,17 @@ export function registerReadTools(server: McpServer, ctx: McpContext) {
         data: await statsService.getAdminStats(),
       })),
   )
+
+  server.registerTool(
+    'get_public_stats',
+    {
+      title: 'Métricas públicas',
+      description: 'Conteos públicos de la vitrina (colecciones, items, insignias legendarias, coleccionistas, piezas conseguidas).',
+      inputSchema: {},
+      annotations: READ_ONLY,
+    },
+    async (args) =>
+      runTool(ctx, { tool: 'get_public_stats', scope: 'catalog:read' }, args, () =>
+        statsService.getPublicStats()),
+  )
 }

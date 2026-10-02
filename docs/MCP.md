@@ -26,7 +26,10 @@ pnpm mcp:key --name "Claude" --email tu@email.com \
 | `inventory:read` / `inventory:write` | Leer / registrar movimientos y lotes |
 | `personal:read` / `personal:write` | Colección personal y wishlist del dueño de la key |
 | `stats:read` | Métricas del dashboard (admin) |
-| `users:read` / `users:write` | Listar usuarios / cambiar rol (admin) |
+| `users:read` / `users:write` | Listar/obtener usuarios / cambiar rol (admin) |
+| `keys:read` / `keys:write` | Listar/crear/revocar las API keys del dueño |
+
+> Las claves también se pueden crear y gestionar **desde la UI** en `/settings` (menú de usuario → Configuración).
 
 ### Crear una key en producción
 
@@ -88,12 +91,14 @@ curl -s https://vault.volt-3d.store/mcp \
 
 ## 3. Superficie
 
-**Tools (29)**:
+**Tools (37)**:
 - **Catálogo (lectura)**: `list_collections`, `get_collection`, `list_tags`, `list_items`, `get_item`, `list_files`.
-- **Catálogo (escritura)**: `create_collection`, `update_collection`, `publish_collection`, `archive_collection`*, `upsert_tag`, `create_item`, `update_item`, `set_item_rarity`, `archive_item`*, `register_file_url`.
+- **Catálogo (escritura)**: `create_collection`, `update_collection`, `publish_collection`, `archive_collection`*, `upsert_tag`, `create_item` (acepta `spec`), `update_item` (acepta `spec`), `set_item_rarity`, `archive_item`*, `register_file_url`.
 - **Inventario**: `list_inventory_movements`, `list_inventory_batches`, `adjust_stock`, `create_inventory_batch`.
 - **Personal**: `list_my_collection`, `get_my_stats`, `collect_item`, `uncollect_item`, `add_wishlist`, `remove_wishlist`.
-- **Admin**: `get_admin_stats`, `list_users`, `set_user_role`*.
+- **Gamificación**: `get_my_achievements`, `list_achievements`*, `recompute_gamification`*.
+- **Configuración (API keys)**: `list_api_keys`, `create_api_key`, `revoke_api_key`*.
+- **Admin**: `get_admin_stats`, `get_public_stats`, `list_users`, `get_user`*, `set_user_role`*.
 
 `*` = destructivo: requiere `confirm: true`.
 

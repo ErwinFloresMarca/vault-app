@@ -72,7 +72,7 @@ base de datos relacional PostgreSQL dedicada (`vault-volt3d`) en el Postgres Doc
 | Rediseño UI | m13-redesign-ui.md | ☑ (fases 1-5) |
 | Ficha técnica | m14-ficha-tecnica.md | ☑ |
 | Gamificación | m15-gamificacion.md | ☑ |
-| Configuración / API keys | m16-configuracion-apikeys.md | ◐ (fase 1 ☑) |
+| Configuración / API keys | m16-configuracion-apikeys.md | ☑ |
 
 ## Desviaciones respecto al plan original
 

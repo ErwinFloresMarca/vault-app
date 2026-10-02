@@ -5,6 +5,8 @@ import { registerCatalogTools } from './tools/catalog'
 import { registerInventoryTools } from './tools/inventory'
 import { registerPersonalTools } from './tools/personal'
 import { registerAdminTools } from './tools/admin'
+import { registerKeyTools } from './tools/keys'
+import { registerGamificationTools } from './tools/gamification'
 import { registerResources } from './resources'
 import { registerPrompts } from './prompts'
 
@@ -19,6 +21,8 @@ export function createMcpServer(ctx: McpContext): McpServer {
   registerInventoryTools(server, ctx)
   registerPersonalTools(server, ctx)
   registerAdminTools(server, ctx)
+  registerKeyTools(server, ctx)
+  registerGamificationTools(server, ctx)
   registerResources(server, ctx)
   registerPrompts(server, ctx)
   return server

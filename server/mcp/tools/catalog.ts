@@ -9,6 +9,12 @@ import type { McpContext } from '../types'
 const STATUS = z.enum(['DRAFT', 'PUBLISHED', 'ARCHIVED'])
 const RARITY = z.enum(['COMMON', 'RARE', 'EPIC', 'LEGENDARY'])
 const ITEM_STATUS = z.enum(['DRAFT', 'AVAILABLE', 'SOLD_OUT', 'ARCHIVED'])
+const ITEM_SPEC = z.object({
+  scale: z.string().optional(),
+  material: z.string().optional(),
+  lighting: z.string().optional(),
+  base: z.string().optional(),
+})
 
 async function resolveTagIds(names?: string[]): Promise<string[] | undefined> {
   if (!names?.length) return undefined
@@ -121,6 +127,7 @@ export function registerCatalogTools(server: McpServer, ctx: McpContext) {
         stockInicial: z.number().int().min(0).optional(),
         status: ITEM_STATUS.optional(),
         rarity: RARITY.optional(),
+        spec: ITEM_SPEC.optional(),
       },
       annotations: { readOnlyHint: false },
     },
@@ -134,6 +141,7 @@ export function registerCatalogTools(server: McpServer, ctx: McpContext) {
           stockInicial: args.stockInicial,
           status: args.status,
           rarity: args.rarity,
+          spec: args.spec,
         })),
   )
 
@@ -141,7 +149,7 @@ export function registerCatalogTools(server: McpServer, ctx: McpContext) {
     'update_item',
     {
       title: 'Actualizar item',
-      description: 'Actualiza un item por id (name/description/fileIds/status/rarity). No cambia stock.',
+      description: 'Actualiza un item por id (name/description/fileIds/status/rarity/spec). No cambia stock.',
       inputSchema: {
         id: z.string(),
         name: z.string().min(1).optional(),
@@ -149,6 +157,7 @@ export function registerCatalogTools(server: McpServer, ctx: McpContext) {
         fileIds: z.array(z.string()).optional(),
         status: ITEM_STATUS.optional(),
         rarity: RARITY.optional(),
+        spec: ITEM_SPEC.optional(),
       },
       annotations: { readOnlyHint: false },
     },
@@ -160,6 +169,7 @@ export function registerCatalogTools(server: McpServer, ctx: McpContext) {
           fileIds: args.fileIds,
           status: args.status,
           rarity: args.rarity,
+          spec: args.spec,
         })),
   )
 

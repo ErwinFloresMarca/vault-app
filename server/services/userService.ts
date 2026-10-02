@@ -30,6 +30,25 @@ export const userService = {
     })
   },
 
+  /** Obtiene un usuario por id (admin/MCP). */
+  async getUser(id: string) {
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        xp: true,
+        avatarUrl: true,
+        lastLoginAt: true,
+        createdAt: true,
+      },
+    })
+    if (!user) throw createError({ statusCode: 404, statusMessage: 'Usuario no encontrado' })
+    return user
+  },
+
   /** Marca un item como conseguido (idempotente). */
   async collect(userId: string, itemId: string) {
     const item = await prisma.collectionItem.findUnique({ where: { id: itemId } })
