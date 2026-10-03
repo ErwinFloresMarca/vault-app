@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { CollectionSummary } from '~/types'
 import CollectionGrid from '~/components/organisms/CollectionGrid.vue'
-import { absoluteUrl } from '~/utils/seo'
 import { XP_PER_RARITY } from '~/utils/gamification'
 
 useSeoMeta({
@@ -32,16 +31,16 @@ const rarities = [
 
 const config = useRuntimeConfig()
 const canonical = computed(() => `${config.public.siteUrl}/`)
-const ogImage = computed(() => absoluteUrl(allCollections.value?.[0]?.coverImage?.url, config.public.siteUrl))
 
 useSeoMeta({
   ogTitle: 'Volt Vault — La bóveda de coleccionables',
   ogType: 'website',
   ogUrl: canonical,
-  ogImage,
   twitterCard: 'summary_large_image',
 })
 useHead({ link: [{ rel: 'canonical', href: canonical }] })
+
+defineOgImage('VoltVaultGeneric', { label: 'Catálogo completo' })
 </script>
 
 <template>

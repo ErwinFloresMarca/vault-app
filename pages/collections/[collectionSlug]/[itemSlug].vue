@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ItemDetail, CollectionWithItems } from '~/types'
-import { metaDescription, absoluteUrl } from '~/utils/seo'
+import { metaDescription } from '~/utils/seo'
 import { xpForRarity } from '~/utils/gamification'
 
 const route = useRoute()
@@ -50,7 +50,6 @@ const specFields = computed<Array<{ label: string; value: string }>>(() => {
 const config = useRuntimeConfig()
 const canonical = computed(() => `${config.public.siteUrl}/collections/${collectionSlug.value}/${itemSlug.value}`)
 const metaDesc = computed(() => metaDescription(item.value?.description, 'Pieza de colección de Volt Vault.'))
-const ogImage = computed(() => absoluteUrl(item.value?.files?.[0]?.url, config.public.siteUrl))
 
 useSeoMeta({
   title: () => (item.value?.name || 'Item') + ' — Volt Vault',
@@ -59,11 +58,15 @@ useSeoMeta({
   ogDescription: metaDesc,
   ogType: 'article',
   ogUrl: canonical,
-  ogImage,
   twitterCard: 'summary_large_image',
 })
 
 useHead({ link: [{ rel: 'canonical', href: canonical }] })
+
+defineOgImage('VoltVaultCollection', {
+  name: computed(() => item.value?.name ?? 'Item'),
+  itemCount: computed(() => item.value?.collection ? seriesTotal.value : 0),
+})
 
 const { isAuthenticated } = useAuthUser()
 const { busy, toggle } = useCollectItem()

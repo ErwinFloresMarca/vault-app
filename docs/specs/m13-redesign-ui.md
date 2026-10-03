@@ -107,9 +107,11 @@ visuales de los diseños (anillos, tarjetas de bóveda, checklist, telemetría).
 
 1. ~~¿Dark-only o claro?~~ **Resuelto: claro + oscuro (oscuro por defecto).**
 2. ~~¿Se aprueba la Fase 5?~~ **Resuelto: aprobada (incluye migraciones de schema).**
-3. ¿La **telemetría** del admin es real (derivada) o solo visual?
-4. ¿Se traducen/conservan los textos de ejemplo de los diseños (nombres de producto)?
-5. ¿Prioridad: público primero (Fases 1-3) y luego admin (4), o al revés?
+3. ~~¿La telemetría del admin es real o solo visual?~~ **Resuelto: solo datos reales**
+   (dashboard con métricas derivadas); no se añadió telemetría decorativa.
+4. ~~¿Se traducen/conservan los textos de ejemplo de los diseños?~~ **Resuelto: se conserva
+   el copy propio del proyecto** (los nombres de producto de Stitch no se usan).
+5. ~~¿Prioridad público primero y luego admin?~~ **Resuelto: hecho** (fases 3 → 4 → 5).
 
 ## Estado
 

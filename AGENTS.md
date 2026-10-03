@@ -104,6 +104,9 @@ Prisma (`server/utils/db.ts`) → DB. Mantén esta dirección.
 - Tokens cableados: `@theme static` + clases en `assets/css/main.css`,
   `app.config.ts` (`ui.colors`: `primary: 'gold'`, `secondary: 'volt'`,
   `neutral: 'slate'`). Fuentes vía `@nuxt/fonts` (`--font-display`, `--font-sans`).
+- OG: `og:image` **generadas** con `nuxt-og-image` (satori) 1200×630 en
+  `components/OgImage/*.satori.vue`, usando `defineOgImage` (nunca ambas con
+  `useSeoMeta({ ogImage })`). Se sirven en `/_og/**`; nunca una URL de tercero.
 
 ## Preview en navegador (Playwright)
 

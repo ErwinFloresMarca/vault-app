@@ -19,8 +19,35 @@ export default defineNuxtConfig({
     '@nuxt/icon',
     '@nuxt/image',
     '@nuxt/ui',
-    'nuxt-auth-utils'
+    'nuxt-auth-utils',
+    'nuxt-og-image'
   ],
+
+  // @nuxt/fonts: fuentes del design system. `global: true` para que satori
+  // (og:image) las encuentre al renderizar las cards.
+  fonts: {
+    families: [
+      { name: 'Plus Jakarta Sans', weights: [500, 600, 700, 800], global: true },
+      { name: 'Hanken Grotesk', weights: [400, 500, 600, 700], global: true },
+    ],
+  },
+
+  // OG images generadas (1200×630, PNG) servidas desde el propio dominio.
+  ogImage: {
+    defaults: {
+      width: 1200,
+      height: 630,
+      extension: 'png',
+      cacheMaxAgeSeconds: 60 * 60 * 24 * 30,
+    },
+    buildCache: true,
+  },
+
+  routeRules: {
+    '/_og/**': {
+      headers: { 'cache-control': 'public, max-age=31536000, immutable' },
+    },
+  },
 
   // Atomic Design: registrar los componentes de atoms/molecules/organisms
   // sin el prefijo de directorio (p.ej. <AppImage>, <TagList>, <CollectionCard>).

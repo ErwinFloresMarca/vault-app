@@ -73,7 +73,7 @@ base de datos relacional PostgreSQL dedicada (`vault-volt3d`) en el Postgres Doc
 | Ficha técnica | m14-ficha-tecnica.md | ☑ |
 | Gamificación | m15-gamificacion.md | ☑ |
 | Configuración / API keys | m16-configuracion-apikeys.md | ☑ |
-| OG Image social | m17-og-image.md | ☐ |
+| OG Image social | m17-og-image.md | ☑ |
 | Deploy DNS + OAuth | m18-deploy-dns-oauth.md | ☑ (as-built) |
 
 ## Desviaciones respecto al plan original
@@ -105,6 +105,6 @@ base de datos relacional PostgreSQL dedicada (`vault-volt3d`) en el Postgres Doc
   2026-09-13 para reflejar la implementación real, no el plan inicial.
 
 ## Follow-ups abiertos (Linear SEL)
-- `SEL-32` cablear middleware auth/admin en páginas.
-- `SEL-33` corregir errores de eslint en `server/services`.
-- `SEL-34` cablear tokens de `DESIGN.md` en `assets/css/main.css`.
+- Ninguno. Los follow-ups históricos (`SEL-32/33/34`) y todas las fases del
+  rediseño/MCP/ganificación están en `Done`. Mantener esta lista solo con ítems
+  realmente abiertos.

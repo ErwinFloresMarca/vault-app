@@ -149,6 +149,16 @@ exige `global: true`. El proyecto tiene `@nuxt/fonts` instalado pero **sin bloqu
 - No se toca `utils/seo.ts` más allá de lo que exija quitar el `ogImage`
   manual; `metaDescription` y `absoluteUrl` siguen igual de usados.
 
+## Estado
+
+- **☑ Implementado** `SEL-131`. `nuxt-og-image` + satori/`@resvg/resvg-js` en
+  `dependencies`; `ogImage` (1200×630, png, `buildCache`) y `fonts` (`global: true`)
+  en `nuxt.config.ts`; plantillas `components/OgImage/{VoltVaultCollection,VoltVaultGeneric}.satori.vue`;
+  `defineOgImage` en `/`, `/collections`, detalle de colección e item (se quitó el
+  `og:image` manual). Verificado: las 4 rutas emiten `og:image` + `width/height/type`
+  apuntando al propio dominio `/_og/…`, y la imagen renderiza PNG 1200×630 con la
+  tipografía correcta (Jakarta/Hanken). `pnpm build` OK (con resvg nativo); eslint/typecheck 0.
+
 ## Success Criteria
 
 - `curl` de `/`, `/collections`, una colección y un item devuelve `og:image`

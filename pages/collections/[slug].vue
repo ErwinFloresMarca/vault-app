@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { CollectionWithItems, Rarity } from '~/types'
-import { metaDescription, absoluteUrl } from '~/utils/seo'
+import { metaDescription } from '~/utils/seo'
 
 const route = useRoute()
 const slug = computed(() => String(route.params.slug))
@@ -13,7 +13,6 @@ const canonical = computed(() => `${config.public.siteUrl}/collections/${slug.va
 const metaDesc = computed(() =>
   metaDescription(collection.value?.description, 'Colección de coleccionables de Volt Vault.'),
 )
-const ogImage = computed(() => absoluteUrl(collection.value?.coverImage?.url, config.public.siteUrl))
 
 useSeoMeta({
   title: () => (collection.value?.name || 'Colección') + ' — Volt Vault',
@@ -22,11 +21,15 @@ useSeoMeta({
   ogDescription: metaDesc,
   ogType: 'website',
   ogUrl: canonical,
-  ogImage,
   twitterCard: 'summary_large_image',
 })
 
 useHead({ link: [{ rel: 'canonical', href: canonical }] })
+
+defineOgImage('VoltVaultCollection', {
+  name: computed(() => collection.value?.name ?? 'Colección'),
+  itemCount: computed(() => collection.value?.itemCount ?? 0),
+})
 
 const mode = ref<'grid' | 'checklist'>('grid')
 

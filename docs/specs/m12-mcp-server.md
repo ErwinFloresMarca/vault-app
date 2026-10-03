@@ -210,12 +210,13 @@ docs/MCP.md
 - `docs/MCP.md` con ejemplos reproducibles.
 
 ## Open Questions
-1. ¿API keys (v1 recomendado) u OAuth 2.1 (DCR) desde el inicio?
-2. ¿`upload_file` por MCP (base64) o solo `register_file_url`? (recomiendo solo URL en v1).
-3. ¿Scopes globales (v1) o por colección/tenant?
-4. ¿Qué clientes MCP primero (Claude, Cursor, ChatGPT, opencode)?
-5. ¿Límites de rate y retención de auditoría concretos?
-6. ¿Tools de usuarios/roles (riesgo) o solo lectura en v1?
+1. ~~¿API keys (v1) u OAuth 2.1 (DCR)?~~ **Resuelto: API keys bearer** (implementado).
+2. ~~¿`upload_file` (base64) o solo `register_file_url`?~~ **Resuelto: solo URL** (allowlist).
+3. ~~¿Scopes globales o por colección/tenant?~~ **Resuelto: globales**.
+4. ~~¿Qué clientes MCP primero?~~ **Resuelto**: cualquiera vía HTTPS (`opencode`, `mcp-remote`, etc.).
+5. ~~¿Límites de rate y retención de auditoría?~~ **Resuelto: 60 req/min**; auditoría sin
+   retención automática (se conserva, limpieza manual).
+6. ~~¿Tools de usuarios/roles?~~ **Resuelto: implementadas** (`list_users`, `get_user`, `set_user_role` con `confirm`).
 
 ## Estado
 - Fase 1 (fundamentos + lectura): ☑ `SEL-102` — `ApiKey`/`McpAuditLog`, `/mcp` (Streamable HTTP
