@@ -55,7 +55,8 @@ Modelos en `prisma/schema.prisma`: `User`, `OAuthAccount`, `File`, `Collection`,
   `admin.ts` (rol ADMIN en páginas `/admin/*`).
 - `server/routes/api/` — HTTP. `server/services/` — lógica de negocio.
   `server/utils/{db,auth}.ts`. `server/routes/auth/` — callbacks OAuth.
-- `docs/specs/` — specs por módulo (`m01-…` a `m10-…`) + `PLAN.md`. `docs/AUTH_SETUP.md`.
+- `docs/specs/` — specs por módulo (`m01-…` a `m18-…`) + `PLAN.md`. `docs/AUTH_SETUP.md`.
+- `server/mcp/` — servidor MCP (`/mcp`); tools, resources y prompts por dominio.
 - `DESIGN.md` — design system (tokens, componentes, layout). Fuente de verdad visual.
 
 ## Arquitectura / flujo de datos
@@ -89,26 +90,30 @@ Prisma (`server/utils/db.ts`) → DB. Mantén esta dirección.
 - `NUXT_SESSION_PASSWORD` es obligatorio en producción (hay fallback inseguro en
   `nuxt.config.ts`; no confíes en él).
 
-## UI / Design
+## UI / Design (Cyber-Luxe, post `m13-redesign-ui.md`)
 
-- Sigue `DESIGN.md`: pills 9999px, tipografía uppercase, grid con reglas de 1px,
-  un solo peso 400, Volt Blue `#1E90FF` como único acento interactivo.
+- Sigue `DESIGN.md`. **Modo oscuro por defecto** (`colorMode.preference: 'dark'`).
+- Primario = **gold** `#FFD700` (texto navy); en claro pasa a ámbar `#B45309` por
+  contraste AA. Volt Blue `#1E90FF` es secundario/interacción, NO el acento único.
+- Tipografía: **Plus Jakarta Sans 700** para display/`label-caps`, **Hanken
+  Grotesk 400** para body. NO es un sistema de peso único 400.
+- Pills `9999px` solo en CTAs, badges, chips y filtros. Tarjetas `rounded-xl`,
+  inputs `rounded-lg`, modales `rounded-xl`. NO uses `rounded-full` en todo.
 - Iconos: colección `lucide` vía `@nuxt/icon` (p.ej. `i-lucide-library`).
 - Imágenes remotas permitidas: `images.unsplash.com` (`@nuxt/image`).
-- Tokens de `DESIGN.md` cableados: `@theme static` en `assets/css/main.css` y
-  `app.config.ts` (`ui.colors.primary: 'volt'` = Volt Blue `#1E90FF`; botones/badges
-  pill + uppercase). Peso único 400 global en `main.css`; fuente Inter vía `@nuxt/fonts`.
+- Tokens cableados: `@theme static` + clases en `assets/css/main.css`,
+  `app.config.ts` (`ui.colors`: `primary: 'gold'`, `secondary: 'volt'`,
+  `neutral: 'slate'`). Fuentes vía `@nuxt/fonts` (`--font-display`, `--font-sans`).
 
 ## Preview en navegador (Playwright)
 
 - `pnpm dev` en `:3000` (usa la BD y OAuth del `.env`). Rutas públicas de smoke:
   `/`, `/collections`, `/collections/[slug]`, `/login`, `/privacy`, `/terms`.
   `/me` y `/admin/*` requieren sesión.
-- MCP global `playwright` (headless, en `~/.config/opencode/opencode.jsonc`) para
-  navegar, capturar screenshot, leer consola y depurar la app en ejecución.
-- CLI local: `pnpm exec playwright` (browsers en `~/.cache/ms-playwright`). E2E
-  autenticado: `pnpm e2e` (`scripts/e2e-auth.mjs`; login `/api/test/login` dev-only).
-- Error de consola conocido: 404 de `/1x` (@nuxt/image con imágenes remotas); inofensivo.
+- MCP global `playwright` (headless) o `pnpm exec playwright` para navegar,
+  capturar screenshot y leer consola. E2E autenticado: `pnpm e2e`
+  (`scripts/e2e-auth.mjs`; login `/api/test/login` dev-only).
+- Error de consola conocido e inofensivo: 404 de `/1x` (@nuxt/image con remotas).
 
 ## Boundarys
 
@@ -121,18 +126,10 @@ Prisma (`server/utils/db.ts`) → DB. Mantén esta dirección.
 - No cambies el alias `@gen-prisma` de `nuxt.config.ts` ni el adapter `PrismaPg`
   de `server/utils/db.ts`.
 
-## Verificación antes de terminar
-
-1. `pnpm exec eslint .` y `pnpm typecheck`
-2. `pnpm db:generate` si tocaste `schema.prisma`
-3. `pnpm dev` y verifica la ruta afectada con Playwright (MCP `playwright` o CLI):
-   navega, revisa consola y captura screenshot (no hay tests).
-4. Cierra la tarea: commit + push + estado en Linear (ver “Cierre de tarea”).
-
 ## Linear
 
 Proyecto **Volt Vault** (equipo `SEL`): https://linear.app/self-proyects/project/volt-vault-65fb0f09e1fb
-Specs as-built en `docs/specs/`. Deploy en `docs/DEPLOY.md`.
+Specs as-built en `docs/specs/`. Deploy en `docs/DEPLOY.md` (runbook en `docs/specs/m18-deploy-dns-oauth.md`).
 
 ## Skills globales de uso obligatorio
 
@@ -144,12 +141,14 @@ Están en `~/.config/opencode/skills/` y DEBEN usarse para sus propósitos:
 - **nuxt-project**, **nuxt-ui**, **nuxt-architecture**, **nuxt-reference**: cualquier
   código Nuxt; el MCP `nuxt-ui` para detalles de componentes.
 
-## Cierre de tarea (OBLIGATORIO)
+## Verificación y cierre de tarea (OBLIGATORIO)
 
 Al terminar **cada** tarea, sin pedir permiso:
-1. Verificar (`pnpm exec eslint .`; Playwright si aplica).
-2. Commit de lo tocado (Conventional Commits: `feat:`, `fix:`, `chore:` `docs:`, `refactor:`).
-3. Actualizar el issue correspondiente en Linear → `Done`.
-4. `git push origin main`.
+1. `pnpm exec eslint .` y `pnpm typecheck`.
+2. `pnpm db:generate` si tocaste `schema.prisma`.
+3. `pnpm dev` y verifica la ruta afectada con Playwright (MCP `playwright` o CLI):
+   navega, revisa consola y captura screenshot (no hay tests unitarios).
+4. Commit de lo tocado (Conventional Commits: `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`).
+5. Issue de Linear → `Done`, y `git push origin main`.
 
 - Branch: `type/descripcion-corta`. Nunca commitear `.env` ni secretos.
