@@ -73,6 +73,8 @@ base de datos relacional PostgreSQL dedicada (`vault-volt3d`) en el Postgres Doc
 | Ficha técnica | m14-ficha-tecnica.md | ☑ |
 | Gamificación | m15-gamificacion.md | ☑ |
 | Configuración / API keys | m16-configuracion-apikeys.md | ☑ |
+| OG Image social | m17-og-image.md | ☐ |
+| Deploy DNS + OAuth | m18-deploy-dns-oauth.md | ☑ (as-built) |
 
 ## Desviaciones respecto al plan original
 
@@ -95,8 +97,10 @@ base de datos relacional PostgreSQL dedicada (`vault-volt3d`) en el Postgres Doc
   `tag`, `q`, `page`, `pageSize`; nuevo `GET /api/tags`. UI con búsqueda, filtro
   por etiqueta y paginación.
 - **SEO por entidad implementado** (SEL-38): `canonical`, `og:image/title/description`
-  y `description` derivada del Markdown vía `utils/seo.ts`. Pendiente: `og:image`
-  en home e índice de colecciones.
+  y `description` derivada del Markdown vía `utils/seo.ts`. El `og:image` de home
+  e índice quedó en `m17-og-image.md`: hoy resuelven a la portada de la primera
+  colección vía Unsplash `?w=600` (baja resolución, sin fallback, y home e índice
+  devuelven la misma imagen).
 - **Specs as-built**: los 10 specs se reconstruyeron desde el código el
   2026-09-13 para reflejar la implementación real, no el plan inicial.
 

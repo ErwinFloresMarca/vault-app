@@ -56,13 +56,26 @@ check `127.0.0.1:3010`.
 
 Deploy manual en la VPS: `pnpm deploy` (descarga el último release con `gh`).
 
-## Pendiente (manual, requiere tus cuentas)
+## DNS y OAuth — completados
 
-1. **DNS (Cloudflare)**: crear registro `A` `vault.volt-3d.store` → `72.61.55.208`,
-   **proxied** (naranja). TLS lo da Cloudflare.
-2. **OAuth**: añadir los redirect URIs `https://vault.volt-3d.store/auth/google` y
-   `https://vault.volt-3d.store/auth/facebook` en las apps de Google/Facebook.
-   (Mientras no resuelva el DNS, se puede probar con `Host:` o por IP:3010.)
+Ambos pasos manuales están **hechos y verificados** (2026-10-03, contra v0.4.0). El
+procedimiento, los valores exactos y los comandos de verificación están en
+[`docs/specs/m18-deploy-dns-oauth.md`](specs/m18-deploy-dns-oauth.md) — ese es el
+documento a consultar, no esta sección.
+
+Resumen:
+
+- **DNS**: registro `A` `vault` → `72.61.55.208`, **proxied** (naranja). TLS lo
+  emite Cloudflare.
+- **OAuth**: redirect URIs `https://vault.volt-3d.store/auth/google` y
+  `.../auth/facebook` registrados en Google y Meta. Ambos devuelven `302` al
+  proveedor correcto.
+
+> Pendiente de verificación humana: el round-trip completo del login (callback →
+> sesión), que no se puede comprobar sin una cuenta real de Google/Facebook.
+
+> El origin sirve HTTP plano en `:80` y `3010` queda alcanzable por IP, saltándose
+> Cloudflare. Registrado como decisión consciente en el spec m18, no corregido.
 
 ## Nginx (referencia)
 
