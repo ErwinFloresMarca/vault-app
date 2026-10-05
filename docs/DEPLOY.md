@@ -71,8 +71,10 @@ Resumen:
   `.../auth/facebook` registrados en Google y Meta. Ambos devuelven `302` al
   proveedor correcto.
 
-> Pendiente de verificación humana: el round-trip completo del login (callback →
-> sesión), que no se puede comprobar sin una cuenta real de Google/Facebook.
+> **Verificado (2026-10-05)**: el round-trip completo del login con **Google** funciona
+> (consentimiento → callback → sesión) en `https://vault.volt-3d.store/login`.
+> **Facebook**: redirects verificados; el round-trip completo queda pendiente de confirmar
+> con una cuenta real de Meta.
 
 > El origin sirve HTTP plano en `:80` y `3010` queda alcanzable por IP, saltándose
 > Cloudflare. Registrado como decisión consciente en el spec m18, no corregido.

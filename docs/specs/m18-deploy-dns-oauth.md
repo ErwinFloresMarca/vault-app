@@ -28,10 +28,11 @@ Verificado contra producción, no inferido de la configuración local:
 | `GET /auth/facebook` | `302` → `facebook.com` con `redirect_uri=https://vault.volt-3d.store/auth/facebook` |
 | `GET /robots.txt` / `GET /sitemap.xml` | `200` / `200` |
 
-Los dos OAuth son configuración de Google Cloud Console y Meta for Developers. **Se
-verificó que los redirects se emiten correctamente, no que el round-trip completo
-devuelva sesión**; eso último requiere un login interactivo con una cuenta real.
-Queda pendiente de verificación humana.
+Los dos OAuth son configuración de Google Cloud Console y Meta for Developers. Verificado
+contra producción (2026-10-05): el **round-trip completo del login con Google funciona**
+(consentimiento → callback `/auth/google` → `setUserSession` → `/`), confirmado por el
+usuario en `https://vault.volt-3d.store/login`. **Facebook**: los redirects se emiten
+correctamente; el round-trip completo queda pendiente de confirmar con una cuenta real.
 
 ## Procedimiento reproducible
 
