@@ -215,9 +215,11 @@ async function importAll() {
 
 <template>
   <UDashboardPanel>
-    <UDashboardNavbar title="Importar desde MakerWorld" />
-
-    <UContainer class="space-y-6 p-6">
+    <template #header>
+      <UDashboardNavbar title="Importar desde MakerWorld" />
+    </template>
+    <template #body>
+    <UContainer class="min-w-0 space-y-6">
       <UAlert
         color="warning"
         icon="i-lucide-scale"
@@ -225,7 +227,7 @@ async function importAll() {
         description="MakerWorld permite modelos con licencias distintas. La licencia estándar (Standard Digital File License) prohíbe vender las impresiones. Volt Vault guarda el autor, la licencia y el enlace al original en cada item, pero la responsabilidad de comprobarla es tuya."
       />
 
-      <UPageCard>
+      <UPageCard class="min-w-0" :ui="{ container: 'min-w-0', body: 'min-w-0' }">
         <form class="flex flex-col gap-4 lg:flex-row lg:items-end" @submit.prevent="analyze">
           <UFormField label="URL de MakerWorld" class="flex-1" help="Colección (/collections/{id}) o modelo (/models/{id})">
             <UInput
@@ -252,7 +254,7 @@ async function importAll() {
       </div>
 
       <template v-if="resolved && !analyzing">
-        <UPageCard>
+        <UPageCard class="min-w-0" :ui="{ container: 'min-w-0', body: 'min-w-0' }">
           <div class="flex flex-col gap-1">
             <div class="flex flex-wrap items-center gap-2">
               <UIcon name="i-lucide-library" class="size-5 text-[var(--color-gold)]" />
@@ -268,7 +270,7 @@ async function importAll() {
           </div>
         </UPageCard>
 
-        <UPageCard>
+        <UPageCard class="min-w-0" :ui="{ container: 'min-w-0', body: 'min-w-0' }">
           <div class="space-y-5">
             <div class="flex flex-col gap-2">
               <span class="label-caps text-muted">Destino</span>
@@ -320,7 +322,7 @@ async function importAll() {
           </div>
         </UPageCard>
 
-        <UPageCard>
+        <UPageCard class="min-w-0" :ui="{ container: 'min-w-0', body: 'min-w-0' }">
           <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-3">
               <UCheckbox
@@ -339,6 +341,7 @@ async function importAll() {
             />
           </div>
 
+          <div class="min-w-0 overflow-x-auto">
           <UTable :data="resolved.items" :columns="previewColumns" :empty="'No hay modelos'">
             <template #select-cell="{ row }">
               <UCheckbox
@@ -393,6 +396,7 @@ async function importAll() {
               <UBadge v-else color="neutral" variant="subtle">Nuevo</UBadge>
             </template>
           </UTable>
+          </div>
 
           <div v-if="importing || progress > 0" class="mt-5 space-y-2">
             <div class="flex items-center justify-between text-sm">
@@ -405,7 +409,7 @@ async function importAll() {
 
         <UAlert v-if="importError" color="error" icon="i-lucide-circle-alert" title="La importación se detuvo" :description="importError" />
 
-        <UPageCard v-if="importDone">
+        <UPageCard v-if="importDone" class="min-w-0" :ui="{ container: 'min-w-0', body: 'min-w-0' }">
           <div class="space-y-5">
             <div class="flex flex-wrap items-center gap-3">
               <UIcon name="i-lucide-circle-check" class="size-6 text-[var(--color-success)]" />
@@ -441,6 +445,7 @@ async function importAll() {
               </ul>
             </div>
 
+            <div class="min-w-0 overflow-x-auto">
             <UTable v-if="results.length" :data="results" :columns="resultColumns">
               <template #action-cell="{ row }">
                 <UBadge
@@ -454,6 +459,7 @@ async function importAll() {
                 <span class="text-sm text-muted">{{ row.original.license ?? (row.original.error || '—') }}</span>
               </template>
             </UTable>
+            </div>
 
             <div class="flex flex-wrap gap-2">
               <UButton
@@ -475,5 +481,6 @@ async function importAll() {
         </UPageCard>
       </template>
     </UContainer>
+    </template>
   </UDashboardPanel>
 </template>

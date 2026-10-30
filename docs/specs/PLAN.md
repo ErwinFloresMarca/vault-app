@@ -76,6 +76,7 @@ base de datos relacional PostgreSQL dedicada (`vault-volt3d`) en el Postgres Doc
 | OG Image social | m17-og-image.md | ☑ |
 | Deploy DNS + OAuth | m18-deploy-dns-oauth.md | ☑ (as-built) |
 | Import MakerWorld | m19-import-makerworld.md | ☑ |
+| Tablas admin (scroll/paginación/filtros) | m20-admin-tablas-filtros.md | ☑ |
 
 ## Desviaciones respecto al plan original
 

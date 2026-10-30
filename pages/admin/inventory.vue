@@ -197,9 +197,11 @@ function formatDate(iso: string) {
 
 <template>
   <UDashboardPanel>
-    <UDashboardNavbar title="Inventario" />
-
-    <UContainer class="p-6 space-y-6">
+    <template #header>
+      <UDashboardNavbar title="Inventario" />
+    </template>
+    <template #body>
+    <UContainer class="min-w-0 space-y-6">
       <UAlert v-if="!items.length" color="neutral" title="No hay items registrados" description="Crea items desde la sección Items para gestionar su inventario." />
 
       <template v-else>
@@ -214,7 +216,7 @@ function formatDate(iso: string) {
         </div>
 
         <!-- Lista de items -->
-        <UPageCard>
+        <UPageCard class="min-w-0" :ui="{ container: 'min-w-0', body: 'min-w-0' }">
           <template #header>
             <h3 class="font-semibold">Items</h3>
           </template>
@@ -225,6 +227,7 @@ function formatDate(iso: string) {
             </div>
             <span class="text-xs text-muted">Usa "Agregar a batch" para sumar items a un registro por grupo — agrega en lotes desde una o varias colecciones.</span>
           </div>
+          <div class="min-w-0 overflow-x-auto">
           <UTable :data="paginatedItems" :columns="itemColumns" :empty="'Sin items para los filtros'">
             <template #name-cell="{ row }">
               <div class="flex items-center gap-2">
@@ -244,13 +247,14 @@ function formatDate(iso: string) {
               </div>
             </template>
           </UTable>
+          </div>
           <div v-if="filteredItems.length > itemsPageSize" class="mt-4 flex justify-end">
             <UPagination v-model:page="itemsPage" :total="filteredItems.length" :items-per-page="itemsPageSize" />
           </div>
         </UPageCard>
 
         <!-- Batch en curso -->
-        <UPageCard>
+        <UPageCard class="min-w-0" :ui="{ container: 'min-w-0', body: 'min-w-0' }">
           <template #header>
             <div class="flex items-center justify-between">
               <h3 class="font-semibold">Nuevo registro por grupo (batch)</h3>
@@ -319,7 +323,7 @@ function formatDate(iso: string) {
         </UPageCard>
 
         <!-- Historial global de batches -->
-        <UPageCard>
+        <UPageCard class="min-w-0" :ui="{ container: 'min-w-0', body: 'min-w-0' }">
           <template #header>
             <h3 class="font-semibold">Historial de registros (batches)</h3>
           </template>
@@ -327,6 +331,7 @@ function formatDate(iso: string) {
             <USkeleton class="h-40 w-full" />
           </div>
           <template v-else>
+            <div class="min-w-0 overflow-x-auto">
             <UTable :data="batches" :columns="batchColumns" :empty="'Sin batches registrados'">
               <template #type-cell="{ row }">
                 <MovementBadge :type="row.original.type" />
@@ -347,6 +352,7 @@ function formatDate(iso: string) {
                 <span class="text-sm text-muted">{{ formatDate(row.original.createdAt) }}</span>
               </template>
             </UTable>
+            </div>
             <div v-if="batchesTotal > pageSize" class="mt-4 flex justify-end">
               <UPagination v-model:page="batchesPage" :total="batchesTotal" :items-per-page="pageSize" />
             </div>
@@ -361,5 +367,6 @@ function formatDate(iso: string) {
       @update:open="inventoryOpen = $event"
       @changed="refreshItems"
     />
+    </template>
   </UDashboardPanel>
 </template>

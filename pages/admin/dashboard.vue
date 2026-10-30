@@ -52,9 +52,11 @@ const recentItems = computed(() =>
 
 <template>
   <UDashboardPanel>
-    <UDashboardNavbar title="Dashboard" />
-
-    <UContainer class="space-y-8 p-6">
+    <template #header>
+      <UDashboardNavbar title="Dashboard" />
+    </template>
+    <template #body>
+    <UContainer class="min-w-0 space-y-8">
       <!-- Header -->
       <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div class="flex flex-col gap-1">
@@ -106,7 +108,7 @@ const recentItems = computed(() =>
 
         <!-- Split: top + activity -->
         <div class="grid grid-cols-1 gap-6 xl:grid-cols-12 xl:items-start">
-          <div class="rounded-2xl border border-default bg-muted p-5 xl:col-span-8">
+          <div class="min-w-0 rounded-2xl border border-default bg-muted p-5 xl:col-span-8">
             <div class="flex items-center justify-between pb-4">
               <div>
                 <div class="flex items-center gap-2">
@@ -118,7 +120,8 @@ const recentItems = computed(() =>
               <span class="label-caps hidden rounded-full bg-elevated px-2.5 py-1 text-volt sm:inline">Telemetría</span>
             </div>
 
-            <UTable :data="stats.top" :columns="topColumns" :empty="'Sin ventas registradas'">
+            <div class="min-w-0 overflow-x-auto">
+              <UTable :data="stats.top" :columns="topColumns" :empty="'Sin ventas registradas'">
               <template #name-cell="{ row }">
                 <div class="flex flex-col">
                   <span class="font-display font-semibold">{{ row.original.name }}</span>
@@ -138,6 +141,7 @@ const recentItems = computed(() =>
                 <RarityBadge :rarity="row.original.rarity" />
               </template>
             </UTable>
+            </div>
           </div>
 
           <div class="rounded-2xl border border-default bg-muted p-5 xl:col-span-4">
@@ -179,5 +183,6 @@ const recentItems = computed(() =>
         <USkeleton class="h-64 w-full rounded-2xl" />
       </div>
     </UContainer>
+    </template>
   </UDashboardPanel>
 </template>

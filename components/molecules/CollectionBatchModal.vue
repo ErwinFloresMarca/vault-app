@@ -185,7 +185,7 @@ function buildCustomer() {
 const { collection } = toRefs(props)
 
 const { data: itemsData, pending: itemsPending, refresh: refreshItems } = useFetch<{ success: boolean; data: ItemOption[] }>(
-  () => (collection.value?.id ? `/api/admin/items?collectionId=${collection.value.id}&pageSize=200` : ''),
+  () => (collection.value?.id ? `/api/admin/items?collectionId=${collection.value.id}` : ''),
   { immediate: false, watch: false },
 )
 const items = computed<ItemOption[]>(() => itemsData.value?.data ?? [])

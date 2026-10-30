@@ -34,15 +34,114 @@ const columns: TableColumn<ItemRow>[] = [
   { id: 'actions', header: ' ' },
 ]
 
-const { data, pending, error, refresh } = await useFetch<{ success: boolean; data: ItemRow[] }>('/api/admin/items')
-const rows = computed<ItemRow[]>(() => data.value?.data ?? [])
-
 const toast = useToast()
 const localizingId = ref<string | null>(null)
 const localizingAllId = ref<string | null>(null)
 
 const { data: collectionsData } = await useFetch<{ success: boolean; data: CollectionOption[] }>('/api/admin/collections')
 const collections = computed<CollectionOption[]>(() => collectionsData.value?.data ?? [])
+
+const route = useRoute()
+const router = useRouter()
+const pageSize = 20
+
+const initialStatus = typeof route.query.status === 'string' && ['DRAFT', 'AVAILABLE', 'SOLD_OUT', 'ARCHIVED'].includes(route.query.status)
+  ? route.query.status
+  : 'all'
+const initialRarity = typeof route.query.rarity === 'string' && ['COMMON', 'RARE', 'EPIC', 'LEGENDARY'].includes(route.query.rarity)
+  ? route.query.rarity
+  : 'all'
+const initialPage = Number(route.query.page)
+
+const page = ref(Number.isFinite(initialPage) && initialPage > 0 ? Math.floor(initialPage) : 1)
+const searchInput = ref(typeof route.query.q === 'string' ? route.query.q : '')
+const q = ref(searchInput.value.trim())
+const selectedCollectionId = ref(typeof route.query.collectionId === 'string' ? route.query.collectionId : 'all')
+const statusFilter = ref(initialStatus)
+const rarityFilter = ref(initialRarity)
+
+const statusOptions = [
+  { label: 'Todos los estados', value: 'all' },
+  { label: 'Borrador', value: 'DRAFT' },
+  { label: 'Disponible', value: 'AVAILABLE' },
+  { label: 'Agotado', value: 'SOLD_OUT' },
+  { label: 'Archivado', value: 'ARCHIVED' },
+]
+const rarityOptions = [
+  { label: 'Todas las rarezas', value: 'all' },
+  { label: 'Común', value: 'COMMON' },
+  { label: 'Rara', value: 'RARE' },
+  { label: 'Épica', value: 'EPIC' },
+  { label: 'Legendaria', value: 'LEGENDARY' },
+]
+const collectionOptions = computed(() => [
+  { label: 'Todas las colecciones', value: 'all' },
+  ...collections.value.map((collection) => ({ label: collection.name, value: collection.id })),
+])
+
+const query = computed<Record<string, string>>(() => {
+  const params: Record<string, string> = { page: String(page.value), pageSize: String(pageSize) }
+  if (q.value) params.q = q.value
+  if (selectedCollectionId.value !== 'all') params.collectionId = selectedCollectionId.value
+  if (statusFilter.value !== 'all') params.status = statusFilter.value
+  if (rarityFilter.value !== 'all') params.rarity = rarityFilter.value
+  return params
+})
+
+const { data, pending, error, refresh } = await useFetch<{
+  success: boolean
+  data: ItemRow[]
+  total: number
+  page: number
+  pageSize: number
+}>('/api/admin/items', { query })
+
+const rows = computed<ItemRow[]>(() => data.value?.data ?? [])
+const total = computed(() => data.value?.total ?? 0)
+const rangeStart = computed(() => total.value === 0 ? 0 : (page.value - 1) * pageSize + 1)
+const rangeEnd = computed(() => Math.min(page.value * pageSize, total.value))
+const hasFilters = computed(() =>
+  !!q.value
+  || selectedCollectionId.value !== 'all'
+  || statusFilter.value !== 'all'
+  || rarityFilter.value !== 'all',
+)
+
+let searchTimer: ReturnType<typeof setTimeout> | undefined
+watch(searchInput, (value) => {
+  clearTimeout(searchTimer)
+  searchTimer = setTimeout(() => { q.value = value.trim() }, 300)
+})
+onBeforeUnmount(() => clearTimeout(searchTimer))
+
+watch([q, selectedCollectionId, statusFilter, rarityFilter], () => {
+  page.value = 1
+  syncQuery()
+})
+watch(page, syncQuery)
+watch(total, (value) => {
+  const maxPage = Math.max(1, Math.ceil(value / pageSize))
+  if (page.value > maxPage) page.value = maxPage
+}, { immediate: true })
+
+function syncQuery() {
+  const next: Record<string, string> = {}
+  if (q.value) next.q = q.value
+  if (selectedCollectionId.value !== 'all') next.collectionId = selectedCollectionId.value
+  if (statusFilter.value !== 'all') next.status = statusFilter.value
+  if (rarityFilter.value !== 'all') next.rarity = rarityFilter.value
+  if (page.value > 1) next.page = String(page.value)
+  router.replace({ query: next })
+}
+
+function clearFilters() {
+  searchInput.value = ''
+  q.value = ''
+  selectedCollectionId.value = 'all'
+  statusFilter.value = 'all'
+  rarityFilter.value = 'all'
+  page.value = 1
+}
 
 const modalOpen = ref(false)
 const editing = ref<ItemRow | null>(null)
@@ -254,22 +353,56 @@ async function remove(row: ItemRow) {
 
 <template>
   <UDashboardPanel>
-    <UDashboardNavbar title="Items">
-      <template #right>
-        <UButton icon="i-lucide-plus" label="Nuevo item" @click="openCreate" />
-      </template>
-    </UDashboardNavbar>
-    <UContainer class="p-6">
-      <UAlert v-if="error" color="error" title="No se pudieron cargar los items" />
-      <div v-else-if="pending" class="flex justify-center py-16">
-        <USkeleton class="h-64 w-full rounded-lg" />
-      </div>
-      <UPageCard v-else>
-        <UTable
-          :data="rows"
-          :columns="columns"
-          :empty="'Sin items'"
-        >
+    <template #header>
+      <UDashboardNavbar title="Items">
+        <template #right>
+          <UButton icon="i-lucide-plus" label="Nuevo item" @click="openCreate" />
+        </template>
+      </UDashboardNavbar>
+    </template>
+    <template #body>
+      <div class="min-w-0 space-y-4">
+        <div class="rounded-2xl border border-default bg-muted p-4">
+          <div class="grid grid-cols-1 gap-4 lg:grid-cols-12">
+            <UFormField label="Buscar" class="lg:col-span-4">
+              <UInput v-model="searchInput" icon="i-lucide-search" placeholder="Nombre o slug..." />
+            </UFormField>
+            <UFormField label="Colección" class="lg:col-span-3">
+              <USelect v-model="selectedCollectionId" :items="collectionOptions" />
+            </UFormField>
+            <UFormField label="Estado" class="lg:col-span-2">
+              <USelect v-model="statusFilter" :items="statusOptions" />
+            </UFormField>
+            <UFormField label="Rareza" class="lg:col-span-3">
+              <USelect v-model="rarityFilter" :items="rarityOptions" />
+            </UFormField>
+          </div>
+        </div>
+
+        <UAlert v-if="error" color="error" title="No se pudieron cargar los items" />
+        <div v-else-if="pending && !data" class="flex justify-center py-16">
+          <USkeleton class="h-64 w-full rounded-lg" />
+        </div>
+        <UPageCard v-else class="min-w-0" :ui="{ container: 'min-w-0', body: 'min-w-0' }">
+          <template #header>
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div class="flex items-center gap-2">
+                <h2 class="font-display font-bold">Items</h2>
+                <UBadge color="neutral" variant="subtle">{{ total }} {{ total === 1 ? 'item' : 'items' }}</UBadge>
+                <UIcon v-if="pending" name="i-lucide-loader-circle" class="size-4 animate-spin text-muted" />
+              </div>
+              <div class="flex items-center gap-3">
+                <span v-if="total > 0" class="text-sm text-muted">Mostrando {{ rangeStart }}–{{ rangeEnd }} de {{ total }}</span>
+                <UButton v-if="hasFilters" icon="i-lucide-x" variant="ghost" color="neutral" size="sm" label="Limpiar filtros" @click="clearFilters" />
+              </div>
+            </div>
+          </template>
+          <div class="min-w-0 overflow-x-auto">
+            <UTable
+              :data="rows"
+              :columns="columns"
+              :empty="'Sin items para los filtros'"
+            >
           <template #name-cell="{ row }">
             <div class="flex items-center gap-3">
               <div class="size-10 shrink-0 overflow-hidden rounded-xl border border-default bg-elevated">
@@ -336,11 +469,15 @@ async function remove(row: ItemRow) {
               </UModal>
             </div>
           </template>
-        </UTable>
-      </UPageCard>
-    </UContainer>
+            </UTable>
+          </div>
+          <div v-if="total > pageSize" class="mt-4 flex justify-end">
+            <UPagination v-model:page="page" :total="total" :items-per-page="pageSize" show-edges :sibling-count="1" />
+          </div>
+        </UPageCard>
+      </div>
 
-    <UModal v-model:open="modalOpen" :title="editing ? 'Editar item' : 'Nuevo item'">
+      <UModal v-model:open="modalOpen" :title="editing ? 'Editar item' : 'Nuevo item'">
       <template #body>
       <UForm :state="form" class="space-y-4" @submit="save">
         <UFormField label="Nombre">
@@ -408,5 +545,6 @@ async function remove(row: ItemRow) {
     </UModal>
 
     <InventoryModal v-model:open="inventoryOpen" :item="inventoryItem" @changed="refresh" />
+    </template>
   </UDashboardPanel>
 </template>
