@@ -39,6 +39,7 @@ const rows = computed<ItemRow[]>(() => data.value?.data ?? [])
 
 const toast = useToast()
 const localizingId = ref<string | null>(null)
+const localizingAllId = ref<string | null>(null)
 
 const { data: collectionsData } = await useFetch<{ success: boolean; data: CollectionOption[] }>('/api/admin/collections')
 const collections = computed<CollectionOption[]>(() => collectionsData.value?.data ?? [])
@@ -67,6 +68,10 @@ function mainImageOf(row: ItemRow | null) {
 
 function isRemoteImage(file: { url: string } | null | undefined): boolean {
   return !!file?.url && /^https:\/\/(makerworld\.bblmw\.com|images\.unsplash\.com)\//.test(file.url)
+}
+
+function remoteFilesOf(row: ItemRow | null) {
+  return row?.files?.filter((item) => isRemoteImage(item.file)) ?? []
 }
 
 async function localizeImage(file: { id: string; url: string } | null, row?: ItemRow | null) {
@@ -103,6 +108,57 @@ async function localizeImage(file: { id: string; url: string } | null, row?: Ite
     })
   } finally {
     localizingId.value = null
+  }
+}
+
+async function localizeAllImages(row: ItemRow | null) {
+  if (!row || remoteFilesOf(row).length === 0) return
+
+  localizingAllId.value = row.id
+  try {
+    const response = await $fetch<{
+      success: boolean
+      data: {
+        localized: number
+        skipped: number
+        failed: number
+        files: Array<{ id: string; url?: string; ok: boolean; error?: string }>
+      }
+    }>(`/api/admin/items/${row.id}/localize-images`, { method: 'POST' })
+
+    for (const result of response.data.files) {
+      if (!result.url) continue
+      const target = row.files?.find((item) => item.file.id === result.id)
+      if (target) target.file.url = result.url
+      const editingTarget = editing.value?.files?.find((item) => item.file.id === result.id)
+      if (editingTarget) editingTarget.file.url = result.url
+    }
+
+    const { localized, failed, skipped } = response.data
+    toast.add({
+      title: localized > 0
+        ? `${localized} ${localized === 1 ? 'foto guardada' : 'fotos guardadas'} en local`
+        : 'No había fotos remotas',
+      description: failed > 0
+        ? `${failed} ${failed === 1 ? 'imagen no se pudo guardar' : 'imágenes no se pudieron guardar'}`
+        : skipped > 0
+          ? `${skipped} ${skipped === 1 ? 'ya estaba en local' : 'ya estaban en local'}`
+          : 'Todas las imágenes están en el servidor.',
+      icon: failed > 0 ? 'i-lucide-circle-alert' : 'i-lucide-check-check',
+      color: failed > 0 ? 'warning' : 'success',
+    })
+    await refresh()
+  } catch (e) {
+    const message = (e as { data?: { statusMessage?: string } })?.data?.statusMessage
+      ?? 'No se pudieron guardar las fotos en local'
+    toast.add({
+      title: 'Error al guardar las fotos',
+      description: message,
+      icon: 'i-lucide-circle-alert',
+      color: 'error',
+    })
+  } finally {
+    localizingAllId.value = null
   }
 }
 
@@ -259,6 +315,16 @@ async function remove(row: ItemRow) {
                 :loading="localizingId === mainImageOf(row.original)?.id"
                 @click="localizeImage(mainImageOf(row.original), row.original)"
               />
+              <UButton
+                v-if="remoteFilesOf(row.original).length > 1"
+                icon="i-lucide-images"
+                variant="ghost"
+                color="neutral"
+                :aria-label="`Guardar todas las fotos de ${row.original.name} en local`"
+                title="Guardar todas las fotos en local"
+                :loading="localizingAllId === row.original.id"
+                @click="localizeAllImages(row.original)"
+              />
               <UButton icon="i-lucide-boxes" variant="ghost" color="neutral" :aria-label="`Inventario de ${row.original.name}`" @click="openInventory(row.original)" />
               <UButton icon="i-lucide-pencil" variant="ghost" color="neutral" :aria-label="`Editar ${row.original.name}`" @click="openEdit(row.original)" />
               <UModal :title="`Eliminar ${row.original.name}?`" description="Se archivará el item.">
@@ -288,17 +354,28 @@ async function remove(row: ItemRow) {
         </UFormField>
         <UFormField label="Imagen principal">
           <ImageField v-model="form.fileId" :preview-url="editing ? mainImageOf(editing)?.url : null" />
-          <UButton
-            v-if="editing && isRemoteImage(mainImageOf(editing))"
-            class="mt-2"
-            icon="i-lucide-download"
-            variant="outline"
-            color="neutral"
-            size="xs"
-            label="Guardar foto en local"
-            :loading="localizingId === mainImageOf(editing)?.id"
-            @click="localizeImage(mainImageOf(editing), editing)"
-          />
+          <div v-if="editing && remoteFilesOf(editing).length" class="mt-2 flex flex-wrap gap-2">
+            <UButton
+              v-if="isRemoteImage(mainImageOf(editing))"
+              icon="i-lucide-download"
+              variant="outline"
+              color="neutral"
+              size="xs"
+              label="Guardar foto en local"
+              :loading="localizingId === mainImageOf(editing)?.id"
+              @click="localizeImage(mainImageOf(editing), editing)"
+            />
+            <UButton
+              v-if="remoteFilesOf(editing).length > 1"
+              icon="i-lucide-images"
+              variant="outline"
+              color="neutral"
+              size="xs"
+              label="Guardar todas las fotos en local"
+              :loading="localizingAllId === editing?.id"
+              @click="localizeAllImages(editing)"
+            />
+          </div>
         </UFormField>
         <UFormField label="Estado">
           <USelect v-model="form.status" :items="['AVAILABLE', 'DRAFT', 'SOLD_OUT', 'ARCHIVED']" />

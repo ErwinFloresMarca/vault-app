@@ -172,10 +172,16 @@ MakerWorld puede borrar una imagen; para que un item no dependa del CDN:
 - Botón **“Guardar foto en local”** en `/admin/items` (acción de fila y modal de
   edición), visible solo si la imagen principal es remota (`makerworld.bblmw.com`
   o `images.unsplash.com`).
+- Botón **“Guardar todas las fotos en local”** cuando el item tiene más de una
+  imagen remota. Procesa hasta 50 imágenes con concurrencia 2; si una falla, las
+  demás continúan y el resumen indica cuántas se guardaron/omitieron/fallaron.
 - `POST /api/admin/files/{id}/localize` (ADMIN): descarga la imagen (timeout
   20 s, máx. 5 MB, MIME de imagen + sniff de magic bytes), la escribe en
   `public/uploads/{uuid}.{ext}` y actualiza **el mismo** `File`
   (`url`/`path`/`mimeType`/`size`). Conserva `ItemFile`/`CollectionFile`.
+- `POST /api/admin/items/{id}/localize-images` (ADMIN): localiza todas las
+  imágenes remotas del item y devuelve `{ total, localized, skipped, failed,
+  files[] }`. Tolera fallos parciales.
 - Idempotente: si la URL ya es `/uploads/...`, no descarga. Un 409 evita dos
   descargas simultáneas del mismo archivo.
 - `GET /uploads/{filename}` sirve los binarios en producción (Nitro solo publica
@@ -196,6 +202,8 @@ MakerWorld puede borrar una imagen; para que un item no dependa del CDN:
 - Si una imagen falla, el item MUST importarse igual (sin esa imagen).
 - Guardar una foto en local MUST NOT cambiar el id del `File` ni romper sus
   relaciones; MUST validar host, MIME y tamaño antes de escribir.
+- La localización masiva MUST continuar si una imagen falla y MUST devolver el
+  resultado por archivo.
 - `/uploads/<filename>` MUST servir solo nombres UUID con extensión de imagen.
 
 ## Criterios de aceptación
@@ -207,6 +215,8 @@ MakerWorld puede borrar una imagen; para que un item no dependa del CDN:
 - El item público muestra imágenes, descripción con atribución y licencia.
 - “Guardar foto en local” convierte la URL en `/uploads/...`, la imagen sigue
   cargando y el botón desaparece.
+- “Guardar todas las fotos en local” convierte todas las imágenes remotas de un
+  item y muestra un resumen con guardadas/omitidas/fallidas.
 - `pnpm exec eslint .`, `pnpm typecheck` y la verificación Playwright en verde.
 - Sin errores de consola en `/admin/import`.
 
@@ -254,6 +264,8 @@ MakerWorld puede borrar una imagen; para que un item no dependa del CDN:
 - Fase 5 (m19.1): ☑ botón “Guardar foto en local”, `POST
   /api/admin/files/:id/localize`, ruta `GET /uploads/<filename>` para servir
   uploads en producción, allowlist MCP/documentación actualizada.
+- Fase 6 (m19.1): ☑ “Guardar todas las fotos en local” +
+  `POST /api/admin/items/:id/localize-images` (lote con resultado parcial).
 
 ## As-built (notas de implementación)
 
