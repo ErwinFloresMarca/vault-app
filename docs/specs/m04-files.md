@@ -18,6 +18,8 @@ desde `public/uploads` o URLs externas. Colecciones/items se enlazan M:N vía
   que sirve los binarios de `public/uploads`. Necesaria en producción porque el
   deploy solo publica `.output`; `public/uploads` se conserva entre deploys.
   Solo acepta nombres UUID con extensión de imagen y cachea de forma inmutable.
+  En la UI, `AppImage` usa `provider="none"` para `/uploads/...` (IPX solo lee
+  `.output/public` en producción).
 - `POST /api/admin/files/:id/localize` — requiere ADMIN. Descarga una imagen
   remota permitida a `public/uploads` y actualiza el mismo `File` (m19.1).
 

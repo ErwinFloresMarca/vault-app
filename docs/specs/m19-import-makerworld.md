@@ -187,6 +187,9 @@ MakerWorld puede borrar una imagen; para que un item no dependa del CDN:
 - `GET /uploads/{filename}` sirve los binarios en producción (Nitro solo publica
   `.output`; `public/uploads` persiste entre deploys). Solo nombres UUID con
   extensión de imagen, cache inmutable y sin path traversal.
+- En la UI, `AppImage` sirve las rutas `/uploads/...` con `provider="none"`: IPX
+  en producción solo lee `.output/public` y devolvería 404 para los uploads de
+  runtime. Las URLs remotas sí siguen pasando por IPX.
 - Si la descarga falla, la URL remota se mantiene y el admin ve un toast de error.
 
 ## Requisitos (RFC-2119)

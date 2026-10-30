@@ -1,5 +1,17 @@
 <template>
+  <img
+    v-if="isLocalUpload"
+    :src="resolvedSrc"
+    :alt="alt || 'Imagen'"
+    :width="width"
+    :height="height"
+    loading="lazy"
+    class="object-cover"
+    :class="imgClass"
+    @error="onError"
+  >
   <NuxtImg
+    v-else
     :src="resolvedSrc"
     :alt="alt || 'Imagen'"
     :width="width"
@@ -29,4 +41,16 @@ const props = withDefaults(defineProps<{
 })
 
 const resolvedSrc = computed(() => props.src ?? '')
+
+// Los uploads de runtime viven en `public/uploads` y se sirven por `/uploads/...`.
+// Se usan como <img> directo porque IPX en producción solo lee `.output/public`
+// y devolvería 404. Las URLs remotas siguen pasando por NuxtImg/IPX.
+const isLocalUpload = computed(() => resolvedSrc.value.startsWith('/uploads/'))
+
+function onError(event: Event) {
+  const image = event.target as HTMLImageElement
+  if (!image.src.endsWith('/logos/volt3d-icon.svg')) {
+    image.src = '/logos/volt3d-icon.svg'
+  }
+}
 </script>
