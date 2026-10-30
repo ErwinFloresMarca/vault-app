@@ -203,7 +203,7 @@ export function registerCatalogTools(server: McpServer, ctx: McpContext) {
     'register_file_url',
     {
       title: 'Registrar archivo por URL',
-      description: 'Registra una URL como archivo. Solo `/uploads/…` o `https://images.unsplash.com`.',
+      description: 'Registra una URL como archivo. Solo `/uploads/…`, `https://images.unsplash.com` o `https://makerworld.bblmw.com`.',
       inputSchema: { url: z.string().url().or(z.string().startsWith('/uploads/')), mimeType: z.string().optional() },
       annotations: { readOnlyHint: false, idempotentHint: true },
     },

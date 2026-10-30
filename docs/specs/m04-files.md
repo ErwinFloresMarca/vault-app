@@ -14,6 +14,12 @@ desde `public/uploads` o URLs externas. Colecciones/items se enlazan M:N vía
   `mimeType`, `size`). Responde `{ success, file }`.
 - `GET /api/files` — requiere `requireUser`. Devuelve el array de `File`
   ordenado por `createdAt desc` (sin envoltorio `data`).
+- `GET /uploads/<filename>` — ruta pública de Nitro (`server/routes/uploads/`)
+  que sirve los binarios de `public/uploads`. Necesaria en producción porque el
+  deploy solo publica `.output`; `public/uploads` se conserva entre deploys.
+  Solo acepta nombres UUID con extensión de imagen y cachea de forma inmutable.
+- `POST /api/admin/files/:id/localize` — requiere ADMIN. Descarga una imagen
+  remota permitida a `public/uploads` y actualiza el mismo `File` (m19.1).
 
 `server/routes/api/admin/files.ts` es un handler único (no valida método: siempre
 intenta procesar la subida).
@@ -22,8 +28,9 @@ intenta procesar la subida).
 - El enlace a colección/item no ocurre aquí: se hace pasando `fileIds` a los
   endpoints de colección/item (m05/m06), que crean las filas de unión con
   `position = índice`.
-- Archivos externos (Unsplash) se registran como `File` con `url` y sin `path`
-  (ver `seed.ts`).
+- Archivos externos (Unsplash y el CDN de MakerWorld) se registran como `File`
+  con `url` y sin `path` (ver `seed.ts` y m19). Se pueden localizar con
+  `POST /api/admin/files/:id/localize`.
 - Nunca se confía solo en el frontend: MIME/tamaño se validan en el servidor.
 - Los binarios no se commitean a git (viven en `public/uploads`).
 
@@ -38,3 +45,6 @@ intenta procesar la subida).
 ## Success Criteria (verificado)
 - Un admin sube una imagen y obtiene una URL servible (`/uploads/...`).
 - El `File` puede enlazarse a una colección o item vía `fileIds`.
+- `GET /uploads/<uuid>.<ext>` sirve el binario tanto en dev como en producción.
+- `POST /api/admin/files/:id/localize` convierte una URL remota en `/uploads/...`
+  sin romper los enlaces del item/colección.

@@ -123,6 +123,8 @@ Prisma (`server/utils/db.ts`) → DB. Mantén esta dirección.
 ## Boundarys
 
 - `generated/prisma` — generado, nunca a mano.
+- `public/uploads` — binarios de runtime (gitignored); se sirven por
+  `server/routes/uploads/[...path].get.ts`. No commitearlos.
 - `.env` — nunca commitear (solo `.env.example`). Nunca secretos en código,
   AGENTS.md ni DESIGN.md.
 - La autorización real de datos vive en las APIs (`requireAdmin`); el middleware

@@ -120,7 +120,7 @@ Migración: `add_mcp_api_keys`.
 
 ### Tools — Archivos
 - `list_files` (`catalog:read`).
-- `register_file_url` (`files:write`) — solo dominios allowlist (`images.unsplash.com`) o `/uploads/…` (anti-SSRF).
+- `register_file_url` (`files:write`) — solo dominios allowlist (`images.unsplash.com`, `makerworld.bblmw.com`) o `/uploads/…` (anti-SSRF).
 
 ### Tools — Inventario
 - `list_inventory_movements` (`inventory:read`) — `itemId?`, `type?`, paginado.

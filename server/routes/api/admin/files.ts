@@ -1,11 +1,9 @@
 import { readMultipartFormData } from 'h3'
 import { writeFile, mkdir } from 'node:fs/promises'
-import { join, extname } from 'node:path'
+import { join } from 'node:path'
 import { requireAdmin } from '~/server/utils/auth'
 import { prisma } from '~/server/utils/db'
-
-const ALLOWED_MIME = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
-const MAX_SIZE = 5 * 1024 * 1024 // 5 MB
+import { ALLOWED_IMAGE_MIME, IMAGE_EXTENSION_BY_MIME, MAX_UPLOAD_SIZE, UPLOAD_DIR } from '~/server/utils/uploads'
 
 export default defineEventHandler(async (event) => {
   await requireAdmin(event)
@@ -20,19 +18,19 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'Falta el campo "file"' })
   }
 
-  if (!ALLOWED_MIME.has(filePart.type || '')) {
+  if (!ALLOWED_IMAGE_MIME.has(filePart.type || '')) {
     throw createError({ statusCode: 422, statusMessage: `Tipo de archivo no permitido: ${filePart.type}` })
   }
-  if (filePart.data.byteLength > MAX_SIZE) {
+  if (filePart.data.byteLength > MAX_UPLOAD_SIZE) {
     throw createError({ statusCode: 422, statusMessage: 'El archivo supera el tamaño máximo de 5 MB' })
   }
 
-  const ext = extname(filePart.filename) || ''
+  // La extensión sale del MIME permitido, no del nombre original.
+  const ext = IMAGE_EXTENSION_BY_MIME[filePart.type || ''] ?? '.bin'
   const id = crypto.randomUUID()
   const filename = `${id}${ext}`
-  const uploadDir = join(process.cwd(), 'public', 'uploads')
-  await mkdir(uploadDir, { recursive: true })
-  await writeFile(join(uploadDir, filename), filePart.data)
+  await mkdir(UPLOAD_DIR, { recursive: true })
+  await writeFile(join(UPLOAD_DIR, filename), filePart.data)
 
   const file = await prisma.file.create({
     data: {

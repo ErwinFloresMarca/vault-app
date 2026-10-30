@@ -113,7 +113,7 @@ curl -s https://vault.volt-3d.store/mcp \
 - **`confirm: true`** en acciones destructivas.
 - **Rate limit**: 60 req/min por key → `429`.
 - **Auditoría**: cada invocación en `McpAuditLog` (args redactados, duración, resultado).
-- **Anti-SSRF**: `register_file_url` solo `/uploads/…` o `https://images.unsplash.com`.
+- **Anti-SSRF**: `register_file_url` solo `/uploads/…`, `https://images.unsplash.com` o `https://makerworld.bblmw.com`.
 - **Sin cookies**: solo bearer; HTTPS obligatorio. Las keys son revocables/expirables.
 - Los tools llaman a los `services` (route → service → DB); nunca Prisma directo.
 

@@ -165,6 +165,24 @@ Respuesta:
 - Enlace al final: "Ver colección" y "Ver item".
 - Entrada **Importar** en el sidebar admin (`i-lucide-cloud-download`).
 
+## Guardar foto en local (m19.1)
+
+MakerWorld puede borrar una imagen; para que un item no dependa del CDN:
+
+- Botón **“Guardar foto en local”** en `/admin/items` (acción de fila y modal de
+  edición), visible solo si la imagen principal es remota (`makerworld.bblmw.com`
+  o `images.unsplash.com`).
+- `POST /api/admin/files/{id}/localize` (ADMIN): descarga la imagen (timeout
+  20 s, máx. 5 MB, MIME de imagen + sniff de magic bytes), la escribe en
+  `public/uploads/{uuid}.{ext}` y actualiza **el mismo** `File`
+  (`url`/`path`/`mimeType`/`size`). Conserva `ItemFile`/`CollectionFile`.
+- Idempotente: si la URL ya es `/uploads/...`, no descarga. Un 409 evita dos
+  descargas simultáneas del mismo archivo.
+- `GET /uploads/{filename}` sirve los binarios en producción (Nitro solo publica
+  `.output`; `public/uploads` persiste entre deploys). Solo nombres UUID con
+  extensión de imagen, cache inmutable y sin path traversal.
+- Si la descarga falla, la URL remota se mantiene y el admin ve un toast de error.
+
 ## Requisitos (RFC-2119)
 
 - Un no-ADMIN MUST recibir 401/403 en ambas rutas.
@@ -176,6 +194,9 @@ Respuesta:
 - Las peticiones a MakerWorld MUST tener timeout (15 s), throttling y backoff.
 - El import MUST NOT modificar stock ni `soldQuantity`.
 - Si una imagen falla, el item MUST importarse igual (sin esa imagen).
+- Guardar una foto en local MUST NOT cambiar el id del `File` ni romper sus
+  relaciones; MUST validar host, MIME y tamaño antes de escribir.
+- `/uploads/<filename>` MUST servir solo nombres UUID con extensión de imagen.
 
 ## Criterios de aceptación
 
@@ -184,6 +205,8 @@ Respuesta:
 - Reimportar con "actualizar" no duplica; sin "actualizar" omite.
 - Un modelo individual (`/models/{id}`) también se puede importar.
 - El item público muestra imágenes, descripción con atribución y licencia.
+- “Guardar foto en local” convierte la URL en `/uploads/...`, la imagen sigue
+  cargando y el botón desaparece.
 - `pnpm exec eslint .`, `pnpm typecheck` y la verificación Playwright en verde.
 - Sin errores de consola en `/admin/import`.
 
@@ -228,6 +251,9 @@ Respuesta:
 - Fase 4: ☑ `prisma migrate deploy`, `eslint`, `typecheck`, `nuxt build` y
   verificación Playwright (preview, import a colección existente, ficha pública
   con imágenes y licencia). Datos de prueba eliminados.
+- Fase 5 (m19.1): ☑ botón “Guardar foto en local”, `POST
+  /api/admin/files/:id/localize`, ruta `GET /uploads/<filename>` para servir
+  uploads en producción, allowlist MCP/documentación actualizada.
 
 ## As-built (notas de implementación)
 

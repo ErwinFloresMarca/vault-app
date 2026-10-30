@@ -37,6 +37,9 @@ const columns: TableColumn<ItemRow>[] = [
 const { data, pending, error, refresh } = await useFetch<{ success: boolean; data: ItemRow[] }>('/api/admin/items')
 const rows = computed<ItemRow[]>(() => data.value?.data ?? [])
 
+const toast = useToast()
+const localizingId = ref<string | null>(null)
+
 const { data: collectionsData } = await useFetch<{ success: boolean; data: CollectionOption[] }>('/api/admin/collections')
 const collections = computed<CollectionOption[]>(() => collectionsData.value?.data ?? [])
 
@@ -58,8 +61,49 @@ const formError = ref('')
 const inventoryOpen = ref(false)
 const inventoryItem = ref<ItemRow | null>(null)
 
-function mainImageOf(row: ItemRow) {
-  return row.files?.find((f) => f.file)?.file ?? null
+function mainImageOf(row: ItemRow | null) {
+  return row?.files?.find((f) => f.file)?.file ?? null
+}
+
+function isRemoteImage(file: { url: string } | null | undefined): boolean {
+  return !!file?.url && /^https:\/\/(makerworld\.bblmw\.com|images\.unsplash\.com)\//.test(file.url)
+}
+
+async function localizeImage(file: { id: string; url: string } | null, row?: ItemRow | null) {
+  if (!file || !isRemoteImage(file)) return
+
+  localizingId.value = file.id
+  try {
+    const response = await $fetch<{ success: boolean; data: { id: string; url: string } }>(
+      `/api/admin/files/${file.id}/localize`,
+      { method: 'POST' },
+    )
+
+    const updatedUrl = response.data.url
+    const target = row?.files?.find((item) => item.file.id === file.id)
+    if (target) target.file.url = updatedUrl
+    const editingTarget = editing.value?.files?.find((item) => item.file.id === file.id)
+    if (editingTarget) editingTarget.file.url = updatedUrl
+
+    toast.add({
+      title: 'Foto guardada en local',
+      description: 'La imagen ya no depende del servidor original.',
+      icon: 'i-lucide-check-check',
+      color: 'success',
+    })
+    await refresh()
+  } catch (e) {
+    const message = (e as { data?: { statusMessage?: string } })?.data?.statusMessage
+      ?? 'No se pudo guardar la foto en local'
+    toast.add({
+      title: 'Error al guardar la foto',
+      description: message,
+      icon: 'i-lucide-circle-alert',
+      color: 'error',
+    })
+  } finally {
+    localizingId.value = null
+  }
 }
 
 function openInventory(row: ItemRow) {
@@ -205,6 +249,16 @@ async function remove(row: ItemRow) {
           </template>
           <template #actions-cell="{ row }">
             <div class="flex items-center gap-1">
+              <UButton
+                v-if="isRemoteImage(mainImageOf(row.original))"
+                icon="i-lucide-download"
+                variant="ghost"
+                color="neutral"
+                :aria-label="`Guardar foto de ${row.original.name} en local`"
+                title="Guardar foto en local"
+                :loading="localizingId === mainImageOf(row.original)?.id"
+                @click="localizeImage(mainImageOf(row.original), row.original)"
+              />
               <UButton icon="i-lucide-boxes" variant="ghost" color="neutral" :aria-label="`Inventario de ${row.original.name}`" @click="openInventory(row.original)" />
               <UButton icon="i-lucide-pencil" variant="ghost" color="neutral" :aria-label="`Editar ${row.original.name}`" @click="openEdit(row.original)" />
               <UModal :title="`Eliminar ${row.original.name}?`" description="Se archivará el item.">
@@ -234,6 +288,17 @@ async function remove(row: ItemRow) {
         </UFormField>
         <UFormField label="Imagen principal">
           <ImageField v-model="form.fileId" :preview-url="editing ? mainImageOf(editing)?.url : null" />
+          <UButton
+            v-if="editing && isRemoteImage(mainImageOf(editing))"
+            class="mt-2"
+            icon="i-lucide-download"
+            variant="outline"
+            color="neutral"
+            size="xs"
+            label="Guardar foto en local"
+            :loading="localizingId === mainImageOf(editing)?.id"
+            @click="localizeImage(mainImageOf(editing), editing)"
+          />
         </UFormField>
         <UFormField label="Estado">
           <USelect v-model="form.status" :items="['AVAILABLE', 'DRAFT', 'SOLD_OUT', 'ARCHIVED']" />
