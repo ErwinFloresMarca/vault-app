@@ -61,6 +61,10 @@ const navItems = computed<NavigationMenuItem[]>(() => [{
   icon: 'i-lucide-box',
   to: '/admin/items',
 }, {
+  label: 'Importar',
+  icon: 'i-lucide-cloud-download',
+  to: '/admin/import',
+}, {
   label: 'Inventario',
   icon: 'i-lucide-boxes',
   to: '/admin/inventory',

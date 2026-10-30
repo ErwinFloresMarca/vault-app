@@ -68,9 +68,9 @@ export default defineNuxtConfig({
     },
   },
 
-  // @nuxt/image: permitir las imágenes remotas (Unsplash) para evitar fallbacks tipo `/1x`.
+  // @nuxt/image: permitir las imágenes remotas (Unsplash + CDN de MakerWorld) para evitar fallbacks tipo `/1x`.
   image: {
-    domains: ['images.unsplash.com'],
+    domains: ['images.unsplash.com', 'makerworld.bblmw.com'],
     provider: 'ipx',
   },
 

@@ -131,3 +131,54 @@ export interface ApiKeyDto {
   revokedAt: string | null
   createdAt: string
 }
+
+// ===== Importación desde MakerWorld (m19) =====
+
+export interface MakerworldCreator {
+  name: string
+  handle: string
+}
+
+export interface MakerworldPreviewItem {
+  id: number
+  title: string
+  creator: MakerworldCreator | null
+  coverUrl: string | null
+  sourceUrl: string
+  existing: { itemId: string; collectionId: string; collectionName: string } | null
+}
+
+export interface MakerworldResolveResult {
+  source: { type: 'collection' | 'model'; collectionId?: number; title: string; total: number }
+  suggestedCollectionName: string
+  suggestedCollectionDescription: string | null
+  items: MakerworldPreviewItem[]
+}
+
+export interface MakerworldBatchInput {
+  modelIds: number[]
+  collectionId?: string
+  newCollection?: { name: string; description?: string }
+  itemStatus?: ItemStatus
+  collectionStatus?: CollectionStatus
+  updateExisting?: boolean
+  setCollectionCover?: boolean
+}
+
+export interface MakerworldBatchItemResult {
+  id: number
+  itemId?: string
+  action: 'created' | 'updated' | 'skipped' | 'error'
+  license?: string | null
+  error?: string
+}
+
+export interface MakerworldBatchResult {
+  collectionId: string
+  collectionSlug: string
+  created: number
+  updated: number
+  skipped: number
+  errors: Array<{ id: number; message: string }>
+  items: MakerworldBatchItemResult[]
+}

@@ -36,6 +36,8 @@ Modelos en `prisma/schema.prisma`: `User`, `OAuthAccount`, `File`, `Collection`,
 - `CollectionItem.stock` y `soldQuantity` son DENORMALIZADOS: se actualizan
   atómicamente en la misma transacción que crea el/los `InventoryMovement`
   (`server/services/inventoryService.ts`). Nunca los modifiques por fuera de ahí.
+- `CollectionItem.sourceUrl` es único y nullable: identifica la URL canónica de
+  un modelo importado desde MakerWorld (m19). No lo uses para items manuales.
 - Tipos de dominio compartidos en `types/index.ts`.
 - **Gamificación** (`utils/gamification.ts` + `server/services/gamificationService.ts`):
   XP por rareza (50/150/350/1000) y +500 por colección completada; nivel = `floor(xp/500)+1`.
@@ -46,7 +48,7 @@ Modelos en `prisma/schema.prisma`: `User`, `OAuthAccount`, `File`, `Collection`,
 
 - `pages/` — `/` (catálogo), `/collections`, `/collections/[slug]`,
   `/collections/[collectionSlug]/[itemSlug]`, `/me`, `/settings` (API keys de MCP), `/login`, `/auth/error`,
-  `/privacy`, `/terms`, `/admin/{dashboard,collections,items,inventory}`.
+  `/privacy`, `/terms`, `/admin/{dashboard,collections,items,import,inventory}`.
 - `components/{atoms,molecules,organisms}/` — Atomic Design; registrados sin prefijo
   de carpeta en `nuxt.config.ts` (usa `<CollectionCard>`, no `<MoleculesCollectionCard>`).
 - `layouts/{default,admin,minimal}.vue`.
@@ -55,7 +57,7 @@ Modelos en `prisma/schema.prisma`: `User`, `OAuthAccount`, `File`, `Collection`,
   `admin.ts` (rol ADMIN en páginas `/admin/*`).
 - `server/routes/api/` — HTTP. `server/services/` — lógica de negocio.
   `server/utils/{db,auth}.ts`. `server/routes/auth/` — callbacks OAuth.
-- `docs/specs/` — specs por módulo (`m01-…` a `m18-…`) + `PLAN.md`. `docs/AUTH_SETUP.md`.
+- `docs/specs/` — specs por módulo (`m01-…` a `m19-…`) + `PLAN.md`. `docs/AUTH_SETUP.md`.
 - `server/mcp/` — servidor MCP (`/mcp`); tools, resources y prompts por dominio.
 - `DESIGN.md` — design system (tokens, componentes, layout). Fuente de verdad visual.
 
