@@ -28,7 +28,7 @@ const kpis = computed(() => {
     { label: 'Items totales', value: s.counts.items, sub: 'piezas en catálogo', icon: 'i-lucide-box', color: 'var(--color-gold)' },
     { label: 'Usuarios', value: s.counts.users, sub: 'coleccionistas', icon: 'i-lucide-users', color: 'var(--color-volt)' },
     { label: 'Conseguidos', value: s.counts.collected, sub: 'marcas de posesión', icon: 'i-lucide-badge-check', color: 'var(--color-neon)' },
-    { label: 'Unidades vendidas', value: s.sales.total, sub: `promedio ${s.sales.avg.toFixed(1)} / item`, icon: 'i-lucide-payments', color: 'var(--color-success)' },
+    { label: 'Unidades vendidas', value: s.sales.total, sub: `promedio ${s.sales.avg.toFixed(1)} / item`, icon: 'i-lucide-banknote', color: 'var(--color-success)' },
   ]
 })
 
@@ -74,7 +74,7 @@ const recentItems = computed(() =>
         <div class="flex flex-wrap items-center gap-2">
           <UButton to="/admin/collections" color="neutral" variant="subtle" icon="i-lucide-shapes">Nueva colección</UButton>
           <UButton to="/admin/items" color="neutral" variant="subtle" icon="i-lucide-box">Nuevo item</UButton>
-          <UButton to="/admin/inventory" icon="i-lucide-add-box">Registrar lote</UButton>
+          <UButton to="/admin/inventory" icon="i-lucide-package-plus">Registrar lote</UButton>
         </div>
       </div>
 
@@ -147,7 +147,7 @@ const recentItems = computed(() =>
           <div class="rounded-2xl border border-default bg-muted p-5 xl:col-span-4">
             <div class="flex items-center justify-between pb-4">
               <div class="flex items-center gap-2">
-                <UIcon name="i-lucide-sensors" class="size-5 text-gold" />
+                <UIcon name="i-lucide-radar" class="size-5 text-gold" />
                 <h2 class="font-display font-bold">Actividad reciente</h2>
               </div>
               <span class="label-caps inline-flex items-center gap-1 rounded-full bg-elevated px-2 py-0.5 text-volt">
@@ -163,7 +163,7 @@ const recentItems = computed(() =>
         <div class="flex flex-col items-center justify-between gap-4 rounded-2xl border border-default bg-elevated p-4 sm:flex-row">
           <div class="flex items-center gap-3">
             <div class="flex size-10 items-center justify-center rounded-full bg-muted text-gold">
-              <UIcon name="i-lucide-hub" class="size-5" />
+              <UIcon name="i-lucide-network" class="size-5" />
             </div>
             <div>
               <p class="font-display font-semibold">Estado del enclave Volt Vault</p>
