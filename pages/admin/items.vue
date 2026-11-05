@@ -14,6 +14,7 @@ interface ItemRow {
   rarity: Rarity
   stock: number
   soldQuantity: number
+  price?: string | number | null
   collection?: { id: string; name: string }
   files?: Array<{ file: { id: string; url: string } }>
   spec?: ItemSpecDto | null
@@ -28,6 +29,7 @@ interface CollectionOption {
 const columns: TableColumn<ItemRow>[] = [
   { accessorKey: 'name', header: 'Item' },
   { accessorKey: 'rarity', header: 'Rareza', id: 'rarity' },
+  { accessorKey: 'price', header: 'Precio', id: 'price' },
   { accessorKey: 'status', header: 'Estado' },
   { accessorKey: 'stock', header: 'Stock' },
   { accessorKey: 'soldQuantity', header: 'Vendidos' },
@@ -153,6 +155,7 @@ const form = reactive({
   rarity: 'COMMON',
   collectionId: '',
   stockInicial: 0,
+  price: '' as string,
   fileId: null as string | null,
   spec: { scale: '', material: '', lighting: '', base: '' },
 })
@@ -274,6 +277,7 @@ function openCreate() {
   form.rarity = 'COMMON'
   form.collectionId = collections.value[0]?.id ?? ''
   form.stockInicial = 0
+  form.price = ''
   form.fileId = null
   form.spec = { scale: '', material: '', lighting: '', base: '' }
   formError.value = ''
@@ -288,6 +292,7 @@ function openEdit(row: ItemRow) {
   form.rarity = row.rarity
   form.collectionId = row.collection?.id ?? ''
   form.stockInicial = 0
+  form.price = row.price != null ? String(Number(row.price)) : ''
   form.fileId = mainImageOf(row)?.id ?? null
   form.spec = {
     scale: row.spec?.scale ?? '',
@@ -317,6 +322,7 @@ async function save() {
         description: form.description || undefined,
         status: form.status,
         rarity: form.rarity,
+        price: form.price === '' ? null : form.price,
         fileIds: form.fileId ? [form.fileId] : undefined,
         spec: form.spec,
       }
@@ -331,6 +337,7 @@ async function save() {
           rarity: form.rarity,
           collectionId: form.collectionId,
           stockInicial: Number(form.stockInicial) || 0,
+          price: form.price === '' ? null : form.price,
           fileIds: form.fileId ? [form.fileId] : undefined,
           spec: form.spec,
         },
@@ -423,6 +430,10 @@ async function remove(row: ItemRow) {
                 <span class="label-caps text-muted">{{ row.original.collection?.name ?? '—' }}</span>
               </div>
             </div>
+          </template>
+          <template #price-cell="{ row }">
+            <span v-if="row.original.price != null" class="font-display font-semibold tabular-nums">Bs {{ Number(row.original.price).toFixed(2) }}</span>
+            <span v-else class="text-xs text-muted">Sin precio</span>
           </template>
           <template #rarity-cell="{ row }">
             <RarityBadge :rarity="row.original.rarity" />
@@ -519,6 +530,9 @@ async function remove(row: ItemRow) {
         </UFormField>
         <UFormField label="Rareza">
           <USelect v-model="form.rarity" :items="['COMMON', 'RARE', 'EPIC', 'LEGENDARY']" />
+        </UFormField>
+        <UFormField label="Precio de venta (Bs)" help="Déjalo vacío si no se vende por el carrito (se mostrará «Consultar precio»).">
+          <UInput v-model="form.price" type="number" min="0" step="0.5" placeholder="Ej.: 45" />
         </UFormField>
         <USeparator label="Ficha técnica (opcional)" />
         <div class="grid grid-cols-2 gap-3">

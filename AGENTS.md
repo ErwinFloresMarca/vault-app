@@ -28,7 +28,7 @@ OAuth, `NUXT_SESSION_PASSWORD`) → `pnpm db:generate` → `pnpm db:migrate` (o
 Modelos en `prisma/schema.prisma`: `User`, `OAuthAccount`, `File`, `Collection`,
 `CollectionItem`, `ItemSpec`, `Tag`, `CollectionTag`, `CollectionFile`, `ItemFile`,
 `UserCollectedItem`, `UserWishlistItem`, `InventoryBatch`, `InventoryMovement`,
-`Achievement`, `UserAchievement`.
+`Achievement`, `UserAchievement`, `Order`, `OrderItem`.
 
 - Enum `UserRole`: `USER | ADMIN` (uppercase, default `USER`). NO existen `CLIENT`/`client`/`admin`.
 - `CollectionStatus`: `DRAFT | PUBLISHED | ARCHIVED`. `ItemStatus`: `DRAFT | AVAILABLE | SOLD_OUT | ARCHIVED`.
@@ -38,6 +38,15 @@ Modelos en `prisma/schema.prisma`: `User`, `OAuthAccount`, `File`, `Collection`,
   (`server/services/inventoryService.ts`). Nunca los modifiques por fuera de ahí.
 - `CollectionItem.sourceUrl` es único y nullable: identifica la URL canónica de
   un modelo importado desde MakerWorld (m19). No lo uses para items manuales.
+- `CollectionItem.price` (Decimal Bs, nullable): sin precio no se vende por carrito.
+- **Pedidos** (m21, `server/services/orderService.ts`): carrito en el navegador
+  (`composables/useCart.ts`) → `POST /api/orders` (público, precios recalculados en
+  servidor, rate limit por IP, código único `VV-XXXX-XXXX` para el cliente) → correos
+  "Pedido realizado" (cliente) + aviso interno (`NUXT_ORDER_NOTIFY_EMAIL`); al pasar a
+  pagado se envía "Pedido confirmado" una vez (`confirmedAt`). `server/utils/mailer.ts`,
+  `NUXT_SMTP_*`, QR opcional `NUXT_PAYMENT_QR_URL`. Panel `/admin/orders` con reparto 50/50
+  (`computeSplit`) y exportación `.xlsx` (`/api/admin/orders/export`). Los pedidos NO
+  descuentan stock automáticamente.
 - Tipos de dominio compartidos en `types/index.ts`.
 - **Gamificación** (`utils/gamification.ts` + `server/services/gamificationService.ts`):
   XP por rareza (50/150/350/1000) y +500 por colección completada; nivel = `floor(xp/500)+1`.
@@ -47,12 +56,12 @@ Modelos en `prisma/schema.prisma`: `User`, `OAuthAccount`, `File`, `Collection`,
 ## Estructura
 
 - `pages/` — `/` (catálogo), `/collections`, `/collections/[slug]`,
-  `/collections/[collectionSlug]/[itemSlug]`, `/me`, `/settings` (API keys de MCP), `/login`, `/auth/error`,
-  `/privacy`, `/terms`, `/admin/{dashboard,collections,items,import,inventory}`.
+  `/collections/[collectionSlug]/[itemSlug]`, `/cart`, `/me`, `/settings` (API keys de MCP), `/login`, `/auth/error`,
+  `/privacy`, `/terms`, `/admin/{dashboard,orders,collections,items,import,inventory}`.
 - `components/{atoms,molecules,organisms}/` — Atomic Design; registrados sin prefijo
   de carpeta en `nuxt.config.ts` (usa `<CollectionCard>`, no `<MoleculesCollectionCard>`).
 - `layouts/{default,admin,minimal}.vue`.
-- `composables/` — `useAuth.ts`, `useCollectItem.ts`.
+- `composables/` — `useAuth.ts`, `useCollectItem.ts`, `useWishlistItem.ts`, `useCart.ts`.
 - `middleware/` — `auth.global.ts` (global; allowlist de rutas públicas),
   `admin.ts` (rol ADMIN en páginas `/admin/*`).
 - `server/routes/api/` — HTTP. `server/services/` — lógica de negocio.
@@ -85,6 +94,8 @@ Prisma (`server/utils/db.ts`) → DB. Mantén esta dirección.
   implementes login con contraseña.
 - Sesión con `setUserSession`/`getUserSession`/`clearUserSession`; `/api/auth/me`
   devuelve el usuario de BD.
+- `NUXT_ADMIN_EMAILS` (lista de correos): `promoteConfiguredAdmin()` en los callbacks
+  OAuth asigna ADMIN al iniciar sesión (solo asciende).
 - Guardas server-side: `requireUser(event)` / `requireAdmin(event)`
   (`server/utils/auth.ts`). Lanzan 401/403.
 - Cliente: `useAuthUser()`, `useRequireAuth()`, `useRequireAdmin()`
@@ -92,20 +103,21 @@ Prisma (`server/utils/db.ts`) → DB. Mantén esta dirección.
 - `NUXT_SESSION_PASSWORD` es obligatorio en producción (hay fallback inseguro en
   `nuxt.config.ts`; no confíes en él).
 
-## UI / Design (Cyber-Luxe, post `m13-redesign-ui.md`)
+## UI / Design (Maker Dark — rediseño estilo MakerWorld)
 
 - Sigue `DESIGN.md`. **Modo oscuro por defecto** (`colorMode.preference: 'dark'`).
-- Primario = **gold** `#FFD700` (texto navy); en claro pasa a ámbar `#B45309` por
-  contraste AA. Volt Blue `#1E90FF` es secundario/interacción, NO el acento único.
-- Tipografía: **Plus Jakarta Sans 700** para display/`label-caps`, **Hanken
-  Grotesk 400** para body. NO es un sistema de peso único 400.
-- Pills `9999px` solo en CTAs, badges, chips y filtros. Tarjetas `rounded-xl`,
-  inputs `rounded-lg`, modales `rounded-xl`. NO uses `rounded-full` en todo.
+- Grises grafito neutros + primario **verde lima** `#B0EF1F` (texto oscuro encima);
+  en claro pasa a `#4D7C0F` por contraste AA. Dorado solo para legendario/completado.
+- Tipografía: **Figtree** (display y body). `label-caps` sin mayúsculas forzadas.
+- Layout público: sidebar fija plegable (cookie `vv-sidebar-collapsed`) + header
+  con buscador que navega a `/collections?q=`.
+- Pills `9999px` en CTAs, badges, chips, filtros y buscador. Tarjetas `rounded-xl`,
+  inputs `rounded-lg`, banners `rounded-2xl`.
 - Iconos: colección `lucide` vía `@nuxt/icon` (p.ej. `i-lucide-library`).
 - Imágenes remotas permitidas: `images.unsplash.com` (`@nuxt/image`).
 - Tokens cableados: `@theme static` + clases en `assets/css/main.css`,
-  `app.config.ts` (`ui.colors`: `primary: 'gold'`, `secondary: 'volt'`,
-  `neutral: 'slate'`). Fuentes vía `@nuxt/fonts` (`--font-display`, `--font-sans`).
+  `app.config.ts` (`ui.colors`: `primary: 'brand'`, `secondary: 'volt'`,
+  `neutral: 'neutral'`). Fuentes vía `@nuxt/fonts` (`--font-display`, `--font-sans`).
 - OG: `og:image` **generadas** con `nuxt-og-image` (satori) 1200×630 en
   `components/OgImage/*.satori.vue`, usando `defineOgImage` (nunca ambas con
   `useSeoMeta({ ogImage })`). Se sirven en `/_og/**`; nunca una URL de tercero.

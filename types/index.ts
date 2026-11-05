@@ -43,6 +43,8 @@ export interface ItemSummary {
   description?: string | null
   stock: number
   soldQuantity: number
+  /** Precio en Bs; null = sin precio (no se vende por carrito). */
+  price?: number | null
   status: ItemStatus
   rarity: Rarity
   mainImage?: FileDto | null
@@ -181,4 +183,69 @@ export interface MakerworldBatchResult {
   skipped: number
   errors: Array<{ id: number; message: string }>
   items: MakerworldBatchItemResult[]
+}
+
+// ===== Pedidos (m21) =====
+
+export type OrderStatus = 'PENDING_PAYMENT' | 'PAID' | 'IN_PRODUCTION' | 'READY' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED'
+export type DeliveryMethod = 'PICKUP' | 'SHIPPING'
+
+export interface OrderItemDto {
+  id: string
+  itemId: string | null
+  name: string
+  collectionName: string | null
+  imageUrl: string | null
+  unitPrice: number
+  quantity: number
+  lineTotal: number
+}
+
+export interface OrderSplit {
+  /** subtotal − costo de impresión − otros gastos */
+  netProfit: number
+  /** Parte de cada socio (50 %) */
+  partnerShare: number
+  /** Lo que recibe quien imprimió: costo de impresión + su 50 % */
+  printerTotal: number
+}
+
+export interface OrderDto {
+  id: string
+  /** Correlativo interno (solo admin). */
+  number: number
+  /** Código único que ve el cliente (VV-XXXX-XXXX). */
+  code: string
+  status: OrderStatus
+  customerName: string
+  customerPhone: string | null
+  customerEmail: string
+  customerCity: string
+  deliveryMethod: DeliveryMethod
+  address: string | null
+  notes: string | null
+  subtotal: number
+  shippingCost: number
+  total: number
+  printCost: number
+  otherCosts: number
+  printedBy: { id: string; name: string } | null
+  adminNotes: string | null
+  confirmedAt: string | null
+  createdAt: string
+  updatedAt: string
+  items: OrderItemDto[]
+  itemCount: number
+  split: OrderSplit
+}
+
+export interface CreateOrderInput {
+  customerName: string
+  customerPhone?: string
+  customerEmail: string
+  customerCity: string
+  deliveryMethod: DeliveryMethod
+  address?: string
+  notes?: string
+  items: { itemId: string; quantity: number }[]
 }

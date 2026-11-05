@@ -1,8 +1,65 @@
-# DESIGN.md — Volt Vault (Cyber-Luxe)
+# DESIGN.md — Volt Vault (Maker Dark)
 
-> **Fuente de verdad visual.** Basado en los diseños de Stitch en
-> `docs/stitch_volt_vault_ui_ux_platform/` (16 pantallas + su `DESIGN.md`).
-> Plan de implementación: `docs/specs/m13-redesign-ui.md`.
+> **Fuente de verdad visual.** Rediseño "Maker Dark" (inspirado en el layout de
+> MakerWorld): grises grafito neutros, acento **verde lima Volt**, barra lateral
+> fija y tarjetas compactas. Solo estética: rutas, APIs y lógica sin cambios.
+> Más abajo se conserva la referencia histórica de Cyber-Luxe (v0.7).
+
+## Principios
+
+- **El producto es el protagonista**: fondos neutros grafito, sin glows de color
+  ni manchas de luz; el color lo ponen las fotos de las figuras.
+- **Un solo acento**: verde lima (`brand`) para CTAs, estado activo y progreso.
+  Dorado solo para legendario / colección completada. Rarezas conservan su color.
+- **Navegación tipo MakerWorld**: sidebar fija a la izquierda (plegable, recuerda
+  su estado en la cookie `vv-sidebar-collapsed`), barra superior con buscador
+  pill que lleva a `/collections?q=`, avatar/menú de usuario a la derecha.
+- **Densidad**: grillas de 2–5 columnas, tarjetas `rounded-xl` con hover de
+  elevación (`-translate-y-1` + `shadow-card`).
+
+## Tokens — Color (oscuro, por defecto)
+
+| Token | Valor | Uso |
+|---|---|---|
+| `--ui-bg` | `#171717` | Fondo de página |
+| `--ui-bg-muted` / `--cx-sidebar` | `#1F1F1F` | Tarjetas, sidebar |
+| `--ui-bg-elevated` | `#282828` | Inputs, chips, hover, item activo |
+| `--ui-bg-accented` | `#333333` | Ranuras de barras de progreso |
+| `--ui-border` | `#2C2C2C` | Bordes por defecto |
+| `--ui-border-accented` | `#3D3D3D` | Bordes en hover |
+| `--ui-primary` / `brand-400` | `#B0EF1F` | Acento (texto oscuro `#111` encima) |
+| `--ui-text` / muted / dimmed | `#F2F2F2` / `#A3A3A3` / `#737373` | Texto |
+
+Claro: fondo `#F4F4F5`, superficies `#FFFFFF`, primario `#4D7C0F` (contraste AA
+con texto blanco). Paleta completa `brand-50…950` en `assets/css/main.css`.
+`--color-volt` ahora apunta a `--ui-primary` (las clases `text-volt`/`bg-volt`
+heredadas pasan a verde). `secondary` de Nuxt UI sigue siendo el azul `volt-*`
+(p. ej. botón de Facebook). Banners del inicio: degradado `#2A2A2A → #141414`.
+
+## Tipografía
+
+- **Figtree** (`--font-display` y `--font-sans`), pesos 400–900. Titulares en
+  800–900 con tracking ajustado; `label-caps` ya **no** fuerza mayúsculas
+  (semibold 0.75rem).
+- Plus Jakarta Sans y Hanken Grotesk siguen cargadas solo para las og:image (satori).
+
+## Radios
+
+`sm .25rem · md .5rem · lg .625rem · xl .75rem · 2xl 1rem`. Pills en botones,
+chips, badges y buscador. Tarjetas `rounded-xl`; banners `rounded-2xl`.
+
+## Layout (`layouts/default.vue`)
+
+- Sidebar `w-60` (plegada `w-[4.5rem]`, solo iconos) con secciones: Inicio,
+  Todas las colecciones · **Tú**: Mi colección, Configuración, Panel admin (ADMIN).
+- Header sticky `h-16` con botón para ocultar/mostrar la sidebar, buscador,
+  botón "Admin" (ADMIN), modo de color y avatar. En móvil la sidebar es un
+  `USlideover`.
+- Logo: `public/logos/volt-vault-logo.png`.
+
+---
+
+# Histórico: Cyber-Luxe (v0.7)
 
 ## Principios
 

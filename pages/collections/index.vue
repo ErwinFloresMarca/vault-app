@@ -7,8 +7,11 @@ useSeoMeta({
   description: 'Explora todas las series oficiales, filtra por etiqueta y supervisa el progreso de tu vitrina.',
 })
 
-const search = ref('')
-const debouncedSearch = ref('')
+// El buscador de la barra superior navega a /collections?q=...
+const route = useRoute()
+const search = ref(typeof route.query.q === 'string' ? route.query.q : '')
+const debouncedSearch = ref(search.value)
+watch(() => route.query.q, (q) => { search.value = typeof q === 'string' ? q : '' })
 const selectedTag = ref('all')
 const sort = ref('featured')
 const page = ref(1)
@@ -74,12 +77,7 @@ watch(sort, () => { page.value = 1 })
 
 <template>
   <div class="relative">
-    <div class="pointer-events-none absolute inset-0 overflow-hidden">
-      <div class="absolute -top-24 left-1/4 size-96 rounded-full bg-volt/10 blur-[120px]" />
-      <div class="absolute right-10 top-48 size-80 rounded-full bg-gold/10 blur-[140px]" />
-    </div>
-
-    <UContainer class="relative py-10 lg:py-14">
+    <div class="mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 lg:py-8">
       <!-- Header -->
       <header class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <SectionHeading
@@ -87,29 +85,27 @@ watch(sort, () => { page.value = 1 })
           title="Colecciones"
           description="Explora todas las series oficiales, filtra por universo temático y supervisa el progreso de tu vitrina."
         />
-        <div class="inline-flex items-center gap-2 self-start rounded-full border border-default bg-muted px-3 py-1.5 md:self-auto">
-          <span class="relative flex size-2">
-            <span class="absolute inline-flex size-full animate-ping rounded-full bg-volt opacity-75" />
-            <span class="relative inline-flex size-2 rounded-full bg-volt" />
-          </span>
-          <span class="label-caps text-volt">{{ total }} {{ total === 1 ? 'serie activa' : 'series activas' }}</span>
+        <div class="inline-flex items-center gap-2 self-start rounded-full bg-elevated px-3 py-1.5 md:self-auto">
+          <span class="relative inline-flex size-2 rounded-full bg-primary" />
+          <span class="label-caps text-default">{{ total }} {{ total === 1 ? 'serie activa' : 'series activas' }}</span>
         </div>
       </header>
 
       <!-- Sticky filter console -->
-      <section class="sticky top-16 z-30 py-4">
-        <div class="flex flex-col gap-4 rounded-2xl border border-default bg-default/90 p-3 shadow-tier2 backdrop-blur-xl lg:flex-row lg:items-center lg:justify-between">
+      <section class="sticky top-16 z-20 -mx-4 bg-default/90 px-4 py-3 backdrop-blur-xl sm:-mx-6 sm:px-6">
+        <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div class="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center lg:flex-1">
             <UInput
               v-model="search"
               icon="i-lucide-search"
               placeholder="Buscar colección..."
               class="w-full sm:max-w-xs"
+              :ui="{ base: 'rounded-full' }"
             />
-            <div class="flex min-w-0 items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
+            <div class="no-scrollbar flex min-w-0 items-center gap-2 overflow-x-auto">
               <button
                 type="button"
-                class="label-caps shrink-0 rounded-full px-3 py-1.5 transition-colors"
+                class="shrink-0 rounded-full px-3.5 py-1.5 font-display text-sm font-semibold transition-colors"
                 :class="selectedTag === 'all' ? 'bg-primary text-inverted' : 'bg-elevated text-muted hover:text-default'"
                 @click="selectedTag = 'all'"
               >
@@ -119,7 +115,7 @@ watch(sort, () => { page.value = 1 })
                 v-for="tag in tags"
                 :key="tag.id"
                 type="button"
-                class="label-caps shrink-0 rounded-full px-3 py-1.5 transition-colors"
+                class="shrink-0 rounded-full px-3.5 py-1.5 font-display text-sm font-semibold transition-colors"
                 :class="selectedTag === tag.slug ? 'bg-primary text-inverted' : 'bg-elevated text-muted hover:text-default'"
                 @click="selectedTag = tag.slug"
               >
@@ -142,8 +138,8 @@ watch(sort, () => { page.value = 1 })
         </div>
       </section>
 
-      <div v-if="pending" class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        <USkeleton v-for="i in 6" :key="i" class="h-72 rounded-2xl" />
+      <div v-if="pending" class="mt-2 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+        <USkeleton v-for="i in 10" :key="i" class="h-72 rounded-xl" />
       </div>
 
       <UAlert
@@ -153,7 +149,7 @@ watch(sort, () => { page.value = 1 })
         :description="(error as { message?: string }).message"
       />
 
-      <CollectionGrid v-else-if="collections.length" :collections="collections" />
+      <CollectionGrid v-else-if="collections.length" :collections="collections" class="mt-2" />
 
       <UEmpty
         v-else
@@ -166,9 +162,9 @@ watch(sort, () => { page.value = 1 })
       </div>
 
       <!-- Personal vault micro-banner -->
-      <aside class="mx-auto mt-10 flex w-full max-w-xl items-center justify-between gap-3 rounded-2xl border border-default bg-muted p-4">
+      <aside class="mx-auto mt-10 flex w-full max-w-xl items-center justify-between gap-3 rounded-xl border border-default bg-muted p-4">
         <div class="flex items-center gap-3">
-          <div class="flex size-9 shrink-0 items-center justify-center rounded-full bg-elevated text-gold">
+          <div class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-elevated text-primary">
             <UIcon name="i-lucide-refresh-cw" class="size-5" />
           </div>
           <div class="flex flex-col">
@@ -188,6 +184,6 @@ watch(sort, () => { page.value = 1 })
           {{ isAuthenticated ? 'Gestionar' : 'Iniciar sesión' }}
         </UButton>
       </aside>
-    </UContainer>
+    </div>
   </div>
 </template>

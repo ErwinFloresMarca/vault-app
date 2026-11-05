@@ -1,3 +1,4 @@
+import { promoteConfiguredAdmin } from '~/server/utils/auth'
 const config = useRuntimeConfig()
 
 export default defineOAuthFacebookEventHandler({
@@ -67,6 +68,9 @@ export default defineOAuthFacebookEventHandler({
         })
       }
     }
+
+    // Administradores definidos en NUXT_ADMIN_EMAILS
+    user = await promoteConfiguredAdmin(user)
 
     // Crear sesión (estructura { user: {...} } como espera nuxt-auth-utils)
     await setUserSession(event, {

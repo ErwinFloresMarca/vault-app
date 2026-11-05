@@ -28,8 +28,8 @@ const TIER: Record<Rarity, string> = {
 }
 
 const classes = computed(() => [
-  'group relative block overflow-hidden rounded-2xl border border-default bg-muted transition duration-300',
-  props.to ? 'hover:-translate-y-0.5' : '',
+  'group relative block overflow-hidden rounded-xl border border-default bg-muted transition duration-300',
+  props.to ? 'hover:-translate-y-1 hover:border-accented hover:shadow-card' : '',
 ])
 
 const tierStyle = computed(() => {

@@ -2,6 +2,7 @@
 import type { ItemDetail, CollectionWithItems } from '~/types'
 import { metaDescription } from '~/utils/seo'
 import { xpForRarity } from '~/utils/gamification'
+import { CART_MAX_QTY, formatBs } from '~/composables/useCart'
 
 const route = useRoute()
 const itemSlug = computed(() => String(route.params.itemSlug))
@@ -46,6 +47,46 @@ const specFields = computed<Array<{ label: string; value: string }>>(() => {
   ]
   return fields.filter((f): f is { label: string; value: string } => !!f.value)
 })
+
+// Carrito (m21)
+const cart = useCart()
+const appConfig = useAppConfig()
+const buyQty = ref(1)
+const itemPrice = computed(() => item.value?.price ?? null)
+const canBuy = computed(() => itemPrice.value != null && item.value?.status !== 'SOLD_OUT')
+const inCart = computed(() => (item.value ? cart.has(item.value.id) : false))
+const whatsappLink = computed(() => {
+  const number = String(appConfig.volt.whatsapp || '').replace(/\D/g, '')
+  if (!number || !item.value) return ''
+  const text = `Hola, quiero consultar por: ${item.value.name} (${item.value.collection.name}) ${canonical.value}`
+  return `https://wa.me/${number}?text=${encodeURIComponent(text)}`
+})
+
+function changeQty(delta: number) {
+  buyQty.value = Math.min(CART_MAX_QTY, Math.max(1, buyQty.value + delta))
+}
+
+function addToCart() {
+  const it = item.value
+  if (!it || itemPrice.value == null) return
+  cart.add({
+    itemId: it.id,
+    slug: it.slug,
+    collectionSlug: collectionSlug.value,
+    name: it.name,
+    collectionName: it.collection.name,
+    price: itemPrice.value,
+    imageUrl: it.mainImage?.url ?? it.files[0]?.url ?? null,
+  }, buyQty.value)
+  toast.add({
+    title: 'Agregado al carrito',
+    description: `${buyQty.value} × ${it.name}`,
+    icon: 'i-lucide-shopping-cart',
+    color: 'primary',
+    actions: [{ label: 'Ver carrito', to: '/cart', color: 'neutral', variant: 'subtle' }],
+  })
+  buyQty.value = 1
+}
 
 const config = useRuntimeConfig()
 const canonical = computed(() => `${config.public.siteUrl}/collections/${collectionSlug.value}/${itemSlug.value}`)
@@ -177,6 +218,47 @@ async function onToggle() {
             </NuxtLink>
           </div>
 
+          <!-- Compra (m21) -->
+          <div class="flex flex-col gap-4 rounded-2xl border border-default bg-muted p-4">
+            <div class="flex items-end justify-between gap-3">
+              <div class="flex flex-col">
+                <span class="label-caps text-muted">Precio</span>
+                <span v-if="itemPrice != null" class="font-display text-3xl font-black tabular-nums">{{ formatBs(itemPrice) }}</span>
+                <span v-else class="font-display text-xl font-bold">Consultar precio</span>
+              </div>
+              <span class="text-right text-xs text-muted">Pago por QR · Envíos a todo el país<br>(costo adicional)</span>
+            </div>
+
+            <div v-if="canBuy" class="flex gap-3">
+              <div class="flex items-center rounded-full border border-default bg-elevated">
+                <UButton icon="i-lucide-minus" color="neutral" variant="ghost" aria-label="Menos" :disabled="buyQty <= 1" @click="changeQty(-1)" />
+                <span class="w-8 text-center font-display font-bold tabular-nums">{{ buyQty }}</span>
+                <UButton icon="i-lucide-plus" color="neutral" variant="ghost" aria-label="Más" :disabled="buyQty >= CART_MAX_QTY" @click="changeQty(1)" />
+              </div>
+              <UButton block size="lg" icon="i-lucide-shopping-cart" class="flex-1" @click="addToCart">
+                Agregar al carrito
+              </UButton>
+            </div>
+            <UButton v-if="inCart" to="/cart" block color="neutral" variant="subtle" icon="i-lucide-arrow-right" trailing>
+              Ver carrito ({{ cart.count.value }})
+            </UButton>
+            <UButton
+              v-if="!canBuy && whatsappLink"
+              :to="whatsappLink"
+              target="_blank"
+              block
+              size="lg"
+              color="neutral"
+              variant="subtle"
+              icon="i-lucide-message-circle"
+            >
+              Consultar por WhatsApp
+            </UButton>
+            <p v-else-if="!canBuy" class="text-sm text-muted">
+              Esta pieza aún no tiene precio publicado. Escríbenos por nuestras redes para cotizarla.
+            </p>
+          </div>
+
           <!-- Availability -->
           <div class="flex flex-col gap-2 rounded-2xl border border-default bg-muted p-4">
             <div class="flex items-center justify-between">
@@ -225,7 +307,8 @@ async function onToggle() {
                   v-if="!collected"
                   block
                   size="lg"
-                  color="secondary"
+                  color="neutral"
+                  variant="subtle"
                   icon="i-lucide-package"
                   :loading="busy"
                   :disabled="busy"
@@ -278,7 +361,7 @@ async function onToggle() {
           </div>
 
           <div v-else class="flex flex-col gap-3">
-            <UButton to="/login" block size="lg" color="secondary" icon="i-lucide-log-in">
+            <UButton to="/login" block size="lg" color="neutral" variant="subtle" icon="i-lucide-log-in">
               Inicia sesión para conseguir esta pieza
             </UButton>
             <UButton to="/login" block size="lg" color="neutral" variant="subtle" icon="i-lucide-bookmark">
@@ -290,7 +373,7 @@ async function onToggle() {
           <div class="flex flex-col gap-4 rounded-2xl border border-default bg-muted p-5">
             <div class="flex items-center gap-2">
               <UIcon name="i-lucide-clipboard-list" class="size-5 text-gold" />
-              <span class="font-display font-bold uppercase tracking-wide">Ficha técnica</span>
+              <span class="font-display font-bold">Ficha técnica</span>
             </div>
             <dl v-if="specFields.length" class="grid grid-cols-2 gap-3">
               <div v-for="field in specFields" :key="field.label" class="flex flex-col rounded-xl border border-default bg-elevated p-3">

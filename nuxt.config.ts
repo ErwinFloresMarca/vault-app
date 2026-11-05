@@ -27,6 +27,9 @@ export default defineNuxtConfig({
   // (og:image) las encuentre al renderizar las cards.
   fonts: {
     families: [
+      // Figtree: tipografía de la interfaz (estilo MakerWorld).
+      { name: 'Figtree', weights: [400, 500, 600, 700, 800, 900], global: true },
+      // Plus Jakarta / Hanken: se mantienen para las og:image (satori).
       { name: 'Plus Jakarta Sans', weights: [500, 600, 700, 800], global: true },
       { name: 'Hanken Grotesk', weights: [400, 500, 600, 700], global: true },
     ],
@@ -85,6 +88,13 @@ export default defineNuxtConfig({
     smtpUser: process.env.NUXT_SMTP_USER || '',
     smtpPass: process.env.NUXT_SMTP_PASS || '',
     smtpFrom: process.env.NUXT_SMTP_FROM || 'noreply@volt3d.com',
+    // Correo(s) que reciben el aviso de cada pedido nuevo (separados por comas).
+    orderNotifyEmail: process.env.NUXT_ORDER_NOTIFY_EMAIL || '',
+    // Correos que serán administradores automáticamente al iniciar sesión (separados por comas).
+    adminEmails: process.env.NUXT_ADMIN_EMAILS || '',
+    // Imagen del QR de pago que va en el correo "Pedido realizado" (URL completa o ruta
+    // pública, p. ej. /images/qr-pago.png). Vacío = el correo dice que se enviará aparte.
+    paymentQrUrl: process.env.NUXT_PAYMENT_QR_URL || '',
 
     // OAuth
     oauth: {

@@ -42,6 +42,16 @@ async function ensureUniqueItemSlug(slug: string, excludeId?: string): Promise<s
   }
 }
 
+/** Precio en Bs: vacío/null → null; valida número >= 0 con 2 decimales. */
+function normalizePrice(value: number | string | null | undefined): number | null {
+  if (value === undefined || value === null || value === '') return null
+  const n = typeof value === 'number' ? value : Number(String(value).replace(',', '.'))
+  if (!Number.isFinite(n) || n < 0) {
+    throw createError({ statusCode: 422, statusMessage: 'El precio debe ser un número mayor o igual a 0' })
+  }
+  return Math.round(n * 100) / 100
+}
+
 function toFiles(files: ItemFileRow[]): FileDto[] {
   return files.map((f) => ({ id: f.file.id, url: f.file.url, alt: f.alt, position: f.position }))
 }
@@ -56,6 +66,7 @@ function toItemSummary(i: ItemFilesPayload): ItemSummary {
     description: i.description,
     stock: i.stock,
     soldQuantity: i.soldQuantity,
+    price: i.price != null ? Number(i.price) : null,
     status: i.status,
     rarity: i.rarity,
     mainImage: main ?? null,
@@ -74,6 +85,7 @@ export const itemService = {
     stockInicial?: number
     status?: ItemStatus
     rarity?: Rarity
+    price?: number | string | null
     spec?: ItemSpecDto
   }) {
     const collection = await prisma.collection.findUnique({ where: { id: input.collectionId } })
@@ -92,6 +104,7 @@ export const itemService = {
           description: input.description,
           status: input.status ?? 'AVAILABLE',
           rarity: input.rarity,
+          price: normalizePrice(input.price) ?? undefined,
           files: input.fileIds?.length
             ? { create: input.fileIds.map((fileId, idx) => ({ fileId, position: idx })) }
             : undefined,
@@ -118,6 +131,7 @@ export const itemService = {
     fileIds?: string[]
     status?: ItemStatus
     rarity?: Rarity
+    price?: number | string | null
     spec?: ItemSpecDto
   }) {
     const existing = await prisma.collectionItem.findUnique({ where: { id } })
@@ -132,6 +146,7 @@ export const itemService = {
     if (input.description !== undefined) data.description = input.description
     if (input.status !== undefined) data.status = input.status
     if (input.rarity !== undefined) data.rarity = input.rarity
+    if (input.price !== undefined) data.price = normalizePrice(input.price)
 
     return prisma.$transaction(async (tx) => {
       if (input.fileIds) {

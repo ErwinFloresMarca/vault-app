@@ -31,3 +31,18 @@ export async function requireAdmin(event: H3Event) {
   }
   return user
 }
+
+/**
+ * Administradores por configuración: si el correo del usuario está en
+ * NUXT_ADMIN_EMAILS (lista separada por comas), se le asigna el rol ADMIN al
+ * iniciar sesión. Solo asciende (nunca quita el rol a nadie).
+ */
+export async function promoteConfiguredAdmin<T extends { id: string; email: string; role: string }>(user: T): Promise<T> {
+  const list = String(useRuntimeConfig().adminEmails || '')
+    .split(',')
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean)
+  if (user.role === 'ADMIN' || !list.includes(user.email.trim().toLowerCase())) return user
+  const updated = await prisma.user.update({ where: { id: user.id }, data: { role: 'ADMIN' } })
+  return { ...user, role: updated.role }
+}

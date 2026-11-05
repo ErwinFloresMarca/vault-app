@@ -1,12 +1,10 @@
 <template>
   <div class="relative flex min-h-screen items-center justify-center overflow-hidden px-4">
-    <div class="pointer-events-none absolute -top-32 left-1/2 size-[520px] -translate-x-1/2 rounded-full bg-volt/15 blur-[150px]" />
-    <div class="pointer-events-none absolute bottom-0 right-1/4 size-80 rounded-full bg-gold/10 blur-[140px]" />
 
     <div class="relative w-full max-w-md">
       <div class="mb-8 text-center">
         <div class="mb-4 flex justify-center">
-          <img src="/icon-192.png" alt="Volt Vault" class="h-16 w-16 rounded-2xl">
+          <img src="/logos/volt-vault-logo.png" alt="Volt Vault" class="size-20 object-contain">
         </div>
         <h1 class="font-display text-3xl font-extrabold tracking-tight">Volt Vault</h1>
         <p class="label-caps mt-2 text-volt">La bóveda de coleccionables</p>
