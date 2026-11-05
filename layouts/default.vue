@@ -31,7 +31,7 @@
           <NuxtLink to="/privacy" class="hover:text-default">Privacidad</NuxtLink>
           <NuxtLink to="/terms" class="hover:text-default">Términos</NuxtLink>
         </div>
-        <p>© {{ new Date().getFullYear() }} Volt Vault</p>
+        <p>© {{ new Date().getFullYear() }} Volt Vault · v{{ $config.public.version }}</p>
       </div>
     </aside>
 

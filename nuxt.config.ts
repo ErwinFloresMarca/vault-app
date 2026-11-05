@@ -1,5 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
+
+const { version } = JSON.parse(readFileSync('package.json', 'utf-8'))
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
@@ -110,6 +113,7 @@ export default defineNuxtConfig({
 
     // Public keys - disponibles en cliente
     public: {
+      version,
       apiBase: process.env.NUXT_API_BASE_URL || 'http://localhost:3000',
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'http://localhost:3000',
       exchangeRateApiKey: process.env.NUXT_EXCHANGE_RATE_API_KEY || '',
