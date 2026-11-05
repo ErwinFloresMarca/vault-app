@@ -75,7 +75,6 @@ const completed = computed(() => !!collection.value?.progress && percent.value =
         <div class="mt-4 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div class="flex flex-col gap-3">
             <div class="flex items-center gap-2">
-              <span class="h-4 w-1.5 rounded-full bg-primary" />
               <span class="label-caps text-primary">Bóveda de colección</span>
             </div>
             <h1 class="font-display text-display font-extrabold tracking-tight">{{ collection.name }}</h1>
@@ -156,7 +155,6 @@ const completed = computed(() => !!collection.value?.progress && percent.value =
         class="relative mt-10 overflow-hidden rounded-2xl border p-6 lg:p-8"
         :class="completed ? 'border-gold/40 bg-gold/5' : 'border-default bg-muted'"
       >
-        <div class="pointer-events-none absolute -bottom-16 -right-16 size-52 rounded-full bg-gold/10 blur-2xl" />
         <div class="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <div class="flex items-center gap-4">
             <div

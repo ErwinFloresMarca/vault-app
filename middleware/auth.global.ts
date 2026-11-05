@@ -15,6 +15,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
     '/collections',
     '/privacy',
     '/terms',
+    '/cart',
   ]
 
   // Catálogo público (incluye rutas dinámicas /collections/[slug]/…).

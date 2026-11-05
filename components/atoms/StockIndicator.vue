@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center gap-1.5 text-sm">
+  <div class="flex items-center gap-1.5 text-xs">
     <span class="size-2 rounded-full" :class="dotClass" />
     <span class="text-muted">{{ label }}</span>
   </div>

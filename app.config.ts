@@ -1,10 +1,21 @@
 export default defineAppConfig({
+  // Datos de marca usados por la interfaz (redes en sidebar y pie de página).
+  volt: {
+    // WhatsApp de ventas en formato internacional sin "+" (p. ej. '59170000000').
+    // Vacío = se ocultan los botones de WhatsApp.
+    whatsapp: '',
+    social: [
+      { label: 'Instagram', url: 'https://www.instagram.com/volt3d.bo/', icon: 'i-lucide-instagram' },
+      { label: 'Facebook', url: 'https://www.facebook.com/profile.php?id=61589067363553', icon: 'i-lucide-facebook' },
+      { label: 'TikTok', url: 'https://www.tiktok.com/@volt3d.bo', icon: 'tiktok' },
+    ],
+  },
   ui: {
     colors: {
       // Paletas definidas en assets/css/main.css (@theme static).
-      primary: 'gold',
+      primary: 'brand',
       secondary: 'volt',
-      neutral: 'slate',
+      neutral: 'neutral',
     },
     // Botones: pill, tipografía display y negrita (DESIGN.md).
     button: {
@@ -12,22 +23,22 @@ export default defineAppConfig({
         base: 'rounded-full font-display font-bold',
       },
     },
-    // Badges/chips: pill + etiqueta técnica (label-caps).
+    // Badges/chips: pill compacta, sin mayúsculas forzadas (estilo MakerWorld).
     badge: {
       slots: {
-        base: 'rounded-full font-display font-bold uppercase tracking-wider',
+        base: 'rounded-full font-display font-semibold',
       },
     },
-    // Tarjetas: enclosures grandes (rounded-2xl = 3rem).
+    // Tarjetas: esquinas moderadas (rounded-xl = 0.75rem).
     card: {
       slots: {
-        root: 'rounded-2xl',
+        root: 'rounded-xl',
       },
     },
-    // Inputs y controles: rounded-xl (2rem) según DESIGN.md.
-    input: { slots: { base: 'rounded-xl' } },
-    textarea: { slots: { base: 'rounded-xl' } },
-    select: { slots: { base: 'rounded-xl' } },
+    // Inputs y controles: rounded-lg.
+    input: { slots: { base: 'rounded-lg' } },
+    textarea: { slots: { base: 'rounded-lg' } },
+    select: { slots: { base: 'rounded-lg' } },
     formField: { slots: { label: 'label-caps text-default' } },
     navigationMenu: { slots: { link: 'font-display font-semibold' } },
   },

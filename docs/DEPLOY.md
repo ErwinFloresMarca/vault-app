@@ -41,7 +41,11 @@ el **puerto 3010** y la **misma Postgres** (contenedor `coin-holder-db`, BD
 
 `DATABASE_URL` (127.0.0.1), `NUXT_SESSION_PASSWORD`, OAuth Google/Facebook
 (reutilizados de coin-holder), `PORT=3010`, `NUXT_PUBLIC_SITE_URL`/`NUXT_API_BASE_URL`
-= `https://vault.volt-3d.store`, SMTP y exchange rate.
+= `https://vault.volt-3d.store`, SMTP y exchange rate. Desde m21 (pedidos):
+`NUXT_ORDER_NOTIFY_EMAIL` (correo(s) que reciben el aviso de cada pedido, separados por
+comas) y SMTP real (`NUXT_SMTP_HOST/PORT/USER/PASS/FROM`); sin SMTP el pedido se crea
+igual pero no llega el aviso. Administradores: `NUXT_ADMIN_EMAILS` (correos separados por
+comas) reciben el rol ADMIN automáticamente al iniciar sesión (solo asciende, no quita roles).
 
 ## Flujo de release
 

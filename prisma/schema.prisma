@@ -34,10 +34,13 @@ model User {
   achievements  UserAchievement[]
   apiKeys       ApiKey[]
 
-  registeredBatches InventoryBatch[] @relation("RegisteredBy")
-  customerBatches   InventoryBatch[] @relation("Customer")
+  registeredBatches   InventoryBatch[]    @relation("RegisteredBy")
+  customerBatches     InventoryBatch[]    @relation("Customer")
   registeredMovements InventoryMovement[] @relation("RegisteredBy")
   customerMovements   InventoryMovement[] @relation("Customer")
+
+  orders        Order[] @relation("OrderCustomer")
+  printedOrders Order[] @relation("OrderPrinter")
 }
 
 model OAuthAccount {
@@ -59,12 +62,12 @@ model OAuthAccount {
 // ===== FILES (imágenes y recursos) =====
 
 model File {
-  id        String    @id @default(cuid())
-  url       String    @unique // URL de acceso (web o /uploads/... local)
+  id        String   @id @default(cuid())
+  url       String   @unique // URL de acceso (web o /uploads/... local)
   path      String? // ruta local en disco si aplica
   mimeType  String?
   size      Int?
-  createdAt DateTime  @default(now())
+  createdAt DateTime @default(now())
 
   collections CollectionFile[]
   items       ItemFile[]
@@ -104,9 +107,9 @@ model Collection {
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
 
-  items      CollectionItem[]
-  tags       CollectionTag[]
-  files      CollectionFile[]
+  items            CollectionItem[]
+  tags             CollectionTag[]
+  files            CollectionFile[]
   inventoryBatches InventoryBatch[]
 
   @@index([status])
@@ -119,6 +122,7 @@ model CollectionItem {
   slug         String     @unique
   sourceUrl    String?    @unique // URL canónica del origen (importación externa)
   description  String?
+  price        Decimal?   @db.Decimal(10, 2) // precio de venta en Bs (null = sin precio, no se vende por carrito)
   stock        Int        @default(0) // denormalizado, se actualiza atómicamente con movimientos
   soldQuantity Int        @default(0) // denormalizado, derivado de movimientos SALE
   status       ItemStatus @default(DRAFT)
@@ -127,12 +131,13 @@ model CollectionItem {
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 
-  collection  Collection    @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  collection  Collection          @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   files       ItemFile[]
   movements   InventoryMovement[]
   collectedBy UserCollectedItem[]
   wishlist    UserWishlistItem[]
   spec        ItemSpec?
+  orderItems  OrderItem[]
 
   @@index([collectionId])
   @@index([status])
@@ -140,8 +145,8 @@ model CollectionItem {
 
 // Ficha técnica opcional del coleccionable (1:1 con el item).
 model ItemSpec {
-  id       String @id @default(cuid())
-  itemId   String @unique
+  id       String  @id @default(cuid())
+  itemId   String  @unique
   scale    String? // Escala / Altura (p. ej. "18 cm")
   material String? // Material / Acabado (p. ej. "Vinilo mate")
   lighting String? // Iluminación integrada
@@ -153,11 +158,11 @@ model ItemSpec {
 // ===== TAGS =====
 
 model Tag {
-  id        String        @id @default(cuid())
-  name      String        @unique
-  slug      String        @unique
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   collections CollectionTag[]
 }
@@ -176,10 +181,10 @@ model CollectionTag {
 // ===== RELACIONES FILE ↔ CATÁLOGO (M:N) =====
 
 model CollectionFile {
-  id           String @id @default(cuid())
+  id           String  @id @default(cuid())
   collectionId String
   fileId       String
-  position     Int    @default(0) // 0 = portada
+  position     Int     @default(0) // 0 = portada
   alt          String?
 
   collection Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
@@ -190,10 +195,10 @@ model CollectionFile {
 }
 
 model ItemFile {
-  id       String @id @default(cuid())
+  id       String  @id @default(cuid())
   itemId   String
   fileId   String
-  position Int    @default(0) // 0 = imagen principal
+  position Int     @default(0) // 0 = imagen principal
   alt      String?
 
   item CollectionItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
@@ -263,24 +268,24 @@ model InventoryBatch {
   customerName   String?
   customerEmail  String?
 
-  createdAt DateTime              @default(now())
+  createdAt DateTime @default(now())
 
-  collection Collection?          @relation(fields: [collectionId], references: [id], onDelete: SetNull)
-  movements  InventoryMovement[]
-  registeredBy User? @relation("RegisteredBy", fields: [registeredByUserId], references: [id], onDelete: SetNull)
-  customer    User? @relation("Customer", fields: [customerUserId], references: [id], onDelete: SetNull)
+  collection   Collection?         @relation(fields: [collectionId], references: [id], onDelete: SetNull)
+  movements    InventoryMovement[]
+  registeredBy User?               @relation("RegisteredBy", fields: [registeredByUserId], references: [id], onDelete: SetNull)
+  customer     User?               @relation("Customer", fields: [customerUserId], references: [id], onDelete: SetNull)
 
   @@index([collectionId])
   @@index([createdAt])
 }
 
 model InventoryMovement {
-  id        String               @id @default(cuid())
-  itemId    String
-  batchId   String?
-  type      InventoryMovementType
-  quantity  Int
-  reason    String?
+  id       String                @id @default(cuid())
+  itemId   String
+  batchId  String?
+  type     InventoryMovementType
+  quantity Int
+  reason   String?
 
   // Persona que registra (heredada del batch en movimientos agrupados).
   registeredByUserId String?
@@ -292,12 +297,12 @@ model InventoryMovement {
   customerName   String?
   customerEmail  String?
 
-  createdAt DateTime             @default(now())
+  createdAt DateTime @default(now())
 
-  item CollectionItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
-  batch InventoryBatch? @relation(fields: [batchId], references: [id], onDelete: Cascade)
-  registeredBy User? @relation("RegisteredBy", fields: [registeredByUserId], references: [id], onDelete: SetNull)
-  customer      User? @relation("Customer", fields: [customerUserId], references: [id], onDelete: SetNull)
+  item         CollectionItem  @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  batch        InventoryBatch? @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  registeredBy User?           @relation("RegisteredBy", fields: [registeredByUserId], references: [id], onDelete: SetNull)
+  customer     User?           @relation("Customer", fields: [customerUserId], references: [id], onDelete: SetNull)
 
   @@index([itemId])
   @@index([batchId])
@@ -367,4 +372,80 @@ model UserAchievement {
 
   @@unique([userId, achievementId])
   @@index([achievementId])
+}
+
+// ===== PEDIDOS (carrito / checkout, m21) =====
+
+enum OrderStatus {
+  PENDING_PAYMENT // creado desde el carrito, esperando pago por QR
+  PAID
+  IN_PRODUCTION
+  READY
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum DeliveryMethod {
+  PICKUP // retiro / entrega en la ciudad
+  SHIPPING // envío departamental (costo adicional)
+}
+
+model Order {
+  id     String      @id @default(cuid())
+  number Int         @unique @default(autoincrement()) // correlativo interno (solo admin)
+  code   String      @unique // código único que ve el cliente (p. ej. VV-7K3P-Q9RT)
+  status OrderStatus @default(PENDING_PAYMENT)
+
+  // Cliente (puede pedir sin cuenta; si tiene sesión se vincula userId).
+  // El correo es el contacto principal; WhatsApp es secundario.
+  userId         String?
+  customerName   String
+  customerPhone  String? // WhatsApp (contacto secundario)
+  customerEmail  String // correo (contacto principal: avisos del pedido)
+  customerCity   String
+  deliveryMethod DeliveryMethod @default(PICKUP)
+  address        String?
+  notes          String?
+
+  // Montos en Bs
+  subtotal     Decimal @db.Decimal(10, 2)
+  shippingCost Decimal @default(0) @db.Decimal(10, 2)
+
+  // Reparto entre socios (contrato): quien imprime recupera su costo y la
+  // utilidad neta (total - costo de impresión - otros gastos) se divide 50/50.
+  printCost       Decimal @default(0) @db.Decimal(10, 2)
+  otherCosts      Decimal @default(0) @db.Decimal(10, 2)
+  printedByUserId String?
+  adminNotes      String?
+
+  confirmedAt DateTime? // cuándo se confirmó el pago (se envió "Pedido confirmado")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  items     OrderItem[]
+  user      User?       @relation("OrderCustomer", fields: [userId], references: [id], onDelete: SetNull)
+  printedBy User?       @relation("OrderPrinter", fields: [printedByUserId], references: [id], onDelete: SetNull)
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([userId])
+}
+
+model OrderItem {
+  id             String  @id @default(cuid())
+  orderId        String
+  itemId         String?
+  // Copia de los datos al momento del pedido (aunque el item cambie o se borre)
+  name           String
+  collectionName String?
+  imageUrl       String?
+  unitPrice      Decimal @db.Decimal(10, 2)
+  quantity       Int
+
+  order Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  item  CollectionItem? @relation(fields: [itemId], references: [id], onDelete: SetNull)
+
+  @@index([orderId])
+  @@index([itemId])
 }

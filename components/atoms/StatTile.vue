@@ -1,7 +1,7 @@
 <template>
-  <div class="flex items-center gap-4 rounded-2xl border border-default bg-muted p-4 transition-colors hover:bg-elevated">
+  <div class="flex items-center gap-4 rounded-xl border border-default bg-muted p-4 transition-colors hover:border-accented hover:bg-elevated">
     <div
-      class="flex size-12 shrink-0 items-center justify-center rounded-full"
+      class="flex size-11 shrink-0 items-center justify-center rounded-lg"
       :style="{ backgroundColor: `color-mix(in srgb, ${info.color} 18%, transparent)`, color: info.color }"
     >
       <UIcon :name="icon" class="size-6" />

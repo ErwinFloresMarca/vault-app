@@ -3,7 +3,7 @@
     <UDashboardSidebar collapsible>
       <template #header="{ collapsed }">
         <NuxtLink to="/admin/dashboard" class="flex items-center gap-2 px-2">
-          <img src="/icon-192.png" alt="" class="h-7 w-7 rounded-lg">
+          <img src="/logos/volt-vault-logo.png" alt="" class="size-8 shrink-0 object-contain">
           <span v-if="!collapsed" class="font-display font-bold tracking-tight">Volt Vault · Admin</span>
         </NuxtLink>
       </template>
@@ -52,6 +52,10 @@ const navItems = computed<NavigationMenuItem[]>(() => [{
   label: 'Dashboard',
   icon: 'i-lucide-layout-dashboard',
   to: '/admin/dashboard',
+}, {
+  label: 'Pedidos',
+  icon: 'i-lucide-receipt-text',
+  to: '/admin/orders',
 }, {
   label: 'Colecciones',
   icon: 'i-lucide-library',
