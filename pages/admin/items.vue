@@ -36,6 +36,21 @@ const columns: TableColumn<ItemRow>[] = [
   { id: 'actions', header: ' ' },
 ]
 
+const itemStatusOptions = [
+  { label: 'Disponible (en stock)', value: 'AVAILABLE' },
+  { label: 'A pedido (se crea al confirmar el pago)', value: 'ON_DEMAND' },
+  { label: 'Agotado', value: 'SOLD_OUT' },
+  { label: 'Borrador', value: 'DRAFT' },
+  { label: 'Archivado', value: 'ARCHIVED' },
+]
+
+const rarityFormOptions = [
+  { label: 'Común', value: 'COMMON' },
+  { label: 'Rara', value: 'RARE' },
+  { label: 'Épica', value: 'EPIC' },
+  { label: 'Legendaria', value: 'LEGENDARY' },
+]
+
 const toast = useToast()
 const localizingId = ref<string | null>(null)
 const localizingAllId = ref<string | null>(null)
@@ -47,7 +62,7 @@ const route = useRoute()
 const router = useRouter()
 const pageSize = 20
 
-const initialStatus = typeof route.query.status === 'string' && ['DRAFT', 'AVAILABLE', 'SOLD_OUT', 'ARCHIVED'].includes(route.query.status)
+const initialStatus = typeof route.query.status === 'string' && ['DRAFT', 'AVAILABLE', 'ON_DEMAND', 'SOLD_OUT', 'ARCHIVED'].includes(route.query.status)
   ? route.query.status
   : 'all'
 const initialRarity = typeof route.query.rarity === 'string' && ['COMMON', 'RARE', 'EPIC', 'LEGENDARY'].includes(route.query.rarity)
@@ -66,6 +81,7 @@ const statusOptions = [
   { label: 'Todos los estados', value: 'all' },
   { label: 'Borrador', value: 'DRAFT' },
   { label: 'Disponible', value: 'AVAILABLE' },
+  { label: 'A pedido', value: 'ON_DEMAND' },
   { label: 'Agotado', value: 'SOLD_OUT' },
   { label: 'Archivado', value: 'ARCHIVED' },
 ]
@@ -156,6 +172,7 @@ const form = reactive({
   collectionId: '',
   stockInicial: 0,
   price: '' as string,
+  priceUndefined: false,
   fileId: null as string | null,
   spec: { scale: '', material: '', lighting: '', base: '' },
 })
@@ -278,6 +295,7 @@ function openCreate() {
   form.collectionId = collections.value[0]?.id ?? ''
   form.stockInicial = 0
   form.price = ''
+  form.priceUndefined = false
   form.fileId = null
   form.spec = { scale: '', material: '', lighting: '', base: '' }
   formError.value = ''
@@ -293,6 +311,7 @@ function openEdit(row: ItemRow) {
   form.collectionId = row.collection?.id ?? ''
   form.stockInicial = 0
   form.price = row.price != null ? String(Number(row.price)) : ''
+  form.priceUndefined = row.price == null
   form.fileId = mainImageOf(row)?.id ?? null
   form.spec = {
     scale: row.spec?.scale ?? '',
@@ -309,22 +328,37 @@ async function save() {
     formError.value = 'El nombre es obligatorio'
     return
   }
-  if (!editing.value && !form.collectionId) {
+  if (!form.collectionId) {
     formError.value = 'Selecciona una colección'
+    return
+  }
+  if (!form.priceUndefined && String(form.price).trim() === '') {
+    formError.value = 'Pon un precio o marca «Precio indefinido»'
     return
   }
   saving.value = true
   formError.value = ''
   try {
     if (editing.value) {
+      // Solo se tocan las fotos si cambió la principal; así no se pierde la
+      // galería (antes se reemplazaban todas por la principal al guardar).
+      const originalMainId = mainImageOf(editing.value)?.id ?? null
+      let fileIds: string[] | undefined
+      if (form.fileId && form.fileId !== originalMainId) {
+        const others = (editing.value.files ?? [])
+          .map((f) => f.file.id)
+          .filter((fid) => fid !== form.fileId && fid !== originalMainId)
+        fileIds = [form.fileId, ...others]
+      }
       const payload = {
         name: form.name,
         description: form.description || undefined,
         status: form.status,
         rarity: form.rarity,
-        price: form.price === '' ? null : form.price,
-        fileIds: form.fileId ? [form.fileId] : undefined,
+        price: form.priceUndefined || form.price === '' ? null : form.price,
+        fileIds,
         spec: form.spec,
+        collectionId: form.collectionId,
       }
       await $fetch(`/api/admin/items/${editing.value.id}`, { method: 'PUT', body: payload })
     } else {
@@ -337,7 +371,7 @@ async function save() {
           rarity: form.rarity,
           collectionId: form.collectionId,
           stockInicial: Number(form.stockInicial) || 0,
-          price: form.price === '' ? null : form.price,
+          price: form.priceUndefined || form.price === '' ? null : form.price,
           fileIds: form.fileId ? [form.fileId] : undefined,
           spec: form.spec,
         },
@@ -433,7 +467,7 @@ async function remove(row: ItemRow) {
           </template>
           <template #price-cell="{ row }">
             <span v-if="row.original.price != null" class="font-display font-semibold tabular-nums">Bs {{ Number(row.original.price).toFixed(2) }}</span>
-            <span v-else class="text-xs text-muted">Sin precio</span>
+            <span v-else class="text-xs text-muted">Indefinido</span>
           </template>
           <template #rarity-cell="{ row }">
             <RarityBadge :rarity="row.original.rarity" />
@@ -494,7 +528,7 @@ async function remove(row: ItemRow) {
         <UFormField label="Nombre">
           <UInput v-model="form.name" />
         </UFormField>
-        <UFormField v-if="!editing" label="Colección">
+        <UFormField label="Colección" :help="editing ? 'Cámbiala para mover el item a otra colección.' : undefined">
           <USelect v-model="form.collectionId" :items="collections.map(c => ({ label: c.name, value: c.id }))" />
         </UFormField>
         <UFormField label="Descripción (Markdown)">
@@ -526,13 +560,19 @@ async function remove(row: ItemRow) {
           </div>
         </UFormField>
         <UFormField label="Estado">
-          <USelect v-model="form.status" :items="['AVAILABLE', 'DRAFT', 'SOLD_OUT', 'ARCHIVED']" />
+          <USelect v-model="form.status" :items="itemStatusOptions" />
         </UFormField>
         <UFormField label="Rareza">
-          <USelect v-model="form.rarity" :items="['COMMON', 'RARE', 'EPIC', 'LEGENDARY']" />
+          <USelect v-model="form.rarity" :items="rarityFormOptions" />
         </UFormField>
-        <UFormField label="Precio de venta (Bs)" help="Déjalo vacío si no se vende por el carrito (se mostrará «Consultar precio»).">
-          <UInput v-model="form.price" type="number" min="0" step="0.5" placeholder="Ej.: 45" />
+        <UFormField
+          label="Precio de venta (Bs)"
+          help="Con precio indefinido no se vende por el carrito: el catálogo no muestra precio y la ficha dice «Indefinido»."
+        >
+          <div class="flex flex-col gap-2">
+            <UInput v-model="form.price" type="number" min="0" step="0.5" placeholder="Ej.: 45" :disabled="form.priceUndefined" />
+            <UCheckbox v-model="form.priceUndefined" label="Precio indefinido" />
+          </div>
         </UFormField>
         <USeparator label="Ficha técnica (opcional)" />
         <div class="grid grid-cols-2 gap-3">

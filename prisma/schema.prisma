@@ -88,6 +88,7 @@ enum ItemStatus {
   AVAILABLE
   SOLD_OUT
   ARCHIVED
+  ON_DEMAND // "A pedido": se crea al confirmar el pago (se vende aunque no haya stock)
 }
 
 enum Rarity {

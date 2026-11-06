@@ -35,7 +35,7 @@ const targetMode = ref<'new' | 'existing'>('new')
 const newName = ref('')
 const newDescription = ref('')
 const existingCollectionId = ref('')
-const itemStatus = ref<'DRAFT' | 'AVAILABLE'>('DRAFT')
+const itemStatus = ref<'DRAFT' | 'AVAILABLE' | 'ON_DEMAND'>('DRAFT')
 const collectionStatus = ref<'DRAFT' | 'PUBLISHED'>('DRAFT')
 const updateExisting = ref(false)
 
@@ -303,6 +303,7 @@ async function importAll() {
                   :items="[
                     { label: 'Borrador (revisar antes)', value: 'DRAFT' },
                     { label: 'Disponible', value: 'AVAILABLE' },
+                    { label: 'A pedido', value: 'ON_DEMAND' },
                   ]"
                 />
               </UFormField>

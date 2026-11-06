@@ -64,6 +64,7 @@ function toItemSummary(i: ItemWithFilesPayload): ItemSummary {
     name: i.name,
     slug: i.slug,
     description: i.description,
+    price: i.price != null ? Number(i.price) : null,
     stock: i.stock,
     soldQuantity: i.soldQuantity,
     status: i.status,

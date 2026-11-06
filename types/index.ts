@@ -1,7 +1,7 @@
 // Tipos de dominio de Volt Vault compartidos entre frontend y backend.
 
 export type CollectionStatus = 'DRAFT' | 'PUBLISHED' | 'ARCHIVED'
-export type ItemStatus = 'DRAFT' | 'AVAILABLE' | 'SOLD_OUT' | 'ARCHIVED'
+export type ItemStatus = 'DRAFT' | 'AVAILABLE' | 'ON_DEMAND' | 'SOLD_OUT' | 'ARCHIVED'
 export type Rarity = 'COMMON' | 'RARE' | 'EPIC' | 'LEGENDARY'
 
 export interface FileDto {

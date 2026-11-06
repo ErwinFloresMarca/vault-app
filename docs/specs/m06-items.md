@@ -10,7 +10,7 @@ pública. El stock se gestiona exclusivamente vía movimientos de inventario (m0
 - `GET /api/collections/:slug/items` → `itemService.listByCollectionSlug`; items
   no `ARCHIVED`, orden `orderIndex`, con flag `collected` si hay sesión.
 - `GET /api/items/:slug` → `itemService.getBySlug`. Un visitante anónimo solo ve
-  items `AVAILABLE` o `SOLD_OUT` (404 en otro estado). Devuelve `ItemDetail`:
+  items `AVAILABLE`, `ON_DEMAND` o `SOLD_OUT` (404 en otro estado). Devuelve `ItemDetail`:
   `collection {id,name,slug}`, `files[]`, `tags[]` (hoy siempre vacío),
   `stock, soldQuantity, status, rarity, collected`, más `wishlisted`,
   `collectedCount` y `wishlistCount` (contador social).
@@ -33,7 +33,9 @@ pública. El stock se gestiona exclusivamente vía movimientos de inventario (m0
 - `GET /api/admin/items/:id` — detalle con collection, files, movements y
   collectedBy.
 - `PUT /api/admin/items/:id` — `name` (regenera slug), `description`, `fileIds`
-  (reemplazo en transacción), `status` y `rarity`. **No** modifica stock.
+  (reemplazo en transacción), `status`, `rarity`, `price` y `collectionId` (mueve el
+  item a otra colección: queda al final y se recalcula la gamificación de quienes
+  tienen piezas en la colección de origen o destino). **No** modifica stock.
 - `DELETE /api/admin/items/:id` — **soft delete**: `status = ARCHIVED`.
 
 ## Página

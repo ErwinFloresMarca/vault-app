@@ -8,7 +8,7 @@ import type { McpContext } from '../types'
 
 const STATUS = z.enum(['DRAFT', 'PUBLISHED', 'ARCHIVED'])
 const RARITY = z.enum(['COMMON', 'RARE', 'EPIC', 'LEGENDARY'])
-const ITEM_STATUS = z.enum(['DRAFT', 'AVAILABLE', 'SOLD_OUT', 'ARCHIVED'])
+const ITEM_STATUS = z.enum(['DRAFT', 'AVAILABLE', 'ON_DEMAND', 'SOLD_OUT', 'ARCHIVED'])
 const ITEM_SPEC = z.object({
   scale: z.string().optional(),
   material: z.string().optional(),
@@ -149,7 +149,7 @@ export function registerCatalogTools(server: McpServer, ctx: McpContext) {
     'update_item',
     {
       title: 'Actualizar item',
-      description: 'Actualiza un item por id (name/description/fileIds/status/rarity/spec). No cambia stock.',
+      description: 'Actualiza un item por id (name/description/fileIds/status/rarity/spec/collectionId). collectionId mueve el item a otra colección. No cambia stock.',
       inputSchema: {
         id: z.string(),
         name: z.string().min(1).optional(),
@@ -158,6 +158,7 @@ export function registerCatalogTools(server: McpServer, ctx: McpContext) {
         status: ITEM_STATUS.optional(),
         rarity: RARITY.optional(),
         spec: ITEM_SPEC.optional(),
+        collectionId: z.string().optional(),
       },
       annotations: { readOnlyHint: false },
     },
@@ -170,6 +171,7 @@ export function registerCatalogTools(server: McpServer, ctx: McpContext) {
           status: args.status,
           rarity: args.rarity,
           spec: args.spec,
+          collectionId: args.collectionId,
         })),
   )
 

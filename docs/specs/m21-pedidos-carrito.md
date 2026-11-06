@@ -12,8 +12,13 @@ impresión, ver el **reparto 50/50** (contrato de socios) y **exportar a Excel**
 
 ## Alcance
 
-- `CollectionItem.price` (Decimal Bs, nullable). Sin precio → no se puede agregar al carrito
-  (la ficha muestra "Consultar precio").
+- `CollectionItem.price` (Decimal Bs, nullable). Sin precio (= **precio indefinido**) → no se
+  puede agregar al carrito; la ficha muestra "Indefinido" y el catálogo no muestra precio.
+- Disponibilidad de venta (`utils/itemAvailability.ts`, compartido por tienda y servidor):
+  se puede pedir un item **Disponible con stock > 0** o **A pedido** (`ON_DEMAND`, se crea al
+  confirmar el pago, no depende del stock). Agotado (`SOLD_OUT` o Disponible sin stock),
+  Borrador y Archivado no se pueden pedir. Las tarjetas del catálogo solo muestran el precio
+  cuando el item se puede pedir y tiene precio definido.
 - Modelos `Order` / `OrderItem` (`prisma/schema.prisma`). `OrderItem` guarda copia de
   nombre, colección, imagen y precio unitario al momento del pedido.
 - Estados (`OrderStatus`): `PENDING_PAYMENT` (**Pedido realizado**) → `PAID` (**Pedido
@@ -35,8 +40,8 @@ impresión, ver el **reparto 50/50** (contrato de socios) y **exportar a Excel**
   `volt.whatsapp` está configurado en `app.config.ts`).
 
 ### API
-- `POST /api/orders` (pública): devuelve solo el código del cliente. Valida datos y items (existen, publicados, con precio,
-  cantidad 1–50). **El precio lo calcula el servidor**, nunca se confía en el cliente.
+- `POST /api/orders` (pública): devuelve solo el código del cliente. Valida datos y items (existen, publicados, que se puedan
+  pedir según `isSellable`, con precio, cantidad 1–50). **El precio lo calcula el servidor**, nunca se confía en el cliente.
   Rate limit por IP (5 pedidos / 10 min). Envía el correo de aviso sin bloquear la respuesta.
 - `GET /api/admin/orders` (admin): filtros `status`, `from`, `to`, `q`, paginación.
 - `GET|PUT /api/admin/orders/:id` (admin): detalle y actualización de estado, costo de

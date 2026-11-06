@@ -3,6 +3,7 @@ import { prisma } from '~/server/utils/db'
 import { escapeHtml, sendMail } from '~/server/utils/mailer'
 import type { DeliveryMethod, OrderStatus, Prisma } from '@gen-prisma/client'
 import type { CreateOrderInput, OrderDto, OrderSplit } from '~/types'
+import { isSellable } from '~/utils/itemAvailability'
 
 export const ORDER_STATUSES: OrderStatus[] = ['PENDING_PAYMENT', 'PAID', 'IN_PRODUCTION', 'READY', 'SHIPPED', 'DELIVERED', 'CANCELLED']
 
@@ -329,7 +330,10 @@ export const orderService = {
       if (it.collection.status !== 'PUBLISHED' || it.status === 'DRAFT' || it.status === 'ARCHIVED') {
         fail(`"${it.name}" ya no está disponible. Quítalo del carrito.`)
       }
-      if (it.price == null) fail(`"${it.name}" no tiene precio publicado; consúltalo por WhatsApp.`)
+      if (!isSellable(it.status, it.stock)) {
+        fail(`"${it.name}" está agotado. Quítalo del carrito.`)
+      }
+      if (it.price == null) fail(`"${it.name}" no tiene precio definido; consúltalo por WhatsApp.`)
     }
 
     const lines = items.map((it) => ({

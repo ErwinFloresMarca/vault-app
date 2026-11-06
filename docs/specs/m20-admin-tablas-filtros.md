@@ -39,7 +39,7 @@ Query params:
 | --- | --- | --- |
 | `q` | texto | `name` o `slug` contains, case-insensitive |
 | `collectionId` | id | filtra por colección |
-| `status` | `DRAFT\|AVAILABLE\|SOLD_OUT\|ARCHIVED` | filtra estado |
+| `status` | `DRAFT\|AVAILABLE\|ON_DEMAND\|SOLD_OUT\|ARCHIVED` | filtra estado |
 | `rarity` | `COMMON\|RARE\|EPIC\|LEGENDARY` | filtra rareza |
 | `page` | entero ≥ 1 | activa paginación |
 | `pageSize` | 1..100 (default 20) | tamaño de página |

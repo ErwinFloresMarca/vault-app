@@ -19,6 +19,7 @@ const MAP: Record<AnyStatus, { label: string; color: string }> = {
   DRAFT: { label: 'Borrador', color: '#f59e0b' },
   PUBLISHED: { label: 'Publicado', color: '#22c55e' },
   AVAILABLE: { label: 'Disponible', color: '#22c55e' },
+  ON_DEMAND: { label: 'A pedido', color: '#1e90ff' },
   SOLD_OUT: { label: 'Agotado', color: '#ffb4ab' },
   ARCHIVED: { label: 'Archivado', color: '#94a3b8' },
 }

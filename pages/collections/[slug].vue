@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { CollectionWithItems, Rarity } from '~/types'
 import { metaDescription } from '~/utils/seo'
+import { showsPrice } from '~/utils/itemAvailability'
 
 const route = useRoute()
 const slug = computed(() => String(route.params.slug))
@@ -39,6 +40,46 @@ const RARITIES: { key: Rarity; label: string; color: string }[] = [
   { key: 'EPIC', label: 'Épica', color: 'var(--color-rarity-epic)' },
   { key: 'LEGENDARY', label: 'Legendaria', color: 'var(--color-rarity-legendary)' },
 ]
+
+// Orden de las piezas: por defecto del más económico al más caro.
+type SortKey = 'price-asc' | 'price-desc' | 'rarity-asc' | 'rarity-desc' | 'series'
+const SORT_OPTIONS: { label: string; value: SortKey }[] = [
+  { label: 'Precio: menor a mayor', value: 'price-asc' },
+  { label: 'Precio: mayor a menor', value: 'price-desc' },
+  { label: 'Rareza: más baja', value: 'rarity-asc' },
+  { label: 'Rareza: más alta', value: 'rarity-desc' },
+  { label: 'Orden de la serie', value: 'series' },
+]
+const sortBy = ref<SortKey>('price-asc')
+const RARITY_RANK: Record<Rarity, number> = { COMMON: 0, RARE: 1, EPIC: 2, LEGENDARY: 3 }
+
+const sortedItems = computed(() => {
+  const items = collection.value?.items ?? []
+  // Precio visible en el catálogo (null si es indefinido o no se puede pedir).
+  const priceOf = (i: (typeof items)[number]) =>
+    showsPrice(i.status, i.stock, i.price) ? Number(i.price) : null
+  // Sin precio visible siempre al final; empates por precio y luego orden de la serie.
+  const byPrice = (a: (typeof items)[number], b: (typeof items)[number], dir: 1 | -1) => {
+    const pa = priceOf(a)
+    const pb = priceOf(b)
+    if (pa == null && pb == null) return 0
+    if (pa == null) return 1
+    if (pb == null) return -1
+    return (pa - pb) * dir
+  }
+  const list = items.map((item, index) => ({ item, index }))
+  list.sort((x, y) => {
+    const a = x.item
+    const b = y.item
+    let diff = 0
+    if (sortBy.value === 'price-asc') diff = byPrice(a, b, 1)
+    else if (sortBy.value === 'price-desc') diff = byPrice(a, b, -1)
+    else if (sortBy.value === 'rarity-asc') diff = RARITY_RANK[a.rarity] - RARITY_RANK[b.rarity] || byPrice(a, b, 1)
+    else if (sortBy.value === 'rarity-desc') diff = RARITY_RANK[b.rarity] - RARITY_RANK[a.rarity] || byPrice(a, b, 1)
+    return diff || x.index - y.index
+  })
+  return list.map((x) => x.item)
+})
 
 const rarityCounts = computed(() => RARITIES.map((r) => ({
   ...r,
@@ -122,30 +163,39 @@ const completed = computed(() => !!collection.value?.progress && percent.value =
       <!-- Items header + view toggle -->
       <div class="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h2 class="font-display text-headline font-bold">Piezas de la serie</h2>
-        <div class="inline-flex w-fit rounded-full border border-default bg-muted p-1">
-          <button
-            type="button"
-            class="label-caps inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 transition-colors"
-            :class="mode === 'grid' ? 'bg-elevated text-default' : 'text-muted hover:text-default'"
-            @click="mode = 'grid'"
-          >
-            <UIcon name="i-lucide-layout-grid" class="size-4" /> Vitrina
-          </button>
-          <button
-            type="button"
-            class="label-caps inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 transition-colors"
-            :class="mode === 'checklist' ? 'bg-elevated text-default' : 'text-muted hover:text-default'"
-            @click="mode = 'checklist'"
-          >
-            <UIcon name="i-lucide-list-checks" class="size-4" /> Checklist
-          </button>
+        <div class="flex flex-wrap items-center gap-2">
+          <USelect
+            v-model="sortBy"
+            :items="SORT_OPTIONS"
+            icon="i-lucide-arrow-down-up"
+            aria-label="Ordenar piezas"
+            class="w-60"
+          />
+          <div class="inline-flex w-fit rounded-full border border-default bg-muted p-1">
+            <button
+              type="button"
+              class="label-caps inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 transition-colors"
+              :class="mode === 'grid' ? 'bg-elevated text-default' : 'text-muted hover:text-default'"
+              @click="mode = 'grid'"
+            >
+              <UIcon name="i-lucide-layout-grid" class="size-4" /> Vitrina
+            </button>
+            <button
+              type="button"
+              class="label-caps inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 transition-colors"
+              :class="mode === 'checklist' ? 'bg-elevated text-default' : 'text-muted hover:text-default'"
+              @click="mode = 'checklist'"
+            >
+              <UIcon name="i-lucide-list-checks" class="size-4" /> Checklist
+            </button>
+          </div>
         </div>
       </div>
 
       <div class="mt-6">
         <template v-if="collection.items.length">
-          <CollectionChecklist v-if="mode === 'checklist'" :items="collection.items" :collection-slug="collection.slug" />
-          <ItemGrid v-else :items="collection.items" :collection-slug="collection.slug" />
+          <CollectionChecklist v-if="mode === 'checklist'" :items="sortedItems" :collection-slug="collection.slug" />
+          <ItemGrid v-else :items="sortedItems" :collection-slug="collection.slug" />
         </template>
         <UEmpty v-else title="Sin piezas" description="Esta colección aún no tiene items publicados." />
       </div>

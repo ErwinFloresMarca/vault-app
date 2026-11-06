@@ -3,6 +3,7 @@ import type { ItemDetail, CollectionWithItems } from '~/types'
 import { metaDescription } from '~/utils/seo'
 import { xpForRarity } from '~/utils/gamification'
 import { CART_MAX_QTY, formatBs } from '~/composables/useCart'
+import { isSellable, saleState } from '~/utils/itemAvailability'
 
 const route = useRoute()
 const itemSlug = computed(() => String(route.params.itemSlug))
@@ -32,6 +33,7 @@ const RARITY_LABEL: Record<string, string> = {
 const STATUS_LABEL: Record<string, string> = {
   DRAFT: 'Borrador',
   AVAILABLE: 'Disponible',
+  ON_DEMAND: 'A pedido',
   SOLD_OUT: 'Agotado',
   ARCHIVED: 'Archivado',
 }
@@ -53,7 +55,9 @@ const cart = useCart()
 const appConfig = useAppConfig()
 const buyQty = ref(1)
 const itemPrice = computed(() => item.value?.price ?? null)
-const canBuy = computed(() => itemPrice.value != null && item.value?.status !== 'SOLD_OUT')
+const sale = computed(() => (item.value ? saleState(item.value.status, item.value.stock) : 'unavailable'))
+const sellable = computed(() => (item.value ? isSellable(item.value.status, item.value.stock) : false))
+const canBuy = computed(() => sellable.value && itemPrice.value != null)
 const inCart = computed(() => (item.value ? cart.has(item.value.id) : false))
 const whatsappLink = computed(() => {
   const number = String(appConfig.volt.whatsapp || '').replace(/\D/g, '')
@@ -120,6 +124,7 @@ const wishlisted = ref(item.value?.wishlisted ?? false)
 const wishlistCount = ref(item.value?.wishlistCount ?? 0)
 
 const stockMeter = computed(() => {
+  if (sale.value !== 'in_stock') return 0
   const stock = item.value?.stock ?? 0
   if (stock <= 0) return 0
   if (stock >= 10) return 100
@@ -223,12 +228,19 @@ async function onToggle() {
             <div class="flex items-end justify-between gap-3">
               <div class="flex flex-col">
                 <span class="label-caps text-muted">Precio</span>
-                <span v-if="itemPrice != null" class="font-display text-3xl font-black tabular-nums">{{ formatBs(itemPrice) }}</span>
-                <span v-else class="font-display text-xl font-bold">Consultar precio</span>
+                <template v-if="sellable">
+                  <span v-if="itemPrice != null" class="font-display text-3xl font-black tabular-nums">{{ formatBs(itemPrice) }}</span>
+                  <span v-else class="font-display text-xl font-bold">Indefinido</span>
+                </template>
+                <span v-else class="font-display text-xl font-bold">{{ sale === 'sold_out' ? 'Agotado' : 'No disponible' }}</span>
               </div>
               <span class="text-right text-xs text-muted">Pago por QR · Envíos a todo el país<br>(costo adicional)</span>
             </div>
 
+            <p v-if="sale === 'on_demand'" class="-mt-1 flex items-center gap-2 text-sm text-muted">
+              <UIcon name="i-lucide-clock" class="size-4 shrink-0 text-volt-blue" />
+              Pieza a pedido: se crea al confirmar el pago.
+            </p>
             <div v-if="canBuy" class="flex gap-3">
               <div class="flex items-center rounded-full border border-default bg-elevated">
                 <UButton icon="i-lucide-minus" color="neutral" variant="ghost" aria-label="Menos" :disabled="buyQty <= 1" @click="changeQty(-1)" />
@@ -255,7 +267,9 @@ async function onToggle() {
               Consultar por WhatsApp
             </UButton>
             <p v-else-if="!canBuy" class="text-sm text-muted">
-              Esta pieza aún no tiene precio publicado. Escríbenos por nuestras redes para cotizarla.
+              {{ sellable
+                ? 'Esta pieza aún no tiene precio definido. Escríbenos por nuestras redes para cotizarla.'
+                : 'Esta pieza no está disponible por ahora. Escríbenos por nuestras redes si te interesa.' }}
             </p>
           </div>
 
@@ -266,9 +280,10 @@ async function onToggle() {
                 <UIcon name="i-lucide-bolt" class="size-4 text-volt" />
                 <span class="font-display text-sm font-semibold">Disponibilidad en almacén</span>
               </div>
-              <StockIndicator :stock="item.stock" />
+              <StockIndicator :stock="item.stock" :status="item.status" />
             </div>
-            <div class="h-2 w-full overflow-hidden rounded-full bg-default p-0.5">
+            <p v-if="sale === 'on_demand'" class="text-xs text-muted">Se crea a pedido: no depende del stock.</p>
+            <div v-else class="h-2 w-full overflow-hidden rounded-full bg-default p-0.5">
               <div
                 class="h-full rounded-full bg-gradient-to-r from-volt to-gold transition-[width] duration-700"
                 :style="{ width: `${stockMeter}%` }"
