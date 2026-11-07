@@ -50,6 +50,8 @@ const specFields = computed<Array<{ label: string; value: string }>>(() => {
   return fields.filter((f): f is { label: string; value: string } => !!f.value)
 })
 
+const itemColors = computed(() => item.value?.spec?.colors ?? [])
+
 // Carrito (m21)
 const cart = useCart()
 const appConfig = useAppConfig()
@@ -70,10 +72,27 @@ function changeQty(delta: number) {
   buyQty.value = Math.min(CART_MAX_QTY, Math.max(1, buyQty.value + delta))
 }
 
+// Color al comprar: con 2+ colores el cliente elige uno para todas las
+// unidades o reparte cantidades por color (cada color = una línea del carrito).
+const needsColor = computed(() => itemColors.value.length > 1)
+const colorMode = ref<'single' | 'split'>('single')
+const pickedColor = ref<string | null>(null)
+const splitQty = ref<Record<string, number>>({})
+const splitTotal = computed(() => Object.values(splitQty.value).reduce((acc, n) => acc + n, 0))
+const canAdd = computed(() => {
+  if (!needsColor.value) return true
+  return colorMode.value === 'single' ? !!pickedColor.value : splitTotal.value > 0
+})
+
+function changeSplit(name: string, delta: number) {
+  const next = Math.min(CART_MAX_QTY, Math.max(0, (splitQty.value[name] ?? 0) + delta))
+  splitQty.value = { ...splitQty.value, [name]: next }
+}
+
 function addToCart() {
   const it = item.value
-  if (!it || itemPrice.value == null) return
-  cart.add({
+  if (!it || itemPrice.value == null || !canAdd.value) return
+  const base = {
     itemId: it.id,
     slug: it.slug,
     collectionSlug: collectionSlug.value,
@@ -81,10 +100,27 @@ function addToCart() {
     collectionName: it.collection.name,
     price: itemPrice.value,
     imageUrl: it.mainImage?.url ?? it.files[0]?.url ?? null,
-  }, buyQty.value)
+  }
+  const added: string[] = []
+  if (needsColor.value && colorMode.value === 'split') {
+    for (const c of itemColors.value) {
+      const qty = splitQty.value[c.name] ?? 0
+      if (qty > 0) {
+        cart.add({ ...base, color: { ...c } }, qty)
+        added.push(`${qty} ${c.name}`)
+      }
+    }
+    splitQty.value = {}
+  } else {
+    const color = needsColor.value
+      ? itemColors.value.find((c) => c.name === pickedColor.value) ?? null
+      : itemColors.value[0] ?? null
+    cart.add({ ...base, color: color ? { ...color } : null }, buyQty.value)
+    added.push(color ? `${buyQty.value} ${color.name}` : `${buyQty.value}`)
+  }
   toast.add({
     title: 'Agregado al carrito',
-    description: `${buyQty.value} × ${it.name}`,
+    description: `${it.name}: ${added.join(', ')}`,
     icon: 'i-lucide-shopping-cart',
     color: 'primary',
     actions: [{ label: 'Ver carrito', to: '/cart', color: 'neutral', variant: 'subtle' }],
@@ -241,14 +277,71 @@ async function onToggle() {
               <UIcon name="i-lucide-clock" class="size-4 shrink-0 text-volt-blue" />
               Pieza a pedido: se crea al confirmar el pago.
             </p>
+            <!-- Color al comprar -->
+            <p v-if="canBuy && itemColors.length === 1" class="flex items-center gap-2 text-sm">
+              <span class="size-4 shrink-0 rounded-full border border-accented" :style="{ backgroundColor: itemColors[0]!.hex }" />
+              Color: <strong>{{ itemColors[0]!.name }}</strong>
+            </p>
+            <div v-if="canBuy && needsColor" class="flex flex-col gap-3 rounded-xl border border-default bg-elevated p-3">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <span class="text-sm font-semibold">Elige el color</span>
+                <div class="inline-flex rounded-full border border-default bg-muted p-0.5 text-xs font-semibold">
+                  <button
+                    type="button"
+                    class="rounded-full px-3 py-1 transition"
+                    :class="colorMode === 'single' ? 'bg-primary text-inverted' : 'text-muted hover:text-highlighted'"
+                    @click="colorMode = 'single'"
+                  >
+                    Un color para todos
+                  </button>
+                  <button
+                    type="button"
+                    class="rounded-full px-3 py-1 transition"
+                    :class="colorMode === 'split' ? 'bg-primary text-inverted' : 'text-muted hover:text-highlighted'"
+                    @click="colorMode = 'split'"
+                  >
+                    Repartir por color
+                  </button>
+                </div>
+              </div>
+              <div v-if="colorMode === 'single'" class="flex flex-wrap gap-2">
+                <button
+                  v-for="c in itemColors"
+                  :key="c.name"
+                  type="button"
+                  class="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold transition"
+                  :class="pickedColor === c.name ? 'border-primary bg-primary/10 text-highlighted' : 'border-default text-muted hover:border-accented'"
+                  :aria-pressed="pickedColor === c.name"
+                  @click="pickedColor = c.name"
+                >
+                  <span class="size-3.5 shrink-0 rounded-full border border-accented" :style="{ backgroundColor: c.hex }" />
+                  {{ c.name }}
+                  <UIcon v-if="pickedColor === c.name" name="i-lucide-check" class="size-3.5 text-primary" />
+                </button>
+              </div>
+              <ul v-else class="flex flex-col gap-1.5">
+                <li v-for="c in itemColors" :key="c.name" class="flex items-center justify-between gap-2">
+                  <span class="flex items-center gap-2 text-sm">
+                    <span class="size-3.5 shrink-0 rounded-full border border-accented" :style="{ backgroundColor: c.hex }" />
+                    {{ c.name }}
+                  </span>
+                  <div class="flex items-center rounded-full border border-default bg-muted">
+                    <UButton icon="i-lucide-minus" color="neutral" variant="ghost" size="xs" :aria-label="`Menos ${c.name}`" :disabled="!splitQty[c.name]" @click="changeSplit(c.name, -1)" />
+                    <span class="w-6 text-center font-display text-sm font-bold tabular-nums">{{ splitQty[c.name] ?? 0 }}</span>
+                    <UButton icon="i-lucide-plus" color="neutral" variant="ghost" size="xs" :aria-label="`Más ${c.name}`" @click="changeSplit(c.name, 1)" />
+                  </div>
+                </li>
+                <li class="text-right text-xs text-muted">Total: {{ splitTotal }} unidad(es)</li>
+              </ul>
+            </div>
             <div v-if="canBuy" class="flex gap-3">
-              <div class="flex items-center rounded-full border border-default bg-elevated">
+              <div v-if="!(needsColor && colorMode === 'split')" class="flex items-center rounded-full border border-default bg-elevated">
                 <UButton icon="i-lucide-minus" color="neutral" variant="ghost" aria-label="Menos" :disabled="buyQty <= 1" @click="changeQty(-1)" />
                 <span class="w-8 text-center font-display font-bold tabular-nums">{{ buyQty }}</span>
                 <UButton icon="i-lucide-plus" color="neutral" variant="ghost" aria-label="Más" :disabled="buyQty >= CART_MAX_QTY" @click="changeQty(1)" />
               </div>
-              <UButton block size="lg" icon="i-lucide-shopping-cart" class="flex-1" @click="addToCart">
-                Agregar al carrito
+              <UButton block size="lg" icon="i-lucide-shopping-cart" class="flex-1" :disabled="!canAdd" @click="addToCart">
+                {{ canAdd ? 'Agregar al carrito' : (colorMode === 'single' ? 'Elige un color' : 'Indica cuántos de cada color') }}
               </UButton>
             </div>
             <UButton v-if="inCart" to="/cart" block color="neutral" variant="subtle" icon="i-lucide-arrow-right" trailing>
@@ -389,6 +482,19 @@ async function onToggle() {
             <div class="flex items-center gap-2">
               <UIcon name="i-lucide-clipboard-list" class="size-5 text-gold" />
               <span class="font-display font-bold">Ficha técnica</span>
+            </div>
+            <div v-if="itemColors.length" class="flex flex-col gap-2">
+              <span class="label-caps text-muted">Colores disponibles</span>
+              <ul class="flex flex-wrap gap-2">
+                <li
+                  v-for="c in itemColors"
+                  :key="c.name"
+                  class="inline-flex items-center gap-1.5 rounded-full border border-default bg-elevated px-2.5 py-1 text-xs font-semibold"
+                >
+                  <span class="size-3.5 shrink-0 rounded-full border border-accented" :style="{ backgroundColor: c.hex }" />
+                  {{ c.name }}
+                </li>
+              </ul>
             </div>
             <dl v-if="specFields.length" class="grid grid-cols-2 gap-3">
               <div v-for="field in specFields" :key="field.label" class="flex flex-col rounded-xl border border-default bg-elevated p-3">

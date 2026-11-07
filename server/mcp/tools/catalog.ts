@@ -14,6 +14,7 @@ const ITEM_SPEC = z.object({
   material: z.string().optional(),
   lighting: z.string().optional(),
   base: z.string().optional(),
+  colors: z.array(z.object({ name: z.string(), hex: z.string().regex(/^#[0-9a-fA-F]{6}$/) })).optional(),
 })
 
 async function resolveTagIds(names?: string[]): Promise<string[] | undefined> {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { TableColumn } from '@nuxt/ui'
-import type { ItemStatus, Rarity, ItemSpecDto } from '~/types'
+import type { ItemStatus, Rarity, ItemSpecDto, ItemColor } from '~/types'
 
 useSeoMeta({ title: 'Items — Volt Vault Admin' })
 
@@ -174,7 +174,7 @@ const form = reactive({
   price: '' as string,
   priceUndefined: false,
   fileId: null as string | null,
-  spec: { scale: '', material: '', lighting: '', base: '' },
+  spec: { scale: '', material: '', lighting: '', base: '', colors: [] as ItemColor[] },
 })
 const formError = ref('')
 
@@ -297,7 +297,7 @@ function openCreate() {
   form.price = ''
   form.priceUndefined = false
   form.fileId = null
-  form.spec = { scale: '', material: '', lighting: '', base: '' }
+  form.spec = { scale: '', material: '', lighting: '', base: '', colors: [] }
   formError.value = ''
   modalOpen.value = true
 }
@@ -318,6 +318,7 @@ function openEdit(row: ItemRow) {
     material: row.spec?.material ?? '',
     lighting: row.spec?.lighting ?? '',
     base: row.spec?.base ?? '',
+    colors: (row.spec?.colors ?? []).map((c) => ({ ...c })),
   }
   formError.value = ''
   modalOpen.value = true
@@ -589,6 +590,12 @@ async function remove(row: ItemRow) {
             <UInput v-model="form.spec.base" placeholder="Ej.: Base acrílica" />
           </UFormField>
         </div>
+        <UFormField
+          label="Colores disponibles (opcional)"
+          help="Marca los colores en que se puede imprimir. Si eliges alguno, aparece en la ficha técnica."
+        >
+          <ItemColorsField v-model="form.spec.colors" />
+        </UFormField>
         <UFormField v-if="!editing" label="Stock inicial">
           <UInput v-model.number="form.stockInicial" type="number" min="0" />
         </UFormField>

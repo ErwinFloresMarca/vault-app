@@ -152,6 +152,7 @@ model ItemSpec {
   material String? // Material / Acabado (p. ej. "Vinilo mate")
   lighting String? // Iluminación integrada
   base     String? // Base / Soporte
+  colors   Json    @default("[]") // Colores disponibles: [{ name, hex }] (vacío = no se muestra)
 
   item CollectionItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
 }
@@ -443,6 +444,9 @@ model OrderItem {
   imageUrl       String?
   unitPrice      Decimal @db.Decimal(10, 2)
   quantity       Int
+  // Color elegido por el cliente (si el item tiene colores disponibles)
+  colorName      String?
+  colorHex       String?
 
   order Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
   item  CollectionItem? @relation(fields: [itemId], references: [id], onDelete: SetNull)

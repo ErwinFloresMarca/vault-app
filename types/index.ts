@@ -65,11 +65,19 @@ export interface ItemDetail extends ItemSummary {
   wishlistCount?: number
 }
 
+export interface ItemColor {
+  name: string
+  /** #RRGGBB */
+  hex: string
+}
+
 export interface ItemSpecDto {
   scale?: string | null
   material?: string | null
   lighting?: string | null
   base?: string | null
+  /** Colores disponibles para imprimir la pieza (vacío = no se muestra). */
+  colors?: ItemColor[] | null
 }
 
 export interface CollectionProgress {
@@ -199,6 +207,9 @@ export interface OrderItemDto {
   unitPrice: number
   quantity: number
   lineTotal: number
+  /** Color elegido (null si el item no tiene colores). */
+  colorName: string | null
+  colorHex: string | null
 }
 
 export interface OrderSplit {
@@ -247,5 +258,6 @@ export interface CreateOrderInput {
   deliveryMethod: DeliveryMethod
   address?: string
   notes?: string
-  items: { itemId: string; quantity: number }[]
+  /** `color`: nombre del color elegido; obligatorio si el item tiene 2+ colores. */
+  items: { itemId: string; quantity: number; color?: string | null }[]
 }

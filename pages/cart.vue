@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { DeliveryMethod } from '~/types'
-import { CART_MAX_QTY, formatBs } from '~/composables/useCart'
+import { CART_MAX_QTY, cartLineKey, formatBs } from '~/composables/useCart'
 
 useSeoMeta({
   title: 'Carrito — Volt Vault',
@@ -55,7 +55,7 @@ async function submit() {
       method: 'POST',
       body: {
         ...form,
-        items: cart.lines.value.map((l) => ({ itemId: l.itemId, quantity: l.quantity })),
+        items: cart.lines.value.map((l) => ({ itemId: l.itemId, quantity: l.quantity, color: l.color?.name ?? null })),
       },
     })
     placed.value = res.data
@@ -137,7 +137,7 @@ async function submit() {
         <section class="flex flex-col gap-3 lg:col-span-7">
           <article
             v-for="line in cart.lines.value"
-            :key="line.itemId"
+            :key="cartLineKey(line)"
             class="flex gap-4 rounded-xl border border-default bg-muted p-3"
           >
             <NuxtLink :to="`/collections/${line.collectionSlug}/${line.slug}`" class="size-24 shrink-0 overflow-hidden rounded-lg bg-elevated">
@@ -148,14 +148,18 @@ async function submit() {
                 <div class="min-w-0">
                   <NuxtLink :to="`/collections/${line.collectionSlug}/${line.slug}`" class="line-clamp-1 font-display font-bold hover:text-primary">{{ line.name }}</NuxtLink>
                   <p class="line-clamp-1 text-xs text-muted">{{ line.collectionName }}</p>
+                  <p v-if="line.color" class="mt-0.5 flex items-center gap-1.5 text-xs">
+                    <span class="size-3 shrink-0 rounded-full border border-accented" :style="{ backgroundColor: line.color.hex }" />
+                    Color: <strong>{{ line.color.name }}</strong>
+                  </p>
                 </div>
-                <UButton icon="i-lucide-x" color="neutral" variant="ghost" size="sm" :aria-label="`Quitar ${line.name}`" @click="cart.remove(line.itemId)" />
+                <UButton icon="i-lucide-x" color="neutral" variant="ghost" size="sm" :aria-label="`Quitar ${line.name}`" @click="cart.remove(cartLineKey(line))" />
               </div>
               <div class="mt-auto flex items-center justify-between gap-2">
                 <div class="flex items-center rounded-full border border-default bg-elevated">
-                  <UButton icon="i-lucide-minus" color="neutral" variant="ghost" size="sm" aria-label="Menos" @click="cart.setQuantity(line.itemId, line.quantity - 1)" />
+                  <UButton icon="i-lucide-minus" color="neutral" variant="ghost" size="sm" aria-label="Menos" @click="cart.setQuantity(cartLineKey(line), line.quantity - 1)" />
                   <span class="w-7 text-center font-display text-sm font-bold tabular-nums">{{ line.quantity }}</span>
-                  <UButton icon="i-lucide-plus" color="neutral" variant="ghost" size="sm" aria-label="Más" :disabled="line.quantity >= CART_MAX_QTY" @click="cart.setQuantity(line.itemId, line.quantity + 1)" />
+                  <UButton icon="i-lucide-plus" color="neutral" variant="ghost" size="sm" aria-label="Más" :disabled="line.quantity >= CART_MAX_QTY" @click="cart.setQuantity(cartLineKey(line), line.quantity + 1)" />
                 </div>
                 <div class="text-right">
                   <p class="font-display font-extrabold tabular-nums">{{ formatBs(line.price * line.quantity) }}</p>

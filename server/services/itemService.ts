@@ -1,7 +1,8 @@
 import { prisma } from '~/server/utils/db'
 import { gamificationService } from '~/server/services/gamificationService'
 import type { Prisma } from '@gen-prisma/client'
-import type { ItemDetail, ItemSummary, ItemStatus, Rarity, FileDto, ItemSpecDto } from '~/types'
+import type { ItemDetail, ItemSummary, ItemStatus, Rarity, FileDto, ItemSpecDto, ItemColor } from '~/types'
+import { normalizeColors } from '~/utils/filamentColors'
 
 type ItemFilesPayload = Prisma.CollectionItemGetPayload<{
   include: { files: { include: { file: true } } }
@@ -9,16 +10,26 @@ type ItemFilesPayload = Prisma.CollectionItemGetPayload<{
 
 type ItemFileRow = Prisma.ItemFileGetPayload<{ include: { file: true } }>
 
-/** Normaliza la ficha técnica: descarta vacíos; null si no hay ningún campo. */
-function normalizeSpec(spec?: ItemSpecDto | null): ItemSpecDto | null {
+type SpecData = {
+  scale: string | null
+  material: string | null
+  lighting: string | null
+  base: string | null
+  colors: Prisma.InputJsonValue
+}
+
+/** Normaliza la ficha técnica: descarta vacíos; null si no hay ningún campo ni colores. */
+function normalizeSpec(spec?: ItemSpecDto | null): SpecData | null {
   if (!spec) return null
-  const clean: ItemSpecDto = {
+  const colors = normalizeColors(spec.colors)
+  const texts = {
     scale: spec.scale?.trim() || null,
     material: spec.material?.trim() || null,
     lighting: spec.lighting?.trim() || null,
     base: spec.base?.trim() || null,
   }
-  return Object.values(clean).some((v) => v) ? clean : null
+  if (!Object.values(texts).some((v) => v) && !colors.length) return null
+  return { ...texts, colors: colors as unknown as Prisma.InputJsonValue }
 }
 
 function slugify(text: string): string {
@@ -230,7 +241,13 @@ export const itemService = {
       files: toFiles(item.files),
       tags: [],
       spec: item.spec
-        ? { scale: item.spec.scale, material: item.spec.material, lighting: item.spec.lighting, base: item.spec.base }
+        ? {
+            scale: item.spec.scale,
+            material: item.spec.material,
+            lighting: item.spec.lighting,
+            base: item.spec.base,
+            colors: normalizeColors(item.spec.colors) as ItemColor[],
+          }
         : null,
       collected: !!userId && item.collectedBy.some((cb) => cb.userId === userId),
       wishlisted,

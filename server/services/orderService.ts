@@ -4,6 +4,8 @@ import { escapeHtml, sendMail } from '~/server/utils/mailer'
 import type { DeliveryMethod, OrderStatus, Prisma } from '@gen-prisma/client'
 import type { CreateOrderInput, OrderDto, OrderSplit } from '~/types'
 import { isSellable } from '~/utils/itemAvailability'
+import { normalizeColors } from '~/utils/filamentColors'
+import { orderItemLabel } from '~/utils/orderItemLabel'
 
 export const ORDER_STATUSES: OrderStatus[] = ['PENDING_PAYMENT', 'PAID', 'IN_PRODUCTION', 'READY', 'SHIPPED', 'DELIVERED', 'CANCELLED']
 
@@ -26,7 +28,7 @@ const MAX_QTY = 50
 const MAX_LINES = 30
 
 const orderInclude = {
-  items: { orderBy: { name: 'asc' } },
+  items: { orderBy: [{ name: 'asc' }, { colorName: 'asc' }] },
   printedBy: { select: { id: true, name: true } },
 } satisfies Prisma.OrderInclude
 
@@ -60,6 +62,8 @@ function toDto(o: OrderRow): OrderDto {
     unitPrice: num(i.unitPrice),
     quantity: i.quantity,
     lineTotal: round2(num(i.unitPrice) * i.quantity),
+    colorName: i.colorName,
+    colorHex: i.colorHex,
   }))
   return {
     id: o.id,
@@ -123,7 +127,7 @@ function itemsTableHtml(order: OrderDto): string {
   const rows = order.items.map((i) => `
     <tr>
       <td style="padding:8px;border-bottom:1px solid #eee;white-space:nowrap">${i.quantity} ×</td>
-      <td style="padding:8px;border-bottom:1px solid #eee"><strong>${escapeHtml(i.name)}</strong>${i.collectionName ? `<br><span style="color:#777;font-size:12px">${escapeHtml(i.collectionName)}</span>` : ''}</td>
+      <td style="padding:8px;border-bottom:1px solid #eee"><strong>${escapeHtml(i.name)}</strong>${i.colorName ? `<br><span style="font-size:12px"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;border:1px solid #ccc;background:${escapeHtml(i.colorHex ?? '#ccc')};vertical-align:middle"></span> Color: ${escapeHtml(i.colorName)}</span>` : ''}${i.collectionName ? `<br><span style="color:#777;font-size:12px">${escapeHtml(i.collectionName)}</span>` : ''}</td>
       <td style="padding:8px;border-bottom:1px solid #eee;text-align:right;white-space:nowrap">${bs(i.lineTotal)}</td>
     </tr>`).join('')
   const shipping = order.shippingCost > 0
@@ -191,7 +195,7 @@ async function sendOrderPlacedToCustomer(order: OrderDto) {
     `Hola ${order.customerName}, recibimos tu pedido.`,
     `Código de tu pedido: ${order.code}`,
     '',
-    ...order.items.map((i) => `• ${i.quantity} × ${i.name} — ${bs(i.lineTotal)}`),
+    ...order.items.map((i) => `• ${i.quantity} × ${orderItemLabel(i)} — ${bs(i.lineTotal)}`),
     `Subtotal: ${bs(order.subtotal)}`,
     `Entrega: ${DELIVERY_LABEL[order.deliveryMethod]}${order.address ? ` — ${order.address}` : ''}`,
     '',
@@ -220,7 +224,7 @@ async function sendOrderConfirmedToCustomer(order: OrderDto) {
     `Hola ${order.customerName}, verificamos tu pago. ¡Tu pedido está confirmado!`,
     `Código de tu pedido: ${order.code}`,
     '',
-    ...order.items.map((i) => `• ${i.quantity} × ${i.name} — ${bs(i.lineTotal)}`),
+    ...order.items.map((i) => `• ${i.quantity} × ${orderItemLabel(i)} — ${bs(i.lineTotal)}`),
     `Total: ${bs(order.total)}`,
     '',
     'Ya comenzamos a preparar tu pedido. Te avisaremos cuando esté listo.',
@@ -268,7 +272,7 @@ async function notifyNewOrder(order: OrderDto) {
     `Entrega: ${DELIVERY_LABEL[order.deliveryMethod]}${order.address ? ` — ${order.address}` : ''}`,
     '',
     'Pidió:',
-    ...order.items.map((i) => `  • ${i.quantity} × ${i.name}${i.collectionName ? ` (${i.collectionName})` : ''} — ${bs(i.lineTotal)}`),
+    ...order.items.map((i) => `  • ${i.quantity} × ${orderItemLabel(i)}${i.collectionName ? ` (${i.collectionName})` : ''} — ${bs(i.lineTotal)}`),
     '',
     `Subtotal: ${bs(order.subtotal)}${order.deliveryMethod === 'SHIPPING' ? ' + costo de envío' : ''}`,
     order.notes ? `Notas: ${order.notes}` : '',
@@ -308,24 +312,29 @@ export const orderService = {
     if (!Array.isArray(input.items) || input.items.length === 0) fail('El carrito está vacío')
     if (input.items.length > MAX_LINES) fail('Demasiados productos en un solo pedido')
 
-    // Agrupa líneas repetidas y valida cantidades
-    const qtyById = new Map<string, number>()
+    // Valida cantidades y agrupa líneas repetidas (mismo item + mismo color)
+    const requested: { itemId: string; color: string | null; quantity: number }[] = []
     for (const line of input.items) {
       const qty = Number(line?.quantity)
       if (typeof line?.itemId !== 'string' || !Number.isInteger(qty) || qty < 1 || qty > MAX_QTY) {
         fail(`Cantidad inválida (de 1 a ${MAX_QTY} por producto)`)
       }
-      qtyById.set(line.itemId, Math.min(MAX_QTY, (qtyById.get(line.itemId) ?? 0) + qty))
+      const color = typeof line.color === 'string' && line.color.trim() ? line.color.trim() : null
+      const same = requested.find((r) => r.itemId === line.itemId && r.color?.toLowerCase() === color?.toLowerCase())
+      if (same) same.quantity = Math.min(MAX_QTY, same.quantity + qty)
+      else requested.push({ itemId: line.itemId, color, quantity: qty })
     }
+    const itemIds = [...new Set(requested.map((r) => r.itemId))]
 
     const items = await prisma.collectionItem.findMany({
-      where: { id: { in: [...qtyById.keys()] } },
+      where: { id: { in: itemIds } },
       include: {
         collection: { select: { name: true, status: true } },
         files: { include: { file: true }, orderBy: { position: 'asc' }, take: 1 },
+        spec: { select: { colors: true } },
       },
     })
-    if (items.length !== qtyById.size) fail('Uno de los productos ya no está disponible. Revisa tu carrito.')
+    if (items.length !== itemIds.length) fail('Uno de los productos ya no está disponible. Revisa tu carrito.')
     for (const it of items) {
       if (it.collection.status !== 'PUBLISHED' || it.status === 'DRAFT' || it.status === 'ARCHIVED') {
         fail(`"${it.name}" ya no está disponible. Quítalo del carrito.`)
@@ -336,14 +345,30 @@ export const orderService = {
       if (it.price == null) fail(`"${it.name}" no tiene precio definido; consúltalo por WhatsApp.`)
     }
 
-    const lines = items.map((it) => ({
-      itemId: it.id,
-      name: it.name,
-      collectionName: it.collection.name,
-      imageUrl: it.files[0]?.file.url ?? null,
-      unitPrice: Number(it.price),
-      quantity: qtyById.get(it.id)!,
-    }))
+    // Color de cada línea: sin colores → ninguno; 1 color → ese; 2+ → el elegido (obligatorio)
+    const byId = new Map(items.map((it) => [it.id, it]))
+    const lines = requested.map((r) => {
+      const it = byId.get(r.itemId)!
+      const colors = normalizeColors(it.spec?.colors)
+      let color: { name: string; hex: string } | null = null
+      if (colors.length === 1) {
+        color = colors[0]!
+      } else if (colors.length > 1) {
+        if (!r.color) fail(`Elige un color para "${it.name}".`)
+        color = colors.find((c) => c.name.toLowerCase() === r.color!.toLowerCase()) ?? null
+        if (!color) fail(`El color "${r.color}" ya no está disponible para "${it.name}". Revisa tu carrito.`)
+      }
+      return {
+        itemId: it.id,
+        name: it.name,
+        collectionName: it.collection.name,
+        imageUrl: it.files[0]?.file.url ?? null,
+        unitPrice: Number(it.price),
+        quantity: r.quantity,
+        colorName: color?.name ?? null,
+        colorHex: color?.hex ?? null,
+      }
+    })
     const subtotal = round2(lines.reduce((acc, l) => acc + l.unitPrice * l.quantity, 0))
 
     // Crea el pedido con un código único (reintenta si hubiera colisión)
