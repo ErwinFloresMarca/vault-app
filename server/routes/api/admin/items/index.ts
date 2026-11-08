@@ -3,7 +3,7 @@ import { requireAdmin } from '~/server/utils/auth'
 import { prisma } from '~/server/utils/db'
 import type { ItemStatus, Prisma, Rarity } from '@gen-prisma/client'
 
-const ITEM_STATUSES = new Set<string>(['DRAFT', 'AVAILABLE', 'SOLD_OUT', 'ARCHIVED'])
+const ITEM_STATUSES = new Set<string>(['DRAFT', 'AVAILABLE', 'ON_DEMAND', 'SOLD_OUT', 'ARCHIVED'])
 const RARITIES = new Set<string>(['COMMON', 'RARE', 'EPIC', 'LEGENDARY'])
 
 export default defineEventHandler(async (event) => {
@@ -40,7 +40,7 @@ export default defineEventHandler(async (event) => {
       }
 
       const include = {
-        collection: { select: { name: true, slug: true } },
+        collection: { select: { id: true, name: true, slug: true } },
         spec: true,
         _count: { select: { collectedBy: true } },
         files: { include: { file: true }, orderBy: { position: 'asc' as const } },

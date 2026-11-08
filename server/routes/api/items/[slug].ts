@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
   if (!item) {
     throw createError({ statusCode: 404, statusMessage: 'Item no encontrado' })
   }
-  if (!user && item.status !== 'AVAILABLE' && item.status !== 'SOLD_OUT') {
+  if (!user && item.status !== 'AVAILABLE' && item.status !== 'ON_DEMAND' && item.status !== 'SOLD_OUT') {
     throw createError({ statusCode: 404, statusMessage: 'Item no encontrado' })
   }
 

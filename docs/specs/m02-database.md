@@ -23,7 +23,7 @@ define schema y carpeta de migraciones; el datasource usa `DATABASE_URL` del `.e
 Enums:
 - `UserRole`: `USER | ADMIN` (default `USER`)
 - `CollectionStatus`: `DRAFT | PUBLISHED | ARCHIVED`
-- `ItemStatus`: `DRAFT | AVAILABLE | SOLD_OUT | ARCHIVED`
+- `ItemStatus`: `DRAFT | AVAILABLE | ON_DEMAND | SOLD_OUT | ARCHIVED`
 - `InventoryMovementType`: `IN | OUT | ADJUSTMENT | SALE`
 
 Migraciones aplicadas:

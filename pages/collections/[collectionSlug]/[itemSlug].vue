@@ -3,6 +3,7 @@ import type { ItemDetail, CollectionWithItems } from '~/types'
 import { metaDescription } from '~/utils/seo'
 import { xpForRarity } from '~/utils/gamification'
 import { CART_MAX_QTY, formatBs } from '~/composables/useCart'
+import { isSellable, saleState } from '~/utils/itemAvailability'
 
 const route = useRoute()
 const itemSlug = computed(() => String(route.params.itemSlug))
@@ -32,6 +33,7 @@ const RARITY_LABEL: Record<string, string> = {
 const STATUS_LABEL: Record<string, string> = {
   DRAFT: 'Borrador',
   AVAILABLE: 'Disponible',
+  ON_DEMAND: 'A pedido',
   SOLD_OUT: 'Agotado',
   ARCHIVED: 'Archivado',
 }
@@ -48,12 +50,16 @@ const specFields = computed<Array<{ label: string; value: string }>>(() => {
   return fields.filter((f): f is { label: string; value: string } => !!f.value)
 })
 
+const itemColors = computed(() => item.value?.spec?.colors ?? [])
+
 // Carrito (m21)
 const cart = useCart()
 const appConfig = useAppConfig()
 const buyQty = ref(1)
 const itemPrice = computed(() => item.value?.price ?? null)
-const canBuy = computed(() => itemPrice.value != null && item.value?.status !== 'SOLD_OUT')
+const sale = computed(() => (item.value ? saleState(item.value.status, item.value.stock) : 'unavailable'))
+const sellable = computed(() => (item.value ? isSellable(item.value.status, item.value.stock) : false))
+const canBuy = computed(() => sellable.value && itemPrice.value != null)
 const inCart = computed(() => (item.value ? cart.has(item.value.id) : false))
 const whatsappLink = computed(() => {
   const number = String(appConfig.volt.whatsapp || '').replace(/\D/g, '')
@@ -66,10 +72,27 @@ function changeQty(delta: number) {
   buyQty.value = Math.min(CART_MAX_QTY, Math.max(1, buyQty.value + delta))
 }
 
+// Color al comprar: con 2+ colores el cliente elige uno para todas las
+// unidades o reparte cantidades por color (cada color = una línea del carrito).
+const needsColor = computed(() => itemColors.value.length > 1)
+const colorMode = ref<'single' | 'split'>('single')
+const pickedColor = ref<string | null>(null)
+const splitQty = ref<Record<string, number>>({})
+const splitTotal = computed(() => Object.values(splitQty.value).reduce((acc, n) => acc + n, 0))
+const canAdd = computed(() => {
+  if (!needsColor.value) return true
+  return colorMode.value === 'single' ? !!pickedColor.value : splitTotal.value > 0
+})
+
+function changeSplit(name: string, delta: number) {
+  const next = Math.min(CART_MAX_QTY, Math.max(0, (splitQty.value[name] ?? 0) + delta))
+  splitQty.value = { ...splitQty.value, [name]: next }
+}
+
 function addToCart() {
   const it = item.value
-  if (!it || itemPrice.value == null) return
-  cart.add({
+  if (!it || itemPrice.value == null || !canAdd.value) return
+  const base = {
     itemId: it.id,
     slug: it.slug,
     collectionSlug: collectionSlug.value,
@@ -77,10 +100,27 @@ function addToCart() {
     collectionName: it.collection.name,
     price: itemPrice.value,
     imageUrl: it.mainImage?.url ?? it.files[0]?.url ?? null,
-  }, buyQty.value)
+  }
+  const added: string[] = []
+  if (needsColor.value && colorMode.value === 'split') {
+    for (const c of itemColors.value) {
+      const qty = splitQty.value[c.name] ?? 0
+      if (qty > 0) {
+        cart.add({ ...base, color: { ...c } }, qty)
+        added.push(`${qty} ${c.name}`)
+      }
+    }
+    splitQty.value = {}
+  } else {
+    const color = needsColor.value
+      ? itemColors.value.find((c) => c.name === pickedColor.value) ?? null
+      : itemColors.value[0] ?? null
+    cart.add({ ...base, color: color ? { ...color } : null }, buyQty.value)
+    added.push(color ? `${buyQty.value} ${color.name}` : `${buyQty.value}`)
+  }
   toast.add({
     title: 'Agregado al carrito',
-    description: `${buyQty.value} × ${it.name}`,
+    description: `${it.name}: ${added.join(', ')}`,
     icon: 'i-lucide-shopping-cart',
     color: 'primary',
     actions: [{ label: 'Ver carrito', to: '/cart', color: 'neutral', variant: 'subtle' }],
@@ -120,6 +160,7 @@ const wishlisted = ref(item.value?.wishlisted ?? false)
 const wishlistCount = ref(item.value?.wishlistCount ?? 0)
 
 const stockMeter = computed(() => {
+  if (sale.value !== 'in_stock') return 0
   const stock = item.value?.stock ?? 0
   if (stock <= 0) return 0
   if (stock >= 10) return 100
@@ -223,20 +264,84 @@ async function onToggle() {
             <div class="flex items-end justify-between gap-3">
               <div class="flex flex-col">
                 <span class="label-caps text-muted">Precio</span>
-                <span v-if="itemPrice != null" class="font-display text-3xl font-black tabular-nums">{{ formatBs(itemPrice) }}</span>
-                <span v-else class="font-display text-xl font-bold">Consultar precio</span>
+                <template v-if="sellable">
+                  <span v-if="itemPrice != null" class="font-display text-3xl font-black tabular-nums">{{ formatBs(itemPrice) }}</span>
+                  <span v-else class="font-display text-xl font-bold">Indefinido</span>
+                </template>
+                <span v-else class="font-display text-xl font-bold">{{ sale === 'sold_out' ? 'Agotado' : 'No disponible' }}</span>
               </div>
               <span class="text-right text-xs text-muted">Pago por QR · Envíos a todo el país<br>(costo adicional)</span>
             </div>
 
+            <p v-if="sale === 'on_demand'" class="-mt-1 flex items-center gap-2 text-sm text-muted">
+              <UIcon name="i-lucide-clock" class="size-4 shrink-0 text-volt-blue" />
+              Pieza a pedido: se crea al confirmar el pago.
+            </p>
+            <!-- Color al comprar -->
+            <p v-if="canBuy && itemColors.length === 1" class="flex items-center gap-2 text-sm">
+              <span class="size-4 shrink-0 rounded-full border border-accented" :style="{ backgroundColor: itemColors[0]!.hex }" />
+              Color: <strong>{{ itemColors[0]!.name }}</strong>
+            </p>
+            <div v-if="canBuy && needsColor" class="flex flex-col gap-3 rounded-xl border border-default bg-elevated p-3">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <span class="text-sm font-semibold">Elige el color</span>
+                <div class="inline-flex rounded-full border border-default bg-muted p-0.5 text-xs font-semibold">
+                  <button
+                    type="button"
+                    class="rounded-full px-3 py-1 transition"
+                    :class="colorMode === 'single' ? 'bg-primary text-inverted' : 'text-muted hover:text-highlighted'"
+                    @click="colorMode = 'single'"
+                  >
+                    Un color para todos
+                  </button>
+                  <button
+                    type="button"
+                    class="rounded-full px-3 py-1 transition"
+                    :class="colorMode === 'split' ? 'bg-primary text-inverted' : 'text-muted hover:text-highlighted'"
+                    @click="colorMode = 'split'"
+                  >
+                    Repartir por color
+                  </button>
+                </div>
+              </div>
+              <div v-if="colorMode === 'single'" class="flex flex-wrap gap-2">
+                <button
+                  v-for="c in itemColors"
+                  :key="c.name"
+                  type="button"
+                  class="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold transition"
+                  :class="pickedColor === c.name ? 'border-primary bg-primary/10 text-highlighted' : 'border-default text-muted hover:border-accented'"
+                  :aria-pressed="pickedColor === c.name"
+                  @click="pickedColor = c.name"
+                >
+                  <span class="size-3.5 shrink-0 rounded-full border border-accented" :style="{ backgroundColor: c.hex }" />
+                  {{ c.name }}
+                  <UIcon v-if="pickedColor === c.name" name="i-lucide-check" class="size-3.5 text-primary" />
+                </button>
+              </div>
+              <ul v-else class="flex flex-col gap-1.5">
+                <li v-for="c in itemColors" :key="c.name" class="flex items-center justify-between gap-2">
+                  <span class="flex items-center gap-2 text-sm">
+                    <span class="size-3.5 shrink-0 rounded-full border border-accented" :style="{ backgroundColor: c.hex }" />
+                    {{ c.name }}
+                  </span>
+                  <div class="flex items-center rounded-full border border-default bg-muted">
+                    <UButton icon="i-lucide-minus" color="neutral" variant="ghost" size="xs" :aria-label="`Menos ${c.name}`" :disabled="!splitQty[c.name]" @click="changeSplit(c.name, -1)" />
+                    <span class="w-6 text-center font-display text-sm font-bold tabular-nums">{{ splitQty[c.name] ?? 0 }}</span>
+                    <UButton icon="i-lucide-plus" color="neutral" variant="ghost" size="xs" :aria-label="`Más ${c.name}`" @click="changeSplit(c.name, 1)" />
+                  </div>
+                </li>
+                <li class="text-right text-xs text-muted">Total: {{ splitTotal }} unidad(es)</li>
+              </ul>
+            </div>
             <div v-if="canBuy" class="flex gap-3">
-              <div class="flex items-center rounded-full border border-default bg-elevated">
+              <div v-if="!(needsColor && colorMode === 'split')" class="flex items-center rounded-full border border-default bg-elevated">
                 <UButton icon="i-lucide-minus" color="neutral" variant="ghost" aria-label="Menos" :disabled="buyQty <= 1" @click="changeQty(-1)" />
                 <span class="w-8 text-center font-display font-bold tabular-nums">{{ buyQty }}</span>
                 <UButton icon="i-lucide-plus" color="neutral" variant="ghost" aria-label="Más" :disabled="buyQty >= CART_MAX_QTY" @click="changeQty(1)" />
               </div>
-              <UButton block size="lg" icon="i-lucide-shopping-cart" class="flex-1" @click="addToCart">
-                Agregar al carrito
+              <UButton block size="lg" icon="i-lucide-shopping-cart" class="flex-1" :disabled="!canAdd" @click="addToCart">
+                {{ canAdd ? 'Agregar al carrito' : (colorMode === 'single' ? 'Elige un color' : 'Indica cuántos de cada color') }}
               </UButton>
             </div>
             <UButton v-if="inCart" to="/cart" block color="neutral" variant="subtle" icon="i-lucide-arrow-right" trailing>
@@ -255,7 +360,9 @@ async function onToggle() {
               Consultar por WhatsApp
             </UButton>
             <p v-else-if="!canBuy" class="text-sm text-muted">
-              Esta pieza aún no tiene precio publicado. Escríbenos por nuestras redes para cotizarla.
+              {{ sellable
+                ? 'Esta pieza aún no tiene precio definido. Escríbenos por nuestras redes para cotizarla.'
+                : 'Esta pieza no está disponible por ahora. Escríbenos por nuestras redes si te interesa.' }}
             </p>
           </div>
 
@@ -266,9 +373,10 @@ async function onToggle() {
                 <UIcon name="i-lucide-bolt" class="size-4 text-volt" />
                 <span class="font-display text-sm font-semibold">Disponibilidad en almacén</span>
               </div>
-              <StockIndicator :stock="item.stock" />
+              <StockIndicator :stock="item.stock" :status="item.status" />
             </div>
-            <div class="h-2 w-full overflow-hidden rounded-full bg-default p-0.5">
+            <p v-if="sale === 'on_demand'" class="text-xs text-muted">Se crea a pedido: no depende del stock.</p>
+            <div v-else class="h-2 w-full overflow-hidden rounded-full bg-default p-0.5">
               <div
                 class="h-full rounded-full bg-gradient-to-r from-volt to-gold transition-[width] duration-700"
                 :style="{ width: `${stockMeter}%` }"
@@ -374,6 +482,19 @@ async function onToggle() {
             <div class="flex items-center gap-2">
               <UIcon name="i-lucide-clipboard-list" class="size-5 text-gold" />
               <span class="font-display font-bold">Ficha técnica</span>
+            </div>
+            <div v-if="itemColors.length" class="flex flex-col gap-2">
+              <span class="label-caps text-muted">Colores disponibles</span>
+              <ul class="flex flex-wrap gap-2">
+                <li
+                  v-for="c in itemColors"
+                  :key="c.name"
+                  class="inline-flex items-center gap-1.5 rounded-full border border-default bg-elevated px-2.5 py-1 text-xs font-semibold"
+                >
+                  <span class="size-3.5 shrink-0 rounded-full border border-accented" :style="{ backgroundColor: c.hex }" />
+                  {{ c.name }}
+                </li>
+              </ul>
             </div>
             <dl v-if="specFields.length" class="grid grid-cols-2 gap-3">
               <div v-for="field in specFields" :key="field.label" class="flex flex-col rounded-xl border border-default bg-elevated p-3">

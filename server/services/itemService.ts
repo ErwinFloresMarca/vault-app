@@ -1,6 +1,8 @@
 import { prisma } from '~/server/utils/db'
+import { gamificationService } from '~/server/services/gamificationService'
 import type { Prisma } from '@gen-prisma/client'
-import type { ItemDetail, ItemSummary, ItemStatus, Rarity, FileDto, ItemSpecDto } from '~/types'
+import type { ItemDetail, ItemSummary, ItemStatus, Rarity, FileDto, ItemSpecDto, ItemColor } from '~/types'
+import { normalizeColors } from '~/utils/filamentColors'
 
 type ItemFilesPayload = Prisma.CollectionItemGetPayload<{
   include: { files: { include: { file: true } } }
@@ -8,16 +10,26 @@ type ItemFilesPayload = Prisma.CollectionItemGetPayload<{
 
 type ItemFileRow = Prisma.ItemFileGetPayload<{ include: { file: true } }>
 
-/** Normaliza la ficha técnica: descarta vacíos; null si no hay ningún campo. */
-function normalizeSpec(spec?: ItemSpecDto | null): ItemSpecDto | null {
+type SpecData = {
+  scale: string | null
+  material: string | null
+  lighting: string | null
+  base: string | null
+  colors: Prisma.InputJsonValue
+}
+
+/** Normaliza la ficha técnica: descarta vacíos; null si no hay ningún campo ni colores. */
+function normalizeSpec(spec?: ItemSpecDto | null): SpecData | null {
   if (!spec) return null
-  const clean: ItemSpecDto = {
+  const colors = normalizeColors(spec.colors)
+  const texts = {
     scale: spec.scale?.trim() || null,
     material: spec.material?.trim() || null,
     lighting: spec.lighting?.trim() || null,
     base: spec.base?.trim() || null,
   }
-  return Object.values(clean).some((v) => v) ? clean : null
+  if (!Object.values(texts).some((v) => v) && !colors.length) return null
+  return { ...texts, colors: colors as unknown as Prisma.InputJsonValue }
 }
 
 function slugify(text: string): string {
@@ -133,6 +145,7 @@ export const itemService = {
     rarity?: Rarity
     price?: number | string | null
     spec?: ItemSpecDto
+    collectionId?: string
   }) {
     const existing = await prisma.collectionItem.findUnique({ where: { id } })
     if (!existing) throw createError({ statusCode: 404, statusMessage: 'Item no encontrado' })
@@ -148,7 +161,20 @@ export const itemService = {
     if (input.rarity !== undefined) data.rarity = input.rarity
     if (input.price !== undefined) data.price = normalizePrice(input.price)
 
-    return prisma.$transaction(async (tx) => {
+    // Mover a otra colección: queda al final de la colección destino.
+    const moved = !!input.collectionId && input.collectionId !== existing.collectionId
+    if (moved) {
+      const target = await prisma.collection.findUnique({ where: { id: input.collectionId }, select: { id: true } })
+      if (!target) throw createError({ statusCode: 404, statusMessage: 'Colección no encontrada' })
+      const last = await prisma.collectionItem.aggregate({
+        where: { collectionId: target.id },
+        _max: { orderIndex: true },
+      })
+      data.collection = { connect: { id: target.id } }
+      data.orderIndex = (last._max.orderIndex ?? -1) + 1
+    }
+
+    const updated = await prisma.$transaction(async (tx) => {
       if (input.fileIds) {
         await tx.itemFile.deleteMany({ where: { itemId: id } })
         if (input.fileIds.length) {
@@ -169,6 +195,19 @@ export const itemService = {
       }
       return tx.collectionItem.update({ where: { id }, data })
     })
+
+    // Cambiar de colección puede completar o «descompletar» colecciones:
+    // recalcula XP e insignias de quienes tienen piezas en la de origen o destino.
+    if (moved) {
+      const affected = await prisma.userCollectedItem.findMany({
+        where: { item: { collectionId: { in: [existing.collectionId, input.collectionId!] } } },
+        select: { userId: true },
+        distinct: ['userId'],
+      })
+      for (const { userId } of affected) await gamificationService.recompute(userId)
+    }
+
+    return updated
   },
 
   async remove(id: string) {
@@ -202,7 +241,13 @@ export const itemService = {
       files: toFiles(item.files),
       tags: [],
       spec: item.spec
-        ? { scale: item.spec.scale, material: item.spec.material, lighting: item.spec.lighting, base: item.spec.base }
+        ? {
+            scale: item.spec.scale,
+            material: item.spec.material,
+            lighting: item.spec.lighting,
+            base: item.spec.base,
+            colors: normalizeColors(item.spec.colors) as ItemColor[],
+          }
         : null,
       collected: !!userId && item.collectedBy.some((cb) => cb.userId === userId),
       wishlisted,

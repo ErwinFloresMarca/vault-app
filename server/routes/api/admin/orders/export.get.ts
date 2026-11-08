@@ -1,6 +1,7 @@
 import ExcelJS from 'exceljs'
 import { DELIVERY_LABEL, ORDER_STATUS_LABEL, formatOrderNumber, orderService } from '~/server/services/orderService'
 import { requireAdmin } from '~/server/utils/auth'
+import { orderItemLabel } from '~/utils/orderItemLabel'
 
 /**
  * Exporta los pedidos (con los mismos filtros del panel) a Excel:
@@ -77,7 +78,7 @@ export default defineEventHandler(async (event) => {
       confirmed: o.confirmedAt ? localDate(o.confirmedAt) : null,
       delivery: DELIVERY_LABEL[o.deliveryMethod],
       address: o.address ?? '',
-      products: o.items.map((i) => `${i.quantity} × ${i.name}`).join(', '),
+      products: o.items.map((i) => `${i.quantity} × ${orderItemLabel(i)}`).join(', '),
       units: o.itemCount,
       subtotal: o.subtotal,
       shipping: o.shippingCost,
@@ -119,6 +120,7 @@ export default defineEventHandler(async (event) => {
     { header: 'Estado', key: 'status', width: 18 },
     { header: 'Cliente', key: 'customer', width: 24 },
     { header: 'Producto', key: 'product', width: 30 },
+    { header: 'Color', key: 'color', width: 16 },
     { header: 'Colección', key: 'collection', width: 24 },
     { header: 'Cantidad', key: 'qty', width: 10 },
     { header: 'Precio unitario', key: 'unit', width: 15, style: { numFmt: money } },
@@ -132,6 +134,7 @@ export default defineEventHandler(async (event) => {
         status: ORDER_STATUS_LABEL[o.status],
         customer: o.customerName,
         product: i.name,
+        color: i.colorName ?? '',
         collection: i.collectionName ?? '',
         qty: i.quantity,
         unit: i.unitPrice,

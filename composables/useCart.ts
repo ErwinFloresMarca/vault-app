@@ -1,3 +1,5 @@
+import type { ItemColor } from '~/types'
+
 /**
  * Carrito de compras (m21). Vive en el navegador (localStorage `vv-cart`);
  * los precios se muestran como referencia y el servidor los recalcula al
@@ -12,6 +14,13 @@ export interface CartLine {
   price: number
   imageUrl: string | null
   quantity: number
+  /** Color elegido (si el item tiene colores). Mismo item en otro color = otra línea. */
+  color?: ItemColor | null
+}
+
+/** Clave única de una línea: item + color. */
+export function cartLineKey(line: Pick<CartLine, 'itemId' | 'color'>): string {
+  return `${line.itemId}::${line.color?.name.toLowerCase() ?? ''}`
 }
 
 const STORAGE_KEY = 'vv-cart'
@@ -50,7 +59,8 @@ export function useCart() {
   const subtotal = computed(() => Math.round(lines.value.reduce((acc, l) => acc + l.price * l.quantity, 0) * 100) / 100)
 
   function add(line: Omit<CartLine, 'quantity'>, quantity = 1) {
-    const existing = lines.value.find((l) => l.itemId === line.itemId)
+    const key = cartLineKey(line)
+    const existing = lines.value.find((l) => cartLineKey(l) === key)
     if (existing) {
       existing.quantity = Math.min(CART_MAX_QTY, existing.quantity + quantity)
       Object.assign(existing, { ...line, quantity: existing.quantity })
@@ -60,16 +70,18 @@ export function useCart() {
     persist()
   }
 
-  function setQuantity(itemId: string, quantity: number) {
-    const line = lines.value.find((l) => l.itemId === itemId)
+  /** `key` = cartLineKey(línea). */
+  function setQuantity(key: string, quantity: number) {
+    const line = lines.value.find((l) => cartLineKey(l) === key)
     if (!line) return
-    if (quantity <= 0) return remove(itemId)
+    if (quantity <= 0) return remove(key)
     line.quantity = Math.min(CART_MAX_QTY, Math.floor(quantity))
     persist()
   }
 
-  function remove(itemId: string) {
-    lines.value = lines.value.filter((l) => l.itemId !== itemId)
+  /** `key` = cartLineKey(línea). */
+  function remove(key: string) {
+    lines.value = lines.value.filter((l) => cartLineKey(l) !== key)
     persist()
   }
 

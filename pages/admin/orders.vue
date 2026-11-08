@@ -2,6 +2,7 @@
 import type { TableColumn } from '@nuxt/ui'
 import type { OrderDto, OrderStatus } from '~/types'
 import { formatBs } from '~/composables/useCart'
+import { orderItemLabel } from '~/utils/orderItemLabel'
 
 useSeoMeta({ title: 'Pedidos — Volt Vault Admin' })
 
@@ -287,7 +288,7 @@ async function save() {
             </template>
             <template #products-cell="{ row }">
               <div class="flex max-w-72 flex-col">
-                <span class="line-clamp-2 text-sm">{{ row.original.items.map((i) => `${i.quantity} × ${i.name}`).join(', ') }}</span>
+                <span class="line-clamp-2 text-sm">{{ row.original.items.map((i) => `${i.quantity} × ${orderItemLabel(i)}`).join(', ') }}</span>
                 <span class="text-xs text-muted">{{ row.original.deliveryMethod === 'SHIPPING' ? 'Envío departamental' : 'Entrega en la ciudad' }}</span>
               </div>
             </template>
@@ -349,6 +350,10 @@ async function save() {
                 </div>
                 <div class="min-w-0 flex-1">
                   <p class="truncate text-sm font-semibold">{{ i.name }}</p>
+                  <p v-if="i.colorName" class="flex items-center gap-1.5 text-xs">
+                    <span class="size-3 shrink-0 rounded-full border border-accented" :style="{ backgroundColor: i.colorHex ?? undefined }" />
+                    Color: <strong>{{ i.colorName }}</strong>
+                  </p>
                   <p class="truncate text-xs text-muted">{{ i.collectionName }} · {{ i.quantity }} × {{ formatBs(i.unitPrice) }}</p>
                 </div>
                 <span class="font-display text-sm font-bold tabular-nums">{{ formatBs(i.lineTotal) }}</span>

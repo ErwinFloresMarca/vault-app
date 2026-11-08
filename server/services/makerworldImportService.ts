@@ -21,7 +21,7 @@ import type {
 const MAX_COLLECTION_ITEMS = 500
 /** El cliente envía lotes pequeños; el servidor también valida. */
 const MAX_BATCH_SIZE = 25
-const ALLOWED_ITEM_STATUS = new Set(['DRAFT', 'AVAILABLE'])
+const ALLOWED_ITEM_STATUS = new Set(['DRAFT', 'AVAILABLE', 'ON_DEMAND'])
 const ALLOWED_COLLECTION_STATUS = new Set(['DRAFT', 'PUBLISHED'])
 
 function slugify(text: string): string {
@@ -288,7 +288,7 @@ export const makerworldImportService = {
               slug,
               sourceUrl,
               description: buildImportedDescription(design),
-              status: itemStatus as 'DRAFT' | 'AVAILABLE',
+              status: itemStatus as 'DRAFT' | 'AVAILABLE' | 'ON_DEMAND',
               orderIndex: nextOrder++,
               files: fileIds.length
                 ? {

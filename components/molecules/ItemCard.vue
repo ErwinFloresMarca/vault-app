@@ -20,8 +20,8 @@
     <div class="flex flex-col gap-1.5 p-3">
       <h3 class="line-clamp-1 font-display text-[0.9375rem] font-bold transition-colors group-hover:text-primary">{{ item.name }}</h3>
       <div class="flex items-center justify-between gap-2">
-        <StockIndicator :stock="item.stock" />
-        <span v-if="item.price != null" class="font-display text-sm font-extrabold tabular-nums">{{ formatBs(item.price) }}</span>
+        <StockIndicator :stock="item.stock" :status="item.status" />
+        <span v-if="showsPrice(item.status, item.stock, item.price)" class="font-display text-sm font-extrabold tabular-nums">{{ formatBs(item.price!) }}</span>
       </div>
     </div>
   </VaultCard>
@@ -30,6 +30,7 @@
 <script setup lang="ts">
 import type { ItemSummary } from '~/types'
 import { formatBs } from '~/composables/useCart'
+import { showsPrice } from '~/utils/itemAvailability'
 
 defineProps<{
   item: ItemSummary

@@ -31,7 +31,7 @@ Modelos en `prisma/schema.prisma`: `User`, `OAuthAccount`, `File`, `Collection`,
 `Achievement`, `UserAchievement`, `Order`, `OrderItem`.
 
 - Enum `UserRole`: `USER | ADMIN` (uppercase, default `USER`). NO existen `CLIENT`/`client`/`admin`.
-- `CollectionStatus`: `DRAFT | PUBLISHED | ARCHIVED`. `ItemStatus`: `DRAFT | AVAILABLE | SOLD_OUT | ARCHIVED`.
+- `CollectionStatus`: `DRAFT | PUBLISHED | ARCHIVED`. `ItemStatus`: `DRAFT | AVAILABLE | ON_DEMAND | SOLD_OUT | ARCHIVED` (`ON_DEMAND` = «A pedido»: se vende sin stock, se crea al confirmar el pago).
 - `InventoryMovementType`: `IN | OUT | ADJUSTMENT | SALE`.
 - `CollectionItem.stock` y `soldQuantity` son DENORMALIZADOS: se actualizan
   atómicamente en la misma transacción que crea el/los `InventoryMovement`

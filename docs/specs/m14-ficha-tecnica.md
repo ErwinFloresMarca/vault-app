@@ -30,8 +30,17 @@ el detalle de producto, con el estilo Cyber-Luxe.
 ## Modelo
 
 - `ItemSpec` (1:1 con `CollectionItem`, `onDelete: Cascade`):
-  `scale`, `material`, `lighting`, `base` (`String?`).
+  `scale`, `material`, `lighting`, `base` (`String?`) y `colors` (`Json`, default `[]`).
 - `ItemDetail.spec?: ItemSpecDto | null`.
+
+### Colores disponibles
+
+- `colors`: lista `[{ name, hex }]` de colores en que se puede imprimir la pieza.
+- El admin ofrece 20 colores comunes de filamento (`utils/filamentColors.ts`) y un color
+  personalizado (nombre + selector de color). Vacío = no se muestra nada.
+- `normalizeColors` (compartido) limpia la lista: hex `#RRGGBB`, nombre ≤ 40, sin repetidos
+  por nombre, máx. 40 colores. Si se marcan colores, la ficha se guarda aunque no tenga textos.
+- La ficha del producto muestra los colores como muestras con su nombre.
 
 ## Criterios de aceptación
 
@@ -51,3 +60,4 @@ el detalle de producto, con el estilo Cyber-Luxe.
   (1:1, cascade); `itemService` normaliza y hace upsert/delete de la ficha; admin con sección
   "Ficha técnica (opcional)"; detalle de producto muestra la ficha (con fallback a datos reales).
   Verificado con API + Playwright; eslint/typecheck en verde.
+- **☑ Colores disponibles** — migración `20261107120000_add_item_spec_colors`.

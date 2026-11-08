@@ -6,19 +6,29 @@
 </template>
 
 <script setup lang="ts">
+import type { ItemStatus } from '~/types'
+import { saleState } from '~/utils/itemAvailability'
+
 const props = defineProps<{
   stock: number
+  status?: ItemStatus
 }>()
 
+// Sin estado se comporta como antes (solo según el stock).
+const state = computed(() => saleState(props.status ?? 'AVAILABLE', props.stock))
+
 const label = computed(() => {
+  if (state.value === 'on_demand') return 'A pedido'
+  if (state.value === 'sold_out') return 'Agotado'
+  if (state.value === 'unavailable') return 'No disponible'
   if (props.stock > 10) return `Disponible (${props.stock})`
-  if (props.stock > 0) return `¡Últimas ${props.stock} unidades!`
-  return 'Agotado'
+  return `¡Últimas ${props.stock} unidades!`
 })
 
 const dotClass = computed(() => {
+  if (state.value === 'on_demand') return 'bg-volt-blue'
+  if (state.value === 'sold_out' || state.value === 'unavailable') return 'bg-danger'
   if (props.stock > 10) return 'bg-success'
-  if (props.stock > 0) return 'bg-warning'
-  return 'bg-danger'
+  return 'bg-warning'
 })
 </script>

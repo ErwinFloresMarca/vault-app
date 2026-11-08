@@ -26,7 +26,7 @@
           <span class="truncate font-display font-semibold">{{ item.name }}</span>
           <div class="mt-0.5 flex items-center gap-2">
             <RarityBadge :rarity="item.rarity" />
-            <StockIndicator v-if="!item.collected" :stock="item.stock" />
+            <StockIndicator v-if="!item.collected" :stock="item.stock" :status="item.status" />
           </div>
         </div>
 

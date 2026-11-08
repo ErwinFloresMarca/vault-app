@@ -68,7 +68,7 @@ export function registerReadTools(server: McpServer, ctx: McpContext) {
       description: 'Lista items del catálogo con filtros opcionales (colección, estado, rareza).',
       inputSchema: {
         collectionId: z.string().optional(),
-        status: z.enum(['DRAFT', 'AVAILABLE', 'SOLD_OUT', 'ARCHIVED']).optional(),
+        status: z.enum(['DRAFT', 'AVAILABLE', 'ON_DEMAND', 'SOLD_OUT', 'ARCHIVED']).optional(),
         rarity: z.enum(['COMMON', 'RARE', 'EPIC', 'LEGENDARY']).optional(),
         page: z.number().int().min(1).optional(),
         pageSize: z.number().int().min(1).max(100).optional(),
