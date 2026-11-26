@@ -41,7 +41,7 @@ usa ese pepper y el `DATABASE_URL` de producción:
 ```bash
 PGPASS=$(ssh hostinger "sed -n 's/^POSTGRES_PASSWORD=//p' /root/apps/docker-postgres-db/.env | tr -d '\"'")
 PEPPER=$(ssh hostinger "sed -n 's/^MCP_KEY_PEPPER=//p' /var/www/vault-app/current/.env | tr -d '\"'")
-DATABASE_URL="postgresql://volt3d-coins:${PGPASS}@72.61.55.208:5432/vault-volt3d" \
+DATABASE_URL="postgresql://<db-user>:${PGPASS}@<vps-host>:5432/vault-volt3d" \
 MCP_KEY_PEPPER="$PEPPER" \
 pnpm mcp:key --name "Claude" --scopes catalog:read,personal:read
 ```

@@ -1,6 +1,6 @@
 # Deploy — Volt Vault (`vault-app`)
 
-Desplegado en la **VPS Hostinger** (`72.61.55.208`, alias SSH `hostinger`) con el
+Desplegado en la **VPS Hostinger** (`<vps-host>`, alias SSH `hostinger`) con el
 mismo patrón que coin-holder: build en GitHub Actions → release `.output` en
 tar.gz → PM2. Convive con coin-holder (3000), sindicato-api (3001), etc., usando
 el **puerto 3010** y la **misma Postgres** (contenedor `coin-holder-db`, BD
@@ -27,8 +27,8 @@ el **puerto 3010** y la **misma Postgres** (contenedor `coin-holder-db`, BD
 
 | Secret | Valor |
 |---|---|
-| `DATABASE_URL` | `postgresql://volt3d-coins:<pass>@72.61.55.208:5432/vault-volt3d` (público, para `prisma migrate deploy` en CI) |
-| `VPS_HOST` | `72.61.55.208` |
+| `DATABASE_URL` | `postgresql://<db-user>:<pass>@<vps-host>:5432/vault-volt3d` (público, para `prisma migrate deploy` en CI) |
+| `VPS_HOST` | `<vps-host>` |
 | `VPS_USER` | `root` |
 | `VPS_PORT` | `22` |
 | `VPS_SSH_KEY` | clave **CI dedicada** `~/.ssh/ci-cd-vault` (sin passphrase) |
@@ -69,7 +69,7 @@ documento a consultar, no esta sección.
 
 Resumen:
 
-- **DNS**: registro `A` `vault` → `72.61.55.208`, **proxied** (naranja). TLS lo
+- **DNS**: registro `A` `vault` → `<vps-host>`, **proxied** (naranja). TLS lo
   emite Cloudflare.
 - **OAuth**: redirect URIs `https://vault.volt-3d.store/auth/google` y
   `.../auth/facebook` registrados en Google y Meta. Ambos devuelven `302` al

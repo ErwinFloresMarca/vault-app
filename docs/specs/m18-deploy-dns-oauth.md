@@ -38,7 +38,7 @@ correctamente; el round-trip completo queda pendiente de confirmar con una cuent
 
 ### 1. DNS (Cloudflare)
 
-- Registro tipo **A**, nombre `vault`, valor `72.61.55.208`, **proxied**
+- Registro tipo **A**, nombre `vault`, valor `<vps-host>`, **proxied**
   (naranja). TTL auto.
 - Cloudflare emite el TLS. El origin no sirve HTTPS.
 
@@ -97,8 +97,8 @@ server {
 
 | Secret | Valor |
 |---|---|
-| `DATABASE_URL` | `postgresql://volt3d-coins:<pass>@72.61.55.208:5432/vault-volt3d` (público, para `prisma migrate deploy` en CI) |
-| `VPS_HOST` | `72.61.55.208` |
+| `DATABASE_URL` | `postgresql://<db-user>:<pass>@<vps-host>:5432/vault-volt3d` (público, para `prisma migrate deploy` en CI) |
+| `VPS_HOST` | `<vps-host>` |
 | `VPS_USER` | `root` |
 | `VPS_PORT` | `22` |
 | `VPS_SSH_KEY` | clave CI dedicada `~/.ssh/ci-cd-vault` (ed25519, sin passphrase) |
@@ -122,7 +122,7 @@ Cloudflare termina el TLS, pero:
 
 - El origin sirve **HTTP plano en `:80`**, sin redirección a HTTPS.
 - `3010` escucha en `0.0.0.0`, así que la app es alcanzable **directo por
-  `72.61.55.208:3010`**, saltándose Cloudflare por completo.
+  `<vps-host>:3010`**, saltándose Cloudflare por completo.
 - `X-Forwarded-Proto` se reenvía tal cual lo recibe el cliente; no se fuerza a
   `https`.
 
